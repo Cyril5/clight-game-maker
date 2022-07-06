@@ -1,4 +1,4 @@
-# clight game maker
+# clight game maker (Lusine Game Maker 0.1)
  3D Game Maker developed with ElectronJS and ThreeJS
  Librairies utilisés : Blockly (Google), ThreeJS et ElectronJS.
  Prérequis à installer : NodeJS, Blockly et ElectronJS
