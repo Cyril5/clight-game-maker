@@ -35,14 +35,3 @@ Vous pouvez suivre l'avancé du projet sur [Trello](https://trello.com/invite/b/
 Alpha 0.1.0
 
 Pour toutes signalement de problèmes ou bugs je vous invite à créer une issue ici : https://github.com/Cyril5/clight-game-maker/issues
-
- ## Démarrage de l'application
- Prérequis à installer : ThreeJS, Blockly et ElectronJS.
- Ouvrir un terminal dans Visual Studio Code et lancé le script "start" avec la commande : 
- npm run start.
-
- ## Autres Infos
- - TODO List,Roadmap... --> https://trello.com/invite/b/pmIEW7yd/bd11b08e4cae7693f1d6b1b1345d55a9/lusine-game-maker-clight-javascirpt-game-maker
-
-LUsine Game Maker Alpha 0.1 développé par Cyril5 : https://github.com/Cyril5/ en 2022.
-
