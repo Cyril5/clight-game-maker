@@ -3,6 +3,11 @@ body {
     background-color: rgb(86, 86, 86);
 }
 
+p,h2,h3 {
+    color: rgb(220, 220, 220);
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
 .full-screen {
     position: absolute;
     left: 0;
@@ -18,4 +23,65 @@ body {
     bottom: 0;
     width: 600;
     height: 480;
+}
+
+.container {
+    display: flex;
+    width: 100%;
+}
+
+#objectsList {
+    /* text-align: center; */
+    width: 15%;
+    padding: 15px;
+}
+
+#objectsList h2 {
+    text-align: center;
+}
+
+#objectsList .child {
+    margin-left: 15px;
+}
+
+.left {
+    width: 50%;
+}
+
+.right {
+    width: 50%;
+    height:450px;
+}
+
+#code {
+    width: 100%;
+}
+
+.properties-bar {
+    display: none;
+    height: 100vh;
+    color: white;
+    background: black;
+}
+
+.properties-bar .component {
+    margin: 10px;
+}
+
+.component {
+    border: 1px solid white;
+    height: 200px;
+}
+
+.component h2, .component h3 {
+    font-size: 1.5em;
+}
+
+#footer {
+    font-size: 0.8em;
+    text-align: center;
+    margin-top: 390px;
+    padding: 2px;
+    background-color: #211e30;
+    color: antiquewhite;
 }

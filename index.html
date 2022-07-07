@@ -6,78 +6,85 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>3D Game Maker</title>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"> -->
   <link rel="stylesheet" href="style.css">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
   <script src="js/three.min.js"></script>
 </head>
 
 <body>
-  
-  <div class="toolbar">
+
+  <div class="container">
+
+    <div id="objectsList">
+      <h2>Objets</h2>
+      <button id="selectObjABtn">Player Car (ID: 4)</button>
+      <div class="child">
+        <button id="selectObjBBtn">Player Car (ID: 4)</button>
+      </div>
+    </div>
     
-    <button id="translateModeBtn">Pos</button>
-    <button id="rotateModeBtn">Rot</button>
-    <button id="scaleModeBtn">Scale</button>
-    <button id="localSpaceBtn">Local</button>
-    <button id="worldSpaceBtn">Monde</button>
-    <button id="startGameBtn">Play</button>
-    <button id="stopGameBtn">Stop</button>
-  </div>
-
-  <div class="group" style="display: flex;">
-
-    <div class="groupA">
+    <div class="left">
+      <button id="translateModeBtn">Pos</button>
+      <button id="rotateModeBtn">Rot</button>
+      <button id="scaleModeBtn">Scale</button>
+      <button id="localSpaceBtn">Local</button>
+      <button id="worldSpaceBtn">Monde</button>
+      <button id="startGameBtn">Play</button>
+      <button id="stopGameBtn">Stop</button>
       <div id="renderer"></div>
 
-      <!-- Dragable Objects List -->
-      <div>
-        <ul>
-          <li>
-            <ul>Parent Name
-              <li>Children Name</li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-
-
-      <!-- Command -->
-      <textarea id="objectsList" readonly 
-      rows="5" cols="33" style="color: yellow; background-color: rgb(30, 3, 47); height: 200px;">
-    </textarea>
-    
-    <textarea placeholder="JavaScript command" id="command" rows="5" cols="33" style="color: #00ff00; background-color: black; height: 50px;"></textarea>
-    <button id="executeCommandBtn">Execute Command</button>
+    <!-- Command -->
+      <textarea placeholder="JavaScript command" id="command" rows="5" cols="33"
+        style="color: #00ff00; background-color: black; height: 50px;"></textarea>
+      <button id="executeCommandBtn">Execute Command</button>
 
     </div>
 
-    <div class="workspaces" style="width: 50%;">
-      <button>FSM</button>
+    <div class="right">
+      <p id="fsm-name" style="color: #fff; text-align: center;">PlayerCar->FSM->State A</p>
+      
+      <div id="fsm">
+        <button disabled>FSM</button>
         <button>State A</button>
-        <button>State B</button>
-        <button>State C</button>
-        <div id="stateA_workspace" style="width: 100%;"></div>
-        <textarea id="code" name="story" placeholder="Current State Javascript output code" readonly 
-        rows="5" cols="33" style="color: fff; background-color: black; height: 300px;">
-      </textarea>
+        <button disabled >State B</button>
+        <button disabled>State C</button>
+        <div id="stateA">
+          <div id="stateA_workspace"></div>
+          <textarea id="code" name="story" placeholder="Current State Javascript output code" readonly rows="5" cols="33"
+            style="color: fff; background-color: black; height: 300px;">
+          </textarea>
+        </div>
+      </div>
+      
+
+    </div>
+
+    <div class="properties-bar">
+      <div class="component">
+        <h2>Transform</h2>
+        <h3>Position</h3>
+        <div class="position" style="display: flex;">
+          <p>X : 0</p>
+          <p>Y : 0</p>
+          <p>Z : 0</p>
+        </div>
+        <h3>Rotation</h3>
+          <div class="rotation"  style="display: flex;">
+            <p>X : 0</p>
+            <p>Y : 0</p>
+            <p>Z : 0</p>
+          </div>
+        <h3>Echelle</h3>
+          <div class="scale"  style="display: flex;">
+            <p>X : 1</p>
+            <p>Y : 1</p>
+            <p>Z : 1</p>
+          </div>
+      </div>
     </div>
   </div>
-
-
-    <!-- <div class="div" style="text-align: center;">
-      <p>OnUpdateState</p>
-      <div id="onupdatestate_workspace" style="height: 480px; width: 600px;"></div>
-    </div> -->
-
-    <!-- <div class="div" style="text-align: center;">
-      <p>OnExitState</p>
-      <div id="onexitstate_workspace" style="height: 480px; width: 600px;"></div>
-    </div> -->
-
-
-
 
 
 
@@ -132,8 +139,9 @@
         </statement>
       </block>
       <block type="state_leave_state_checks">
-        <comment pinned="false" h="80" w="160">Code généré automatiquement lors de l'ajout d'une transition de sortie vers un autre état.
-  
+        <comment pinned="false" h="80" w="160">Code généré automatiquement lors de l'ajout d'une transition de sortie
+          vers un autre état.
+    
         </comment>
       </block>
     </category>
@@ -530,62 +538,19 @@
     <sep></sep>
   </xml>
 
-<!-- WORKSPACE -->
-  <xml xmlns="https://developers.google.com/blockly/xml" id="stateA_workspace">
-    <variables>
-      <variable id=")KM%fgNwHMgGj,$fr!02">stateB</variable>
-    </variables>
-    <block type="state_onenterstate" id="W.KdtjlkkH]p$${D~D_u" x="38" y="38"></block>
-    <block type="state_onupdatestate" id="Ns.Qv31Lbyi~n$4AnYuZ" x="37" y="163">
-      <comment pinned="true" h="51" w="150">Tant qu'on reste dans cet état</comment>
-    </block>
-    <block type="state_onexitstate" id="{B(+Vfn:d}V9;DWk4i_)" x="38" y="238"></block>
-    <block type="state_leave_state_checks" id="tzj4mCWtK5E@_BojJ|*A" x="38" y="363">
-      <comment pinned="true" h="46" w="366">Code généré automatiquement lors de l'ajout d'une transition de sortie vers un autre état.
-  NE PAS SUPPRIMER
-      </comment>
-      <statement name="_LEAVE_STATE_CHECKS">
-        <block type="controls_if" id="D7iVFncA536R3_BF7Cs?">
-          <mutation elseif="1"></mutation>
-          <value name="IF0">
-            <block type="logic_compare" id="|vCj[QL$wY3H(=FXmZp#">
-              <field name="OP">EQ</field>
-            </block>
-          </value>
-          <statement name="DO0">
-            <block type="state_exit" id=")PXMfl-03[[VntxZ|I1O">
-              <value name="STATE">
-                <block type="variables_get" id="Sb!,|KlbT6Voh?$,`@CX">
-                  <field name="VAR" id=")KM%fgNwHMgGj,$fr!02">stateB</field>
-                </block>
-              </value>
-            </block>
-          </statement>
-          <value name="IF1">
-            <block type="logic_compare" id="5]!%9e*c[|U]9T^TQvF*">
-              <field name="OP">EQ</field>
-            </block>
-          </value>
-          <statement name="DO1">
-            <block type="state_exit" id="SukWWA0:2AEc6JnPh{vp"></block>
-          </statement>
-        </block>
-      </statement>
-    </block>
-  </xml>
+
+
   
-
-  <footer style="margin-top:300px;">
-
-  </footer>
-
-
+  
   <script src="js/blocks/blocksDefs.js" type="module"></script>
   <script src="js/blocks/blocksStubs.js"></script>
 
 
 
   <script src="js/engine.js" type="module"></script>
+  <footer id="footer">
+    <p>Lusin(e) Game Maker 3D - version Alpha 0.1.0 -  by Cyril5</p>
+  </footer>
 </body>
 
 </html>
