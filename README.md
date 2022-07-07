@@ -1,5 +1,8 @@
 # clight game maker (Lusine Game Maker 0.1)
 
+![image](https://user-images.githubusercontent.com/73618602/177780067-09ac3ade-3859-4b4b-bf40-328b2a3e1daf.png)
+
+
 Environnement de développement de jeux-vidéo ou applications 3D.
 Basé sur le concept de la Finite State Machine, Unity, PlayMaker, Scratch, Multimedia Fusion 2.5+.
 
@@ -14,7 +17,7 @@ Le nom LUsine GM est temporaire.
 - ThreeJS : https://threejs.org/ ou https://github.com/mrdoob/three.js/
 - Blockly : https://github.com/google/blockly
 
-## Installation de la l'application Web App Desktop
+## Installation de l'application Web App Desktop
 La version StandAlone (Windows, Mac, Linux n'est pas encore disponible mais vous pouvez lancer l'éditeur en exécutant le script npm start
 * Dans le dossier ouvrez un terminal sous Visual Studio Code et lancez la commande : `npm install` pour installer toutes les dépendances nécéssaire au fonctionnement de l'application : _**ElectronJS, ThreeJS et Blockly**_.
 
