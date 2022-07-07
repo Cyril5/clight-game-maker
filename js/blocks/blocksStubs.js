@@ -67,6 +67,7 @@ Blockly.JavaScript['gameobject_this'] = function(block) {
   return [code, Blockly.JavaScript.ORDER_NONE];
 };
 
+
 Blockly.JavaScript['gameobject_find_by_id'] = function(block) {
   var value_id = Blockly.JavaScript.valueToCode(block, 'ID', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
@@ -84,14 +85,6 @@ Blockly.JavaScript['compare_distance_objects'] = function(block) {
   return [code, Blockly.JavaScript.ORDER_NONE];
 };
 
-// S'execute depuis un STATE
-Blockly.JavaScript['translate_z_self'] = function(block) {
-  var number_zdist = block.getFieldValue('ZDISTANCE');
-  // TODO: Assemble JavaScript into code variable.
-  var code = "this.gameObject.translateZ("+number_zdist+");\n";
-
-  return code;
-};
 
 
 
