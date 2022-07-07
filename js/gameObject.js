@@ -21,7 +21,7 @@ export default class GameObject extends THREE.Object3D {
 
         this.name = name;
 
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
         const material = new THREE.MeshPhongMaterial({ color: 0x119999 });
         const cube = new THREE.Mesh(geometry, material);
         cube.position.y = 0.5;

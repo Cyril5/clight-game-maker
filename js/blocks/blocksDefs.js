@@ -1,6 +1,19 @@
 import { GameObjectRotateYBlock } from "./gameObject/gameobject_rotate_y_block.js";
+import { GameObjectSetPosNumbersBlock } from "./gameObject/gameobject_setpos_numbers.js";
+import { GameObjectSetRotationNumbersBlock } from "./gameObject/gameobject_setrot_numbers.js";
+import { GameObjectTranslateForwardBlock } from "./gameObject/gameobject_translate_forward_block.js";
 
+
+const GO_SETPOS_NUMBERS_BLOCK = new GameObjectSetPosNumbersBlock();
+const GO_TRANSLATE_FORWARD_BLOCK = new GameObjectTranslateForwardBlock();
 const GO_ROTATE_Y_BLOCK = new GameObjectRotateYBlock();
+const GO_SETROT_NUMBERS_BLOCK = new GameObjectSetRotationNumbersBlock();
+
+var ajax = new XMLHttpRequest();
+ajax.open("GET", "js/blocks/toolbox.xml", false);
+ajax.send();
+document.body.innerHTML += ajax.responseText;
+
 
 Blockly.Blocks['fsm_init'] = {
   init: function() {
@@ -101,26 +114,11 @@ Blockly.Blocks['gameobject_this'] = {
     this.setInputsInline(true);
     this.setOutput(true, "GameObject");
     this.setColour(230);
- this.setTooltip("Cherche et retourne l'objet ayant un ID");
+ this.setTooltip("L'objet attaché au FSM");
  this.setHelpUrl("");
   }
 };
 
-
-
-Blockly.Blocks['translate_z_self'] = {
-  init: function () {
-    this.appendDummyInput().appendField("Déplacer cet objet de")
-    .appendField(new Blockly.FieldNumber(1), "ZDISTANCE")
-    .appendField("sur l'axe Z");
-
-    this.setPreviousStatement(true, null);
-    this.setNextStatement(true, null);
-    this.setColour(260);
-    this.setTooltip("");
-    this.setHelpUrl("");
-  }
-};
 
 Blockly.Blocks['gameobject_find_by_id'] = {
   init: function() {
