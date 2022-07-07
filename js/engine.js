@@ -84,6 +84,8 @@ scene.add(mesh);
 
 
 const camera = new THREE.PerspectiveCamera(75, 600 / 480, 0.1, 1000);
+camera.position.y = 10;
+camera.position.z = 5;
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(window.devicePixelRatio);
@@ -121,21 +123,23 @@ const car = new Car('Car Group');
 
 //go.attach(car);
 
-go.addFSM('Cube State Machine');
+go.addFSM('PlayerCar State Machine');
 
 scene.add(car);
-car.scale.set(0.1,0.1,0.1);
+car.scale.set(0.025,0.025,0.025);
 go.attach(car);
 scene.add(go);
 
 
-document.getElementById("objectsList").value = 'Name : '+go.name +'     ID : '+go.id;
-document.getElementById("objectsList").value += '\nName : '+car.name +'     ID : '+car.id+'  ParentID : '+car.parent.id;
+document.getElementById("selectObjABtn").innerHTML = go.name +'     ID : '+go.id;
+document.getElementById("selectObjBBtn").innerHTML = car.name +'     ID : '+car.id;
 
 selectObject(go);
 
 scene.add(control);
 
+
+//camera.lookAt(go);
 
 // Button start game
 function startGame() {
@@ -220,18 +224,19 @@ function onChangeWorkspace(event) {
     // var fullCode = code;
 }
 
-document.getElementById('startGameBtn').addEventListener("click", startGame);
-document.getElementById('stopGameBtn').addEventListener("click", stopGame);
-document.getElementById('translateModeBtn').addEventListener("click", ()=>{ control.setMode(ControlMode.Translate) });
-document.getElementById('rotateModeBtn').addEventListener("click", ()=>{ control.setMode(ControlMode.Rotate) });
-document.getElementById('scaleModeBtn').addEventListener("click", ()=>{ control.setMode(ControlMode.Scale) });
-document.getElementById('localSpaceBtn').addEventListener("click", ()=>{ control.setSpace(Space.Local)});
-document.getElementById('worldSpaceBtn').addEventListener("click", ()=>{ control.setSpace(Space.World)});
-
-document.getElementById('executeCommandBtn').addEventListener("click",executeCommand);
 
 function selectObject(gameObject) {
     control.attach(gameObject);
+
+    
+    var f = document.getElementById("fsm-name");
+    if(gameObject.finiteStateMachines.length == 0) {
+        f.innerHTML = "Aucun Automate Fini dans cet objet";
+        document.getElementById("fsm").style.display = 'none';
+    }else{
+        f.innerHTML = gameObject.name+"->"+gameObject.finiteStateMachines[0].name+"->StateA";
+        document.getElementById("fsm").style.display = 'block';
+    }
 }
 
 function executeCommand() {
@@ -243,4 +248,16 @@ function executeCommand() {
     }
 }
 
+document.getElementById('selectObjABtn').addEventListener("click", ()=>{ selectObject(GameObject.findById(4)) });
+document.getElementById('selectObjBBtn').addEventListener("click", ()=>{ selectObject(GameObject.findById(6)) });
+
+document.getElementById('startGameBtn').addEventListener("click", startGame);
+document.getElementById('stopGameBtn').addEventListener("click", stopGame);
+document.getElementById('translateModeBtn').addEventListener("click", ()=>{ control.setMode(ControlMode.Translate) });
+document.getElementById('rotateModeBtn').addEventListener("click", ()=>{ control.setMode(ControlMode.Rotate) });
+document.getElementById('scaleModeBtn').addEventListener("click", ()=>{ control.setMode(ControlMode.Scale) });
+document.getElementById('localSpaceBtn').addEventListener("click", ()=>{ control.setSpace(Space.Local)});
+document.getElementById('worldSpaceBtn').addEventListener("click", ()=>{ control.setSpace(Space.World)});
+
+document.getElementById('executeCommandBtn').addEventListener("click",executeCommand);
 

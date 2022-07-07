@@ -57,9 +57,7 @@ class Car extends GameObject {
         frontWheel.position.x = 18;
         this.add(frontWheel);
 
-        console.log(this.scale);
-
-       this.setRotationFromEuler(new THREE.Euler(Mathf.degToRad(-90),Mathf.degToRad(0),Mathf.degToRad(90)));
+       this.setRotationFromEuler(new THREE.Euler(Mathf.degToRad(-90),Mathf.degToRad(0),Mathf.degToRad(-90)));
     }
 
 

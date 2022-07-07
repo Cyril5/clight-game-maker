@@ -42,7 +42,6 @@ export default class GameObject extends THREE.Object3D {
             console.log(go.id == id);
 
             if (go.id == id) {
-                window.alert("GameObject id : " + id + " found !");
                 result = go;
             }
         });

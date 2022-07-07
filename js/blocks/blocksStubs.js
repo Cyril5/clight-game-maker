@@ -21,7 +21,7 @@ Blockly.JavaScript['fsm_start'] = function(block) {
 };
 
 
-
+// S'execute depuis un FSM
 Blockly.JavaScript['fsm_update'] = function(block) {
   var statements_update = Blockly.JavaScript.statementToCode(block, 'UPDATE');
   // TODO: Assemble JavaScript into code variable.
@@ -47,7 +47,7 @@ Blockly.JavaScript['state_onenterstate'] = function(block) {
 Blockly.JavaScript['state_onexitstate'] = function(block) {
   var statements_onexitstate = Blockly.JavaScript.statementToCode(block, 'ONEXITSTATE');
   // TODO: Assemble JavaScript into code variable.
-  var code = '...;\n';
+  var code = currState+".onExitState = () => {\n" +statements_onexitstate+ "}\n";
   return code;
 };
 
