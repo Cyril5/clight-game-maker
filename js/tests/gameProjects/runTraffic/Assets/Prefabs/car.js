@@ -5,6 +5,8 @@ import { Wheel } from "../../../wheel.js";
 
 class Car extends GameObject {
 
+    bodyMesh;
+    
     constructor() {
         super('Car Group');
         const color = Random.pickElementFromArray([
@@ -14,11 +16,11 @@ class Car extends GameObject {
             0xff9f1c /*0xa52523, 0xbdb638, 0x78b14b*/
         ]
         );
-        const body = new THREE.Mesh(new THREE.BoxBufferGeometry(60, 30, 15), new THREE.MeshLambertMaterial({ color }));
-        body.position.z = 12;
-        body.castShadow = true;
-        body.receiveShadow = true;
-        this.add(body);
+        this.bodyMesh = new THREE.Mesh(new THREE.BoxBufferGeometry(60, 30, 15), new THREE.MeshLambertMaterial({ color }));
+        this.bodyMesh.position.z = 12;
+        this.bodyMesh.castShadow = true;
+        this.bodyMesh.receiveShadow = true;
+        this.group.add(this.bodyMesh);
 
         const frontTexture = this.getFrontTexture();
         frontTexture.center = new THREE.Vector2(0.5, 0.5);
@@ -47,17 +49,17 @@ class Car extends GameObject {
         cabin.position.z = 25.5;
         cabin.castShadow = true;
         cabin.receiveShadow = true;
-        this.add(cabin);
+        this.group.add(cabin);
 
         const backWheel = new Wheel();
         backWheel.position.x = -18;
-        this.add(backWheel);
+        this.group.add(backWheel);
 
         const frontWheel = new Wheel();
         frontWheel.position.x = 18;
-        this.add(frontWheel);
-
-       this.setRotationFromEuler(new THREE.Euler(Mathf.degToRad(-90),Mathf.degToRad(0),Mathf.degToRad(-90)));
+        this.group.add(frontWheel);
+        
+       this.group.setRotationFromEuler(new THREE.Euler(Mathf.degToRad(-90),Mathf.degToRad(0),Mathf.degToRad(-90)));
     }
 
 

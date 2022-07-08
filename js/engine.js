@@ -1,11 +1,22 @@
 
 import * as THREE from '../node_modules/three/build/three.module.js';
 
+import {Editor} from './editor.js';
 import GameObject from "./gameObject.js";
 
 import { MapControls, OrbitControls } from './libs/three/jsm/controls/OrbitControls.js';
 import { TransformControls } from './libs/three/jsm/controls/TransformControls.js';
 import { Car } from './tests/gameProjects/runTraffic/Assets/Prefabs/car.js';
+
+const OBJA_ID = 4;
+const OBJB_ID = 7;
+
+const startGameBtn = document.getElementById('startGameBtn');
+startGameBtn.addEventListener("click", startGame);
+const stopGameBtn = document.getElementById('stopGameBtn');
+stopGameBtn.addEventListener("click", stopGame);
+
+const editor = new Editor();
 
 const ControlMode = {
     Translate: 'translate',
@@ -34,16 +45,6 @@ var options = {
 };
 
 const demoWorkspace = Blockly.inject( document.getElementById("stateA_workspace"),options);
-
-// const demoWorkspace2 = Blockly.inject('onupdatestate_workspace',
-//     {
-//         toolbox: document.getElementById('toolbox')
-//     });
-
-// const demoWorkspace3 = Blockly.inject('onexitstate_workspace',
-//     {
-//         toolbox: document.getElementById('toolbox')
-//     });
 
 const clock = new THREE.Clock(false);
 var deltaTime = 0;
@@ -116,8 +117,8 @@ camera.position.z = 5;
 
 animate();
 
-const go = new GameObject('Player Car');
-const car = new Car('Car Group');
+var go = new GameObject('Player Car');
+var car = new Car('Car Group');
 
 //go.attach(car);
 
@@ -139,30 +140,51 @@ scene.add(control);
 
 //camera.lookAt(go);
 
+var matrix;
+
 // Button start game
 function startGame() {
 
+    startGameBtn.disabled = true;
+    stopGameBtn.disabled = false;
+
     console.log("Game started !");
 
+    editor.gameObjectToExport = go;
+
+    
+    // editor.saveGameObjectToJSON();
+    go.saveTransform();
+    
     //go.finiteStateMachines[0].currState.onUpateStateWorkSpace = demoWorkspace2;
-
+    
     if (go.finiteStateMachines[0].enabled) {
-
+        
         go.finiteStateMachines[0].start();
     }
-
-
-
+    
+    
     clock.start();
     gameIsRunning = true;
-
+    
     // TEST
     //setTimeout(stopGame,3000);
+
 }
 
 function stopGame() {
+
+    stopGameBtn.disabled = true;
+
     clock.stop();
     gameIsRunning = false;
+    //scene.remove(car);
+    //editor.loadGameObjectFromJSON();
+    
+    go.resetTransform(); // remettre l'objet comme il était avant le début du jeu
+
+    startGameBtn.disabled = false;
+
 }
 
 function animate(timestamp) {
@@ -224,17 +246,20 @@ function onChangeWorkspace(event) {
 
 
 function selectObject(gameObject) {
-    control.attach(gameObject);
 
-    
-    var f = document.getElementById("fsm-name");
-    if(gameObject.finiteStateMachines.length == 0) {
-        f.innerHTML = "Aucun Automate Fini dans cet objet";
-        document.getElementById("fsm").style.display = 'none';
-    }else{
-        f.innerHTML = gameObject.name+"->"+gameObject.finiteStateMachines[0].name+"->StateA";
-        document.getElementById("fsm").style.display = 'block';
+    if(gameObject) {
+        control.attach(gameObject);
+
+        var f = document.getElementById("fsm-name");
+        if(gameObject.finiteStateMachines.length == 0) {
+            f.innerHTML = "Aucun Automate Fini dans cet objet";
+            document.getElementById("fsm").style.display = 'none';
+        }else{
+            f.innerHTML = gameObject.name+"->"+gameObject.finiteStateMachines[0].name+"->StateA";
+            document.getElementById("fsm").style.display = 'block';
+        }
     }
+
 }
 
 function executeCommand() {
@@ -246,11 +271,10 @@ function executeCommand() {
     }
 }
 
-document.getElementById('selectObjABtn').addEventListener("click", ()=>{ selectObject(GameObject.findById(4)) });
-document.getElementById('selectObjBBtn').addEventListener("click", ()=>{ selectObject(GameObject.findById(6)) });
+document.getElementById('selectObjABtn').addEventListener("click", ()=>{ selectObject(GameObject.findById(OBJA_ID)) });
+document.getElementById('selectObjBBtn').addEventListener("click", ()=>{ selectObject(GameObject.findById(OBJB_ID)) });
 
-document.getElementById('startGameBtn').addEventListener("click", startGame);
-document.getElementById('stopGameBtn').addEventListener("click", stopGame);
+
 document.getElementById('translateModeBtn').addEventListener("click", ()=>{ control.setMode(ControlMode.Translate) });
 document.getElementById('rotateModeBtn').addEventListener("click", ()=>{ control.setMode(ControlMode.Rotate) });
 document.getElementById('scaleModeBtn').addEventListener("click", ()=>{ control.setMode(ControlMode.Scale) });
