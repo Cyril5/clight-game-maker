@@ -17,7 +17,15 @@ Le nom LUsine GM est temporaire.
 - ThreeJS : https://threejs.org/ ou https://github.com/mrdoob/three.js/
 - Blockly : https://github.com/google/blockly
 
-## Installation de l'application Web App Desktop
+## Installation
+## Windows
+[Télécharger Lusin(e) Game Maker Alpha 0.1.0 sur Windows 32 et 64bit.](https://mega.nz/file/hN5nCKwC#mKut0cluxe1xXxpJhK5SluIRIeI_KwQha-SfmtqtK2s)
+## Linux
+Pas encore disponible
+## Mac
+Pas encore disponible
+
+## Web App Desktop
 La version StandAlone (Windows, Mac, Linux n'est pas encore disponible mais vous pouvez lancer l'éditeur en exécutant le script npm start
 * Dans le dossier ouvrez un terminal sous Visual Studio Code et lancez la commande : `npm install` pour installer toutes les dépendances nécéssaire au fonctionnement de l'application : _**ElectronJS, ThreeJS et Blockly**_.
 
