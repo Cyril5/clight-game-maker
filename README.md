@@ -42,7 +42,7 @@ Bonne lecture ! :D
 Vous pouvez suivre l'avancé du projet sur [Trello](https://trello.com/invite/b/pmIEW7yd/bd11b08e4cae7693f1d6b1b1345d55a9/lusine-game-maker-clight-javascirpt-game-maker)
 
 
-## Version Actuelle (NON STABLE)
-Alpha 0.1.0
+## Version Actuelle
+Alpha 0.1.1 (11 juillet 2022)
 
 Pour toutes signalement de problèmes ou bugs je vous invite à créer une issue ici : https://github.com/Cyril5/clight-game-maker/issues
