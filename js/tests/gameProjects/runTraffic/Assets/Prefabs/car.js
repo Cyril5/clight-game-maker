@@ -1,12 +1,10 @@
 import GameObject from "../../../../../gameObject.js";
 import Mathf from "../../../../../math/mathf.js";
 import { Random } from "../../../../../math/random.js";
-import { Wheel } from "../../../wheel.js";
+import { Wheel } from "./wheel.js";
 
 class Car extends GameObject {
 
-    bodyMesh;
-    
     constructor() {
         super('Car Group');
         const color = Random.pickElementFromArray([
@@ -16,35 +14,33 @@ class Car extends GameObject {
             0xff9f1c /*0xa52523, 0xbdb638, 0x78b14b*/
         ]
         );
-        this.bodyMesh = new THREE.Mesh(new THREE.BoxBufferGeometry(60, 30, 15), new THREE.MeshLambertMaterial({ color }));
-        this.bodyMesh.position.z = 12;
-        this.bodyMesh.castShadow = true;
-        this.bodyMesh.receiveShadow = true;
-        this.group.add(this.bodyMesh);
 
-        const frontTexture = this.getFrontTexture();
-        frontTexture.center = new THREE.Vector2(0.5, 0.5);
-        frontTexture.rotation = Math.PI / 2;
+        let main = new THREE.Mesh(
+            new THREE.BoxBufferGeometry(60, 30, 15),
+            new THREE.MeshLambertMaterial({ color })
+        );
+        main.position.z = 12;
+        main.castShadow = true;
+        main.receiveShadow = true;
+        this.group.add(main);
 
-        const backTexture = this.getFrontTexture();
-        backTexture.center = new THREE.Vector2(0.5, 0.5);
-        backTexture.rotation = -Math.PI / 2;
+        let carFrontTexture = this.getFrontTexture("ft");
+        carFrontTexture.center = new THREE.Vector2(0.5, 0.5);
+        carFrontTexture.rotation = Math.PI / 2;
 
-        const leftSideTexture = this.getSideTexture();
-        leftSideTexture.flipY = false;
+        // let carBackTexture = this.getFrontTexture("bt");
+        // carBackTexture.center = new THREE.Vector2(0.5, 0.5);
+        // carBackTexture.rotation = -Math.PI / 2;
 
-        const rightSideTexture = this.getSideTexture();
+        // let carLeftSideTexture = this.getSideTexture("lt");
+        // carLeftSideTexture.flipY = false;
+        // let carRightSideTexture = this.getSideTexture("rt");
 
-        // const cabin = new THREE.Mesh(new THREE.BoxBufferGeometry(33, 24, 12), [
-        //     new THREE.MeshLambertMaterial({ map: frontTexture }),
-        //     new THREE.MeshLambertMaterial({ map: backTexture }),
-        //     new THREE.MeshLambertMaterial({ map: leftSideTexture }),
-        //     new THREE.MeshLambertMaterial({ map: rightSideTexture }),
-        //     new THREE.MeshLambertMaterial({ color: 0xffffff }), // top
-        //     new THREE.MeshLambertMaterial({ color: 0xffffff }) // bottom
-        //   ]);
 
-        const cabin = new THREE.Mesh(new THREE.BoxBufferGeometry(33, 24, 12));
+        let cabin = new THREE.Mesh(new THREE.BoxBufferGeometry(33,24,12),
+            new THREE.MeshLambertMaterial({color: 0xffffff})
+        );
+
         cabin.position.x = -6;
         cabin.position.z = 25.5;
         cabin.castShadow = true;
@@ -58,12 +54,12 @@ class Car extends GameObject {
         const frontWheel = new Wheel();
         frontWheel.position.x = 18;
         this.group.add(frontWheel);
-        
-       this.group.setRotationFromEuler(new THREE.Euler(Mathf.degToRad(-90),Mathf.degToRad(0),Mathf.degToRad(-90)));
+
+        this.group.setRotationFromEuler(new THREE.Euler(Mathf.degToRad(-90), Mathf.degToRad(0), Mathf.degToRad(-90)));
     }
 
 
-    getFrontTexture() {
+    getFrontTexture(name) {
         const canvas = document.createElement("canvas");
         canvas.width = 64;
         canvas.height = 32;
@@ -75,10 +71,12 @@ class Car extends GameObject {
         context.fillStyle = "#666666";
         context.fillRect(8, 8, 48, 24);
 
-        return new THREE.CanvasTexture(canvas);
+        const texture = new THREE.CanvasTexture(canvas);
+        console.log(texture);
+        return texture;
     }
 
-    getSideTexture() {
+    getSideTexture(name) {
         const canvas = document.createElement("canvas");
         canvas.width = 128;
         canvas.height = 32;
