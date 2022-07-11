@@ -17,7 +17,7 @@ export default class GameObject extends THREE.Object3D {
     
     group = new THREE.Group();
     
-    static gameObjects = []; // private
+    static gameObjects = new Map(); // private map(int, GameObject)
     
     // Peut contenir plusieurs FSM
     finiteStateMachines = [];
@@ -25,7 +25,10 @@ export default class GameObject extends THREE.Object3D {
     constructor(name) {
         super();
         
-        GameObject.gameObjects.push(this);
+        if(!GameObject.gameObjects.has(this.id))
+            GameObject.gameObjects.set(this.id,this);
+        else
+            alert("GameObject id already exists in gameObjects map");
         
         this.name = name;
         
@@ -59,20 +62,24 @@ export default class GameObject extends THREE.Object3D {
         this.finiteStateMachines.push(fsm);
     }
 
-    static findById(id) {
-        let result = null;
-        GameObject.gameObjects.forEach(go => {
-
-            if (go.id == id) {
-                result = go;
-            }
-        });
-
-        if (result == null)
-            window.alert("GameObject id : " + id + " wasn't found");
-
-        return result;
+    static getById(id) {
+        return this.gameObjects.get(id);
     }
+
+    // static findById(id) {
+    //     let result = null;
+    //     GameObject.gameObjects.forEach(go => {
+
+    //         if (go.id == id) {
+    //             result = go;
+    //         }
+    //     });
+
+    //     if (result == null)
+    //         window.alert("GameObject id : " + id + " wasn't found");
+
+    //     return result;
+    // }
 
 
 

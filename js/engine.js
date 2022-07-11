@@ -1,13 +1,14 @@
 
 import * as THREE from '../node_modules/three/build/three.module.js';
 import Stats from '../js/libs/three/jsm/libs/stats.module.js';
-
+import { Game } from './game.js';
 import {Editor} from './editor.js';
-import GameObject from "./gameObject.js";
+import GameObject from './gameObject.js';
 
-import { MapControls, OrbitControls } from './libs/three/jsm/controls/OrbitControls.js';
+import { OrbitControls } from './libs/three/jsm/controls/OrbitControls.js';
 import { TransformControls } from './libs/three/jsm/controls/TransformControls.js';
 import { Car } from './tests/gameProjects/runTraffic/Assets/Prefabs/car.js';
+
 
 const OBJA_ID = 4;
 const OBJB_ID = 7;
@@ -18,7 +19,6 @@ const stopGameBtn = document.getElementById('stopGameBtn');
 stopGameBtn.addEventListener("click", stopGame);
 
 const editor = new Editor();
-
 
 const ControlMode = {
     Translate: 'translate',
@@ -182,6 +182,8 @@ function stopGame() {
     stopGameBtn.disabled = true;
 
     clock.stop();
+    Game.deltaTime = 0;
+    
     gameIsRunning = false;
     //scene.remove(car);
     //editor.loadGameObjectFromJSON();
@@ -199,7 +201,7 @@ function animate(timestamp) {
     render();
 
     if (gameIsRunning) {
-        deltaTime = clock.getDelta();
+        Game.deltaTime = clock.getDelta();
         gameLoop();
     }
 
@@ -277,8 +279,8 @@ function executeCommand() {
     }
 }
 
-document.getElementById('selectObjABtn').addEventListener("click", ()=>{ selectObject(GameObject.findById(OBJA_ID)) });
-document.getElementById('selectObjBBtn').addEventListener("click", ()=>{ selectObject(GameObject.findById(OBJB_ID)) });
+document.getElementById('selectObjABtn').addEventListener("click", ()=>{ selectObject(GameObject.getById(OBJA_ID)) });
+document.getElementById('selectObjBBtn').addEventListener("click", ()=>{ selectObject(GameObject.getById(OBJB_ID)) });
 
 
 document.getElementById('translateModeBtn').addEventListener("click", ()=>{ control.setMode(ControlMode.Translate) });

@@ -71,7 +71,7 @@ Blockly.JavaScript['gameobject_this'] = function(block) {
 Blockly.JavaScript['gameobject_find_by_id'] = function(block) {
   var value_id = Blockly.JavaScript.valueToCode(block, 'ID', Blockly.JavaScript.ORDER_ATOMIC);
   // TODO: Assemble JavaScript into code variable.
-  var code = 'GameObject.findById('+value_id+')';
+  var code = 'GameObject.getById('+value_id+')'; 
   // TODO: Change ORDER_NONE to the correct strength.
   return [code, Blockly.JavaScript.ORDER_NONE];
 };
