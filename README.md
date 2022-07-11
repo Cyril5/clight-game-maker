@@ -19,6 +19,8 @@ Le nom LUsine GM est temporaire.
 
 ## Installation
 ## Windows
+[Télécharger Lusin(e) Game Maker Alpha 0.1.1 (11/07/2022) sur Windows 32 et 64bit.](https://mega.nz/file/8VIQVKJB#ksf7IhS_GFsfBHdB23IQtOGBlegP-Hco1iIs4L5QSGE)
+
 [Télécharger Lusin(e) Game Maker Alpha 0.1.0 sur Windows 32 et 64bit.](https://mega.nz/file/hN5nCKwC#mKut0cluxe1xXxpJhK5SluIRIeI_KwQha-SfmtqtK2s)
 ## Linux
 Pas encore disponible

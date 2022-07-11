@@ -132,7 +132,7 @@ go.addFSM('PlayerCar State Machine');
 
 scene.add(car);
 
-//car.scale.set(0.025,0.025,0.025);
+car.scale.set(0.025,0.025,0.025);
 go.attach(car);
 scene.add(go);
 
