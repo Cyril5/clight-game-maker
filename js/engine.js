@@ -1,5 +1,6 @@
 
 import * as THREE from '../node_modules/three/build/three.module.js';
+import Stats from '../js/libs/three/jsm/libs/stats.module.js';
 
 import {Editor} from './editor.js';
 import GameObject from "./gameObject.js";
@@ -17,6 +18,7 @@ const stopGameBtn = document.getElementById('stopGameBtn');
 stopGameBtn.addEventListener("click", stopGame);
 
 const editor = new Editor();
+
 
 const ControlMode = {
     Translate: 'translate',
@@ -92,6 +94,10 @@ renderer.setSize(600, 480);
 renderer.shadowMap.enabled = true;
 document.getElementById('renderer').appendChild(renderer.domElement);
 
+const stats = new Stats();
+document.getElementById('renderer').appendChild( stats.dom );
+
+
 
 const orbit = new OrbitControls(camera, renderer.domElement);
 orbit.mouseButtons = {
@@ -125,7 +131,8 @@ var car = new Car('Car Group');
 go.addFSM('PlayerCar State Machine');
 
 scene.add(car);
-car.scale.set(0.025,0.025,0.025);
+
+//car.scale.set(0.025,0.025,0.025);
 go.attach(car);
 scene.add(go);
 
@@ -139,8 +146,6 @@ scene.add(control);
 
 
 //camera.lookAt(go);
-
-var matrix;
 
 // Button start game
 function startGame() {
@@ -190,6 +195,7 @@ function stopGame() {
 function animate(timestamp) {
     requestAnimationFrame(animate);
 
+    stats.update();
     render();
 
     if (gameIsRunning) {
@@ -283,3 +289,11 @@ document.getElementById('worldSpaceBtn').addEventListener("click", ()=>{ control
 
 document.getElementById('executeCommandBtn').addEventListener("click",executeCommand);
 
+window.addEventListener( 'resize', onWindowResize );
+
+
+function onWindowResize() {
+    camera.aspect = 600 / 480;
+    camera.updateProjectionMatrix();
+    renderer.setSize(600, 480);
+}
