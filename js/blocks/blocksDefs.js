@@ -1,13 +1,17 @@
+import { DeltaTimeBlock } from "./delta_time_block.js";
 import { GameObjectRotateYBlock } from "./gameObject/gameobject_rotate_y_block.js";
 import { GameObjectSetPosNumbersBlock } from "./gameObject/gameobject_setpos_numbers.js";
 import { GameObjectSetRotationNumbersBlock } from "./gameObject/gameobject_setrot_numbers.js";
 import { GameObjectTranslateForwardBlock } from "./gameObject/gameobject_translate_forward_block.js";
+import { Vector3dBlocks } from "./vector3d_blocks.js";
 
 
 const GO_SETPOS_NUMBERS_BLOCK = new GameObjectSetPosNumbersBlock();
 const GO_TRANSLATE_FORWARD_BLOCK = new GameObjectTranslateForwardBlock();
 const GO_ROTATE_Y_BLOCK = new GameObjectRotateYBlock();
 const GO_SETROT_NUMBERS_BLOCK = new GameObjectSetRotationNumbersBlock();
+const DELTA_TIME_BLOCK = new DeltaTimeBlock();
+const VECTOR3D_BLOCKS = new Vector3dBlocks();
 
 var ajax = new XMLHttpRequest();
 ajax.open("GET", "js/blocks/toolbox.xml", false);
@@ -128,7 +132,7 @@ Blockly.Blocks['gameobject_find_by_id'] = {
     this.setInputsInline(true);
     this.setOutput(true, "GameObject");
     this.setColour(230);
- this.setTooltip("Cherche et retourne l'objet ayant un ID");
+ this.setTooltip("Retourne l'objet ayant un ID");
  this.setHelpUrl("");
   }
 };

@@ -33,7 +33,7 @@ class GameObjectRotateYBlock extends LusineBlock {
           var value_obj = Blockly.JavaScript.valueToCode(block, 'OBJ', Blockly.JavaScript.ORDER_ATOMIC);
           var value_degy = Blockly.JavaScript.valueToCode(block, 'DEGY', Blockly.JavaScript.ORDER_ATOMIC);
           // TODO: Assemble JavaScript into code variable.
-          var yrad = Mathf.degToRad(value_degy);
+          var yrad = 'Mathf.degToRad('+value_degy+')';
           var code = value_obj+".rotateY("+yrad+");\n";
           return code;
         };

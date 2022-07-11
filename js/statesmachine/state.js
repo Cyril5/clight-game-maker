@@ -1,5 +1,7 @@
 // IMPORTS (ne pas supprimer à cause de l'execution du code en temps réel)
 import Mathf from '../math/mathf.js';
+import { Game } from '../game.js';
+import GameObject from '../gameObject.js';
 
 export default class State {
 
