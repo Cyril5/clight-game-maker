@@ -1,6 +1,6 @@
-# clight game maker (Lusine Game Maker 0.1)
+# Lusine Game Maker Alpha 0.1 (clight-game-maker)
 
-![image](https://user-images.githubusercontent.com/73618602/177780067-09ac3ade-3859-4b4b-bf40-328b2a3e1daf.png)
+![image](https://user-images.githubusercontent.com/73618602/178604307-91e511b9-f437-4c42-867d-a95c98d9e6a3.png)
 
 
 Environnement de développement de jeux-vidéo ou applications 3D.
