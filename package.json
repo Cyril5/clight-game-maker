@@ -11,7 +11,9 @@
   "author": "Cyril Leger",
   "license": "ISC",
   "dependencies": {
+    "@blockly/theme-dark": "^3.0.13",
     "blockly": "^8.0.3",
+    "codemirror": "^6.0.1",
     "electron-packager": "^15.5.1",
     "three": "^0.142.0"
   },

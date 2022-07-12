@@ -1,5 +1,4 @@
 
-import * as THREE from '../node_modules/three/build/three.module.js';
 import Stats from '../js/libs/three/jsm/libs/stats.module.js';
 import { Game } from './game.js';
 import {Editor} from './editor.js';
@@ -10,13 +9,8 @@ import { TransformControls } from './libs/three/jsm/controls/TransformControls.j
 import { Car } from './tests/gameProjects/runTraffic/Assets/Prefabs/car.js';
 
 
-const OBJA_ID = 4;
-const OBJB_ID = 7;
-
-const startGameBtn = document.getElementById('startGameBtn');
-startGameBtn.addEventListener("click", startGame);
-const stopGameBtn = document.getElementById('stopGameBtn');
-stopGameBtn.addEventListener("click", stopGame);
+const OBJA_ID = 17;
+const OBJB_ID = 20;
 
 const editor = new Editor();
 
@@ -31,25 +25,8 @@ const Space = {
     World: 'world'
 }
 
-var options = { 
-	toolbox : toolbox, 
-	collapse : true, 
-	comments : true, 
-	disable : true, 
-	maxBlocks : Infinity, 
-	trashcan : true, 
-	toolboxPosition : 'start', 
-	css : true, 
-	// media : 'https://blockly-demo.appspot.com/static/media/', 
-	rtl : false, 
-	scrollbars : true, 
-	oneBasedIndex : true
-};
-
-const demoWorkspace = Blockly.inject( document.getElementById("stateA_workspace"),options);
 
 const clock = new THREE.Clock(false);
-var deltaTime = 0;
 
 let gameIsRunning = false;
 
@@ -123,24 +100,24 @@ camera.position.z = 5;
 
 animate();
 
-var go = new GameObject('Player Car');
+editor.playerCarGO = new GameObject('Player Car');
 var car = new Car('Car Group');
 
 //go.attach(car);
 
-go.addFSM('PlayerCar State Machine');
+editor.playerCarGO.addFSM('PlayerCar State Machine');
 
 scene.add(car);
 
 car.scale.set(0.025,0.025,0.025);
-go.attach(car);
-scene.add(go);
+editor.playerCarGO.attach(car);
+scene.add(editor.playerCarGO);
 
 
-document.getElementById("selectObjABtn").innerHTML = go.name +'     ID : '+go.id;
+document.getElementById("selectObjABtn").innerHTML = editor.playerCarGO.name +'     ID : '+editor.playerCarGO.id;
 document.getElementById("selectObjBBtn").innerHTML = car.name +'     ID : '+car.id;
 
-selectObject(go);
+selectObject(editor.playerCarGO);
 
 scene.add(control);
 
@@ -149,23 +126,23 @@ scene.add(control);
 
 // Button start game
 function startGame() {
-
+    
+    console.log("Game started !");
     startGameBtn.disabled = true;
     stopGameBtn.disabled = false;
 
-    console.log("Game started !");
 
-    editor.gameObjectToExport = go;
+    editor.gameObjectToExport = editor.playerCarGO;
 
     
     // editor.saveGameObjectToJSON();
-    go.saveTransform();
+    editor.playerCarGO.saveTransform();
     
     //go.finiteStateMachines[0].currState.onUpateStateWorkSpace = demoWorkspace2;
     
-    if (go.finiteStateMachines[0].enabled) {
+    if (editor.playerCarGO.finiteStateMachines[0].enabled) {
         
-        go.finiteStateMachines[0].start();
+        editor.playerCarGO.finiteStateMachines[0].start();
     }
     
     
@@ -179,6 +156,8 @@ function startGame() {
 
 function stopGame() {
 
+    console.log("game stoped !");
+
     stopGameBtn.disabled = true;
 
     clock.stop();
@@ -188,7 +167,7 @@ function stopGame() {
     //scene.remove(car);
     //editor.loadGameObjectFromJSON();
     
-    go.resetTransform(); // remettre l'objet comme il était avant le début du jeu
+    editor.playerCarGO.resetTransform(); // remettre l'objet comme il était avant le début du jeu
 
     startGameBtn.disabled = false;
 
@@ -217,39 +196,7 @@ function gameLoop() {
     //if (go.finiteStateMachines[0].enabled)
     //go.finiteStateMachines[0].runCode(demoWorkspace2);
 
-    go.finiteStateMachines[0].update();
-}
-
-demoWorkspace.addChangeListener(onChangeWorkspace);
-
-
-function onChangeWorkspace(event) {
-
-    var workspaceCode = Blockly.JavaScript.workspaceToCode(demoWorkspace);
-    let code = '';
-
-    demoWorkspace.getAllBlocks().forEach(block => {
-
-        const imports = block.imports;
-
-        // if (imports !== undefined) {
-
-        //     let importString = '';
-
-        //     imports.forEach(i => {
-        //         importString = "Import " + i[0] + " from '" + i[1] + "';"; // ex : Import Mathf from '../dir/mathf.js';
-        //         if (!code.includes(importString)) // evite d'importer plusieurs fois les classes
-        //             code += importString;
-        //     });
-        // }
-    });
-
-    code += '\n\n' + workspaceCode;
-
-    go.finiteStateMachines[0].currState.code = code;
-
-    document.getElementById('code').value = code;
-    // var fullCode = code;
+    editor.playerCarGO.finiteStateMachines[0].update();
 }
 
 
@@ -290,6 +237,11 @@ document.getElementById('localSpaceBtn').addEventListener("click", ()=>{ control
 document.getElementById('worldSpaceBtn').addEventListener("click", ()=>{ control.setSpace(Space.World)});
 
 document.getElementById('executeCommandBtn').addEventListener("click",executeCommand);
+
+document.getElementById('startGameBtn').addEventListener("click", startGame);
+document.getElementById('stopGameBtn').addEventListener("click", stopGame);
+
+document.getElementById('saveStateABtn').addEventListener('click',(event)=>{editor.saveDemoWorkspace();});
 
 window.addEventListener( 'resize', onWindowResize );
 

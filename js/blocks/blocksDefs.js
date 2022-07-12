@@ -13,10 +13,7 @@ const GO_SETROT_NUMBERS_BLOCK = new GameObjectSetRotationNumbersBlock();
 const DELTA_TIME_BLOCK = new DeltaTimeBlock();
 const VECTOR3D_BLOCKS = new Vector3dBlocks();
 
-var ajax = new XMLHttpRequest();
-ajax.open("GET", "js/blocks/toolbox.xml", false);
-ajax.send();
-document.body.innerHTML += ajax.responseText;
+
 
 
 Blockly.Blocks['fsm_init'] = {
@@ -24,9 +21,10 @@ Blockly.Blocks['fsm_init'] = {
     this.appendStatementInput("INIT")
         .setCheck(null)
         .appendField("A L'initialisation");
-    this.setColour(120);
- this.setTooltip("Appelé avant le start lors de l'initilisation de la FSM");
- this.setHelpUrl("");
+        this.setTooltip("Appelé avant le start lors de l'initilisation de la FSM");
+        this.setHelpUrl("");
+        this.setStyle('fsm_event_blocks');
+        this.setColour(120);
   }
 };
 
@@ -38,6 +36,7 @@ Blockly.Blocks['fsm_start'] = {
     this.setColour(120);
  this.setTooltip("Start Event");
  this.setHelpUrl("");
+ this.setStyle('fsm_event_blocks');
   }
 };
 
@@ -49,6 +48,7 @@ Blockly.Blocks['fsm_update'] = {
     this.setColour(120);
  this.setTooltip("Evenement : Boucle de la state machine (Ne boucle plus quand la state machine est  désactivée)");
  this.setHelpUrl("");
+ this.setStyle('fsm_event_blocks');
   }
 };
 
@@ -57,7 +57,7 @@ Blockly.Blocks['state_onupdatestate'] = {
     this.appendStatementInput("UPDATESTATE")
       .setCheck(null)
       .appendField("Toujours dans cet état");
-    this.setColour(120);
+      this.setStyle('fsm_event_blocks');
     this.setTooltip("");
     this.setHelpUrl("");
   }
@@ -71,6 +71,7 @@ Blockly.Blocks['state_onenterstate'] = {
     this.setColour(120);
     this.setTooltip("");
     this.setHelpUrl("");
+    this.setStyle('fsm_event_blocks');
   }
 };
 
@@ -82,6 +83,7 @@ Blockly.Blocks['state_onexitstate'] = {
     this.setColour(120);
  this.setTooltip("Est appelé au moment l'état de la FSM va changer");
  this.setHelpUrl("");
+ this.setStyle('fsm_event_blocks');
   }
 };
 

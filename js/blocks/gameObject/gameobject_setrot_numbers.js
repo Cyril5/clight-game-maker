@@ -44,9 +44,13 @@ class GameObjectSetRotationNumbersBlock extends LusineBlock {
       var dropdown_space = block.getFieldValue('SPACE');
       // TODO: Assemble JavaScript into code variable.
 
-      const euler = new THREE.Euler(Mathf.degToRad(value_degx),Mathf.degToRad(value_degy),Mathf.degToRad(value_degz));
+      //const euler = new THREE.Euler(Mathf.degToRad(value_degx),Mathf.degToRad(value_degy),Mathf.degToRad(value_degz));
 
-      var code = value_obj+'.rotation.set('+euler.x+','+euler.y+','+euler.z+');\n';
+      const eulerX = 'Mathf.degToRad(' +value_degx+ ')';
+      const eulerY = 'Mathf.degToRad('+value_degy+')';
+      const eulerZ = 'Mathf.degToRad('+value_degz+')';
+
+      var code = value_obj+'.rotation.set('+eulerX+','+eulerY+','+eulerZ+');\n';
       return code;
     };
   }
