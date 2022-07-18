@@ -2,6 +2,7 @@
 import Mathf from '../math/mathf.js';
 import { Game } from '../game.js';
 import GameObject from '../gameObject.js';
+import { Debug } from '../debug.js';
 
 export default class State {
 

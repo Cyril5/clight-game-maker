@@ -4,6 +4,7 @@ import { GameObjectSetPosNumbersBlock } from "./gameObject/gameobject_setpos_num
 import { GameObjectSetRotationNumbersBlock } from "./gameObject/gameobject_setrot_numbers.js";
 import { GameObjectTranslateForwardBlock } from "./gameObject/gameobject_translate_forward_block.js";
 import { Vector3dBlocks } from "./vector3d_blocks.js";
+import { InputsBlocks } from "./inputs/inputs_blocks.js";
 
 
 const GO_SETPOS_NUMBERS_BLOCK = new GameObjectSetPosNumbersBlock();
@@ -12,6 +13,7 @@ const GO_ROTATE_Y_BLOCK = new GameObjectRotateYBlock();
 const GO_SETROT_NUMBERS_BLOCK = new GameObjectSetRotationNumbersBlock();
 const DELTA_TIME_BLOCK = new DeltaTimeBlock();
 const VECTOR3D_BLOCKS = new Vector3dBlocks();
+const INPUTS_BLOCKS = new InputsBlocks();
 
 
 
@@ -139,18 +141,19 @@ Blockly.Blocks['gameobject_find_by_id'] = {
   }
 };
 
-Blockly.Blocks['compare_distance_objects'] = {
+Blockly.Blocks['debug_console_write'] = {
   init: function() {
-    this.appendValueInput("OBJA")
-        .setCheck("GameObject")
-        .appendField("Distance entre");
-    this.appendValueInput("OBJB")
-        .setCheck("GameObject")
-        .appendField("et");
-    this.setInputsInline(true);
-    this.setOutput(true, null);
-    this.setColour(230);
- this.setTooltip("Retourne la distance entre deux objets");
+    this.appendValueInput("LOG")
+        .setCheck(null)
+        .appendField("Ecrire");
+    this.appendDummyInput()
+        .appendField("dans la console")
+        .appendField("en")
+        .appendField(new Blockly.FieldColour("#3366ff"), "TEXTCOLOR");
+    this.setPreviousStatement(true, null);
+    this.setNextStatement(true, "Boolean");
+    this.setColour(65);
+ this.setTooltip("Ecrire un message dans la console");
  this.setHelpUrl("");
   }
 };

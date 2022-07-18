@@ -85,6 +85,14 @@ Blockly.JavaScript['compare_distance_objects'] = function(block) {
   return [code, Blockly.JavaScript.ORDER_NONE];
 };
 
+Blockly.JavaScript['debug_console_write'] = function(block) {
+  var value_log = Blockly.JavaScript.valueToCode(block, 'LOG', Blockly.JavaScript.ORDER_ATOMIC);
+  var colour_textcolor = block.getFieldValue('TEXTCOLOR');
+  // TODO: Assemble JavaScript into code variable.
+  var code = "Debug.writeInConsole("+value_log+",'"+colour_textcolor+"');\n";
+  return code;
+};
+
 
 
 

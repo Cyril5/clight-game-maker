@@ -46,6 +46,7 @@
 
       
       
+      
       </comment>
     </block>
   </category>
@@ -158,6 +159,37 @@
         </block>
       </value>
     </block>
+  </category>
+  <category name="Contrôles">
+    <block type="inputs_if_keydown">
+      <value name="KEYCODE">
+        <block type="keycode_space"></block>
+      </value>
+    </block>
+    <block type="inputs_if_key">
+      <value name="KEYCODE">
+        <block type="keycode_space"></block>
+      </value>
+    </block>
+    <block type="inputs_onkeydown" disabled="true">
+      <value name="KEYCODE">
+        <block type="keycode_space"></block>
+      </value>
+    </block>
+    <block type="inputs_onkey" disabled="true">
+      <value name="KEYCODE">
+        <block type="keycode_space"></block>
+      </value>
+    </block>
+    <block type="keycode_d"></block>
+    <block type="keycode_space"></block>
+    <block type="keycode_q"></block>
+    <block type="keycode_s"></block>
+    <block type="keycode_z"></block>
+    <block type="keycode_uparrow"></block>
+    <block type="keycode_rightarrow"></block>
+    <block type="keycode_downarrow"></block>
+    <block type="keycode_leftnarrow"></block>
   </category>
   <category name="Vector">
     <block type="vector3">
@@ -478,6 +510,14 @@
         <shadow type="text">
           <field name="TEXT">abc</field>
         </shadow>
+      </value>
+    </block>
+    <block type="debug_console_write">
+      <field name="TEXTCOLOR">#3366ff</field>
+      <value name="LOG">
+        <block type="text">
+          <field name="TEXT">Bonjour tous le monde !</field>
+        </block>
       </value>
     </block>
     <block type="text_prompt_ext">

@@ -103,7 +103,7 @@ class Editor {
               alert("Une erreur c'est produite pendant l'ouverture de StateA :\n\n"+err);
               return;
             }
-            console.log(data);
+
             Blockly.serialization.workspaces.load(JSON.parse(data),this.demoWorkspace);
           });
     }

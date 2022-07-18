@@ -4,6 +4,7 @@ import { Game } from './game.js';
 import {Editor} from './editor.js';
 import GameObject from './gameObject.js';
 
+
 import { OrbitControls } from './libs/three/jsm/controls/OrbitControls.js';
 import { TransformControls } from './libs/three/jsm/controls/TransformControls.js';
 import { Car } from './tests/gameProjects/runTraffic/Assets/Prefabs/car.js';
@@ -242,6 +243,10 @@ document.getElementById('startGameBtn').addEventListener("click", startGame);
 document.getElementById('stopGameBtn').addEventListener("click", stopGame);
 
 document.getElementById('saveStateABtn').addEventListener('click',(event)=>{editor.saveDemoWorkspace();});
+
+document.getElementById('clearConsoleBtn').addEventListener('click',(event)=>{
+    document.getElementById('console').innerHTML = "";
+});
 
 window.addEventListener( 'resize', onWindowResize );
 
