@@ -1,23 +1,29 @@
 {
   "name": "3d-game-maker",
-  "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
+  "version": "0.1.1-alpha",
+  "description": "Un environnement de développement de mini-jeux 3D basé sur Unity et Scratch",
+  "main": "./dist/src/index.js",
   "scripts": {
-    "start": "electron .",
+    "build": "tsc",
+    "start": "npm run build && electron .",
+    "dev": "concurrently \"tsc -w\" \"electron .\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "Cyril Leger",
+  "author": "Cyril5",
   "license": "ISC",
   "dependencies": {
     "@blockly/theme-dark": "^3.0.13",
+    "@types/codemirror": "^5.60.5",
     "blockly": "^8.0.3",
-    "codemirror": "^6.0.1",
+    "codemirror": "^5.65.7",
     "electron-packager": "^15.5.1",
+    "electron-reload": "^2.0.0-alpha.1",
     "three": "^0.142.0"
   },
   "devDependencies": {
+    "@types/three": "^0.141.0",
+    "concurrently": "^7.3.0",
     "electron": "^19.0.7"
   }
 }

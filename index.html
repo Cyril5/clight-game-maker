@@ -17,6 +17,7 @@
 
 <body>
 
+  <!-- <div id="blocklyDiv" style="height: 480px; width: 600px;"></div> -->
   <div class="container">
 
 
@@ -108,30 +109,34 @@
     <button id="clearConsoleBtn">Effacer</button>
   </div>
 
-  <script>
-    const fs = require('fs');
-  </script>
-
-  <script src="./node_modules/three/build/three.min.js"></script>
   <script src="./node_modules/blockly/blockly_compressed.js"></script>
-  <script src="./node_modules/blockly/blocks_compressed.js"></script>
-  <script src="./node_modules/blockly/javascript_compressed.js"></script>
+<script src="./node_modules/blockly/blocks_compressed.js"></script>
+<!-- <script src="./node_modules/blockly/javascript_compressed.js"></script> -->
 
-  <script src="js/libs/blockly/en.js"></script>
+  <script src="src/libs/blockly/en.js"></script>
 
-  <script src="js/libs/blockly/custom-dialogs.js"></script>
+  <!-- <script src="src/libs/blockly/custom-dialogs.js"></script> --> -->
 
-  <script src="js/blocks/blocksDefs.js" type="module"></script>
-  <script src="js/blocks/blocksStubs.js"></script>
+
+  <!-- <script src="./dist/src/blocks/blocksDefs.js"></script> -->
+  <!-- <script src="./dist/src/blocks/blocksStubs.js"></script> -->
 
   <!-- CODE MIRROR CDN JavaScript -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js"></script>
-  <script type="text/javascript"
-    src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/javascript/javascript.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js"></script> -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/javascript/javascript.min.js"></script> -->
 
+  <script>
+    require('./dist/src/blocks/blocksDefs.js');
+    require('./dist/src/engine.js');
 
-  <script src="js/engine.js" type="module"></script>
-
+    // var x = require('./dist/src/gameObject.js');
+    // try {
+    //   eval('alert(x.GameObject); alert(x.GameObject.getById(161))');
+    //   console.log(x.GameObject);
+    // } catch (error) {
+    //   alert(error);
+    // }
+  </script>
 
 
   <footer id="footer">
