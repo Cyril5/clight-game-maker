@@ -14,11 +14,9 @@ import {FiniteStateMachine} from './fsm';
 
   export class State {
 
-    private readonly kebabRequire = "require('../../../dist/src/kebab.js').Kebab";
-    private readonly gameObjectRequire : string = "require('../../../dist/src/gameObject.js').GameObject";
-    private readonly debugRequire : string = "require('../../../dist/src/debug.js')";
-    private readonly mathfRequire = "require('../../../dist/src/math/mathf.js')";
-    private readonly gameRequire = "require('../../../dist/src/game.js')";
+    private readonly gameObjectRequire : string = "require('../../../dist/src/gameObject.js')."+GameObject.name;
+    private readonly mathfRequire = "require('../../../dist/src/math/mathf.js')."+Mathf.name;
+    private readonly gameRequire = "require('../../../dist/src/game.js')."+Game.name;
 
       readonly fsm : FiniteStateMachine;
       code : string = '';
@@ -57,17 +55,18 @@ import {FiniteStateMachine} from './fsm';
       runCode() { // run state code
         
   
-          var totalCode = "var __Kebab = "+this.kebabRequire+";\n"+
-          "var "+GameObject.getVarClassName()+" = "+ this.gameObjectRequire+";\n"+
-          "var __req_mathf ="+this.mathfRequire+";\n"+
-          "var __req_game = "+this.gameRequire+";\n"+
-          "\n\n"+this.code;
+          var requires = '';
 
-          // totalCode = totalCode.replaceAll(Debug.name,'__req_debug.'+Debug.name)
-          // .replaceAll(Mathf.name,'__req_mathf.'+Mathf.name)
-          // .replaceAll(Game.name,'__req_game.'+Game.name)
-          
-          console.log(totalCode);
+          const classes = [Debug,Game,GameObject,Mathf];
+
+          classes.forEach(cls => {
+            if(this.code.includes(cls.getVarClassName())) {
+              requires+= "const "+cls.getVarClassName()+" = require('"+cls.getDistClassFilePath()+"')."+cls.name+";\n";
+            }
+          });
+          const code = requires+='\n'+this.code;
+
+          console.log(code);
   
           // Generate JavaScript code and run it.
           (window as any).LoopTrap = 1000;
@@ -75,7 +74,7 @@ import {FiniteStateMachine} from './fsm';
       
           Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
           try {
-            eval(totalCode+'console.log( __Kebab.eat()  )');
+            eval(code);
           } catch (e : any) {
             Debug.writeInConsole(this.name+"->"+e.message+" - line : ("+e.lineNumbers+")",'#ff0000');
             alert(e);

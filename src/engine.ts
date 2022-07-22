@@ -117,13 +117,14 @@ animate(undefined);
 editor.playerCarGO = new GameObject('Player Car');
 var car: Car = new Car();
 
-editor.playerCarGO.attach(car);
 
 editor.playerCarGO.addFSM('PlayerCar State Machine');
 
 scene.add(car);
 
 car.scale.set(0.025, 0.025, 0.025);
+
+editor.playerCarGO.attach(car);
 
 scene.add(editor.playerCarGO);
 

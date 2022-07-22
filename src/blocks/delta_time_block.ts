@@ -1,12 +1,13 @@
 import { LusineBlock } from "./lusineBlock.js";
 
 import Blockly from 'blockly';
+import { Game } from "../game.js";
 
 export class DeltaTimeBlock {
 
     constructor() {
         const name = 'delta_time';
-        const code = 'Game.deltaTime';
+        const code = Game.getVarClassName()+'.deltaTime';
 
         Blockly.Blocks[name] = {
             init: function() {

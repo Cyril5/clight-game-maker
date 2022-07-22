@@ -1,5 +1,6 @@
 import Blockly from 'blockly';
 import BlocklyJS from 'blockly/javascript';
+import { Mathf } from '../../math/mathf';
 
 export class GameObjectRotateYBlock {
 
@@ -34,7 +35,7 @@ export class GameObjectRotateYBlock {
           var value_obj = BlocklyJS.valueToCode(block, 'OBJ', BlocklyJS.ORDER_ATOMIC);
           var value_degy = BlocklyJS.valueToCode(block, 'DEGY', BlocklyJS.ORDER_ATOMIC);
           // TODO: Assemble JavaScript into code variable.
-          var yrad = 'Mathf.degToRad('+value_degy+')';
+          var yrad = Mathf.getVarClassName()+'.degToRad('+value_degy+')';
           var code = value_obj+".rotateY("+yrad+");\n";
           return code;
         };

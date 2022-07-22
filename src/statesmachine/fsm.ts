@@ -15,12 +15,13 @@ import {GameObject} from '../gameObject';
     
         constructor(name :string, gameObject : GameObject) {
             this.name = name;
+            // INIT VARS (avant le new state)
+            this.gameObject = gameObject;
+
+
             this._currState = new State(this);
     
-            // INIT VARS
-            this.gameObject = gameObject;
             // this.currState.gameObject = this.gameObject;
-            console.log(this);
         }
     
         setState(state:State) {

@@ -44,7 +44,9 @@ export class GameObject extends THREE.Object3D {
     
         }
 
-        static getVarClassName() : string {return '__GameObject'};
+        static getVarClassName() : string {return '__'+GameObject.name};
+        static getDistClassFilePath() : string {return '../../../dist/src/gameObject.js'};
+
     
         resetTransform() {
             console.log(this.initTransform.position);

@@ -118,7 +118,7 @@ BlocklyJS['debug_console_write'] = function(/** @type {{ getFieldValue: (arg0: s
   var value_log = BlocklyJS.valueToCode(block, 'LOG', BlocklyJS.ORDER_ATOMIC);
   var colour_textcolor = block.getFieldValue('TEXTCOLOR');
   // TODO: Assemble JavaScript into code variable.
-  var code = "Debug.writeInConsole("+value_log+",'"+colour_textcolor+"');\n";
+  var code = Debug.getVarClassName()+".writeInConsole("+value_log+",'"+colour_textcolor+"');\n";
   return code;
 };
 
@@ -135,6 +135,7 @@ import { GameObjectTranslateForwardBlock } from "./gameObject/gameobject_transla
 import { Vector3dBlocks } from "./vector3d_blocks";
 import { InputsBlocks } from "./inputs/inputs_blocks";
 import {GameObject} from '../gameObject';
+import { Debug } from '../debug';
 
 
 const DELTA_TIME_BLOCK = new DeltaTimeBlock();

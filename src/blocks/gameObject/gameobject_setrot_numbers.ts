@@ -1,5 +1,6 @@
 import Blockly from 'blockly';
 import BlocklyJS from 'blockly/javascript';
+import { Mathf } from '../../math/mathf';
 
 export class GameObjectSetRotationNumbersBlock {
 
@@ -49,9 +50,9 @@ export class GameObjectSetRotationNumbersBlock {
 
       //const euler = new THREE.Euler(Mathf.degToRad(value_degx),Mathf.degToRad(value_degy),Mathf.degToRad(value_degz));
 
-      const eulerX = 'Mathf.degToRad(' +value_degx+ ')';
-      const eulerY = 'Mathf.degToRad('+value_degy+')';
-      const eulerZ = 'Mathf.degToRad('+value_degz+')';
+      const eulerX = Mathf.getVarClassName()+'.degToRad(' +value_degx+ ')';
+      const eulerY = Mathf.getVarClassName()+'.degToRad('+value_degy+')';
+      const eulerZ = Mathf.getVarClassName()+'.degToRad('+value_degz+')';
 
       var code = value_obj+'.rotation.set('+eulerX+','+eulerY+','+eulerZ+');\n';
       return code;
