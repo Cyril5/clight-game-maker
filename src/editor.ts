@@ -12,6 +12,11 @@ export class Editor {
     demoWorkspace: any | undefined;
     codeEditor;
 
+    selectedObject : GameObject | undefined;
+
+    private addFSMBtn = document.getElementById('addFSMBtn');
+    private componentsList = document.getElementById('componentsList');
+
     private static instance: Editor | undefined;
 
     static getInstance(): Editor | undefined {
@@ -23,6 +28,13 @@ export class Editor {
     playerCarGO: GameObject | undefined;
 
     constructor() {
+
+        // @ts-ignore
+        this.addFSMBtn.addEventListener('click', ()=>{
+            // @ts-ignore
+            this.selectedObject.addFSM(selectedObject.name+' AF');
+            this.refreshFSMComponents();
+        });
 
         // IMPORT TOOLBOX
         var ajax = new XMLHttpRequest();
@@ -125,6 +137,13 @@ export class Editor {
         fsmCategory.hide();
 
         this.openDemoWorkspace();
+    }
+
+    // met à jour la liste des fsm de l'objet séléctionné
+    refreshFSMComponents() {
+        this.selectedObject?.finiteStateMachines.forEach(fsm => {
+            
+        });
     }
 
     json: any;

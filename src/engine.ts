@@ -1,10 +1,10 @@
 console.log("Welcome to Lusine GM engine !");
 
-// import Stats from './jsm/libs/stats.module.js';
-import {Game} from './game';
+import Stats from './jsm/libs/stats.module.js';
+import { Game } from './game';
 
 import { Editor } from './editor';
-import {GameObject} from './gameObject';
+import { GameObject } from './gameObject';
 
 import { OrbitControls } from './jsm/controls/OrbitControls.js';
 import { TransformControls } from './jsm/controls/TransformControls.js';
@@ -15,7 +15,8 @@ const editor = new Editor();
 const OBJA_ID = 161;
 const OBJB_ID = 164;
 
-
+const fsmEditor = document.getElementById("fsm");
+const objectsList = document.getElementById('objectsList');
 const startGameBtn = document.getElementById('startGameBtn');
 const stopGameBtn = document.getElementById('stopGameBtn');
 
@@ -79,11 +80,11 @@ renderer.shadowMap.enabled = true;
 const rendererElement = document.getElementById('renderer');
 
 
-// const stats = Stats();
+const stats = Stats();
 
 if (rendererElement) {
     rendererElement.appendChild(renderer.domElement);
-    // rendererElement.appendChild( stats.dom );
+    rendererElement.appendChild(stats.dom);
 } else {
     console.error('rendererElement is undefined');
 }
@@ -148,7 +149,10 @@ function startGame() {
     startGameBtn.disabled = true;
     // @ts-ignore
     stopGameBtn.disabled = false;
-
+    // @ts-ignore
+    fsmEditor.style.display = 'none';
+    // @ts-ignore
+    objectsList.style.display = 'none';
 
     //editor.gameObjectToExport = editor.playerCarGO;
 
@@ -191,13 +195,17 @@ function stopGame() {
 
     // @ts-ignore
     startGameBtn.disabled = false;
+    // @ts-ignore
+    fsmEditor.style.display = 'block';
+    // @ts-ignore
+    objectsList.style.display = 'block';
 
 }
 
 function animate(timestamp: any) {
     requestAnimationFrame(animate);
 
-    // stats.update();
+    stats.update();
     render();
 
     if (gameIsRunning) {
@@ -232,12 +240,11 @@ function selectObject(gameObject: GameObject) {
             // @ts-ignore
             f.innerHTML = "Aucun Automate Fini dans cet objet";
             // @ts-ignore
-            document.getElementById("fsm").style.display = 'none';
+            fsmEditor.style.display = 'none';
         } else {
             // @ts-ignore
             f.innerHTML = gameObject.name + "->" + gameObject.finiteStateMachines[0].name + "->StateA";
-            // @ts-ignore
-            document.getElementById("fsm").style.display = 'block';
+
         }
     }
 

@@ -14,10 +14,6 @@ import {FiniteStateMachine} from './fsm';
 
   export class State {
 
-    private readonly gameObjectRequire : string = "require('../../../dist/src/gameObject.js')."+GameObject.name;
-    private readonly mathfRequire = "require('../../../dist/src/math/mathf.js')."+Mathf.name;
-    private readonly gameRequire = "require('../../../dist/src/game.js')."+Game.name;
-
       readonly fsm : FiniteStateMachine;
       code : string = '';
       private gameObject : GameObject | undefined;

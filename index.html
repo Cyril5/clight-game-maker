@@ -36,7 +36,7 @@
       <button id="localSpaceBtn">Local</button>
       <button id="worldSpaceBtn">Monde</button>
       <button id="startGameBtn">Play</button>
-      <button id="stopGameBtn">Stop</button>
+      <button id="stopGameBtn" disabled>Stop</button>
       <div id="renderer"></div>
 
 
@@ -45,6 +45,15 @@
 
     <div class="right">
 
+      <h2>Player Car</h2>
+
+      <div id="componentsList">
+
+      </div>
+
+      <button id="addFSMBtn">Ajouter une machine d'Etat sur l'objet</button>
+
+      
       <div id="fsm">
         <button>Nouveau</button>
         <button id="saveStateABtn">Enregistrer</button>
@@ -99,9 +108,11 @@
 
 
   <!-- Command -->
-  <textarea placeholder="JavaScript command" id="command" rows="5" cols="33"
-    style="color: #00ff00; background-color: black; height: 50px;"></textarea>
-  <button id="executeCommandBtn">Execute Command</button>
+  <div id="commandEditor">
+    <textarea placeholder="JavaScript command" id="command" rows="5" cols="33"
+      style="color: #00ff00; background-color: black; height: 50px;"></textarea>
+    <button id="executeCommandBtn">Execute Command</button>
+  </div>
 
   <div>
     <div id="console" style="width: 100%; height: 200px; background-color: black;">
