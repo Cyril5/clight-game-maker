@@ -1,8 +1,3 @@
-// IMPORTS (ne pas supprimer à cause de l'execution du code en temps réel)
-// import Mathf from '../../js/math/mathf.js';
-// import { Game } from '../../js/game.js';
-// import { Debug } from '../../js/debug.js';
-
 import Blockly from 'blockly';
 import { Debug } from '../debug';
 import { Game } from '../game';

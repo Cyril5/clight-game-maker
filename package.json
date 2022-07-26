@@ -1,29 +1,68 @@
 {
-  "name": "3d-game-maker",
-  "version": "0.1.1-alpha",
-  "description": "Un environnement de développement de mini-jeux 3D basé sur Unity et Scratch",
-  "main": "./dist/src/index.js",
-  "scripts": {
-    "build": "tsc",
-    "start": "npm run build && electron .",
-    "dev": "concurrently \"tsc -w\" \"electron .\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
+  "name": "lusine-game-maker",
+  "private": true,
+  "version": "0.0.0",
   "author": "Cyril5",
-  "license": "ISC",
+  "main": "dist/electron/main/main.js",
+  "scripts": {
+    "vite:dev": "vite",
+    "vite:build": "vue-tsc --noEmit && vite build",
+    "vite:preview": "vite preview",
+    "ts": "tsc",
+    "watch": "tsc -w",
+    "lint": "eslint -c .eslintrc --ext .ts ./src",
+    "app:dev": "tsc && concurrently vite \" electron .\" \"tsc -w\"",
+    "app:build": "npm run vite:build && tsc && electron-builder",
+    "app:preview": "npm run vite:build && tsc && electron ."
+  },
+  "build": {
+    "appId": "YourAppID",
+    "asar": true,
+    "directories": {
+      "buildResources": "assets",
+      "output": "release/${version}"
+    },
+    "files": [
+      "dist"
+    ],
+    "mac": {
+      "artifactName": "${productName}_${version}.${ext}",
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "artifactName": "${productName}_${version}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false
+    }
+  },
   "dependencies": {
-    "@blockly/theme-dark": "^3.0.13",
-    "@types/codemirror": "^5.60.5",
     "blockly": "^8.0.3",
     "codemirror": "^5.65.7",
-    "electron-packager": "^15.5.1",
-    "electron-reload": "^2.0.0-alpha.1",
-    "three": "^0.142.0"
+    "three": "^0.142.0",
+    "vue": "^3.2.25"
   },
   "devDependencies": {
-    "@types/three": "^0.141.0",
+    "@types/node": "^18.6.1",
+    "@vitejs/plugin-vue": "^2.3.3",
     "concurrently": "^7.3.0",
-    "electron": "^19.0.7"
+    "electron": "^19.0.9",
+    "electron-builder": "^23.1.0",
+    "typescript": "^4.5.4",
+    "vite": "^2.9.9",
+    "vue-tsc": "^0.34.7"
   }
 }
