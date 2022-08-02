@@ -16,7 +16,7 @@ export class GameObject extends THREE.Object3D {
         }
         
         group = new THREE.Group();
-        
+        private worldPosition  = new THREE.Vector3();
 
         static gameObjects = new Map(); // private map(int, GameObject)
         
@@ -69,6 +69,11 @@ export class GameObject extends THREE.Object3D {
     
         static getById(id : number) {
             return this.gameObjects.get(id);
+        }
+
+        getWorldPos() : THREE.Vector3 {
+
+            return this.getWorldPosition(this.worldPosition);
         }
     
         // static findById(id) {

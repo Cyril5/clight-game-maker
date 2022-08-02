@@ -2,43 +2,51 @@
     <div class="container">
         <div id="objectsList">
             <h2>Objets</h2>
-            <button id="selectObjABtn" v-on:click="boom()"> (ID: })</button>
+            <button id="selectObjABtn" v-on:click="selectObjectA()"> (ID: })</button>
             <div class="child">
-                <button id="selectObjBBtn">Child Car (ID: 4)</button>
+                <button id="selectObjBBtn" v-on:click="selectObjectB()">Child Car (ID: 4)</button>
             </div>
         </div>
 
         <div class="left">
-            <button id="translateModeBtn">Pos</button>
-            <button id="rotateModeBtn">Rot</button>
-            <button id="scaleModeBtn">Scale</button>
-            <button id="localSpaceBtn">Local</button>
-            <button id="worldSpaceBtn">Monde</button>
+            <button id="translateModeBtn" v-on:click="setControlMode('Translate')">Pos</button>
+            <button id="rotateModeBtn" v-on:click="setControlMode('Rotate')">Rot</button>
+            <button id="scaleModeBtn" v-on:click="setControlMode('Scale')">Scale</button>
+            <button id="localSpaceBtn" v-on:click="setSpace('local')">Local</button>
+            <button id="worldSpaceBtn" v-on:click="setSpace('world')">Monde</button>
             <button id="startGameBtn">Start</button>
             <button id="stopGameBtn" disabled>Stop</button>
 
-            <Renderer/>
+            <Renderer />
 
         </div>
 
         <div class="right">
 
-            <h5>KEBAB : {{ toto }}</h5>
-            <!-- <h5>{{selectedObject.name}}</h5> -->
-            <!-- <h2>{{ selectedObject.name }}</h2> -->
-
-            <div id="componentsList">
-
-            </div>
+            <h5 style="color:red">{{ count }}</h5>
 
             <div class="properties-bar">
-                <div v-if="selectedObject" class="component">
-                    <h2>{{ selectedObject.name }}</h2>
-                    <h3>Position</h3>
-                    <div class="position" style="display: flex;">
-                        <p>X : 0</p>
-                        <p>Y : 0</p>
-                        <p>Z : 0</p>
+                <div class="component" v-if="selectedObjectRef">
+                    <h2>{{ selectedObjectRef.name }}</h2>
+                    <h3>Position : </h3>
+                    <div class="position" style="display: flex; justify-content: space-between;">
+                        <div class="local">
+                            <label for="posx">X : </label>
+                            <input type="number" id="posx" v-model="selectedObjectRef.position.x" width="5">
+                            <label for="posx">Y : </label>
+                            <input type="number" id="posy" v-model="selectedObjectRef.position.y" width="5">
+                            <label for="posx">Z : </label>
+                            <input type="number" id="posz" v-model="selectedObjectRef.position.z" width="5">
+
+                            <!-- <p>{{ selectedObjectRef.position }}</p> -->
+                            <!-- <p>{{ selectedObjectRef.position.y }}</p>
+                            <p>{{ selectedObjectRef.position.z }}</p> -->
+                        </div>
+                        <!-- <div class="world" v-if="control.space == 'world'">
+                            <p>MX : {{ selectedObjectRef.getWorldPos().x }}</p>
+                            <p>MY : {{ selectedObjectRef.getWorldPos().y }}</p>
+                            <p>MZ : {{ selectedObjectRef.getWorldPos().z }}</p>
+                        </div> -->
                     </div>
                     <h3>Rotation</h3>
                     <div class="rotation" style="display: flex;">
@@ -53,11 +61,12 @@
                         <p>Z : 1</p>
                     </div>
                 </div>
+                <button id="addFSMBtn">Ajouter une machine d'Etat sur l'objet</button>
+
             </div>
 
 
 
-            <button id="addFSMBtn">Ajouter une machine d'Etat sur l'objet</button>
 
 
             <div id="fsm">
@@ -88,7 +97,7 @@
 
 <script lang="ts">
 
-import { onMounted, onUpdated, ref } from 'vue';
+import { onMounted, onUpdated, reactive, ref } from 'vue';
 import Engine from '../engine';
 import * as THREE from 'three';
 
@@ -117,32 +126,97 @@ enum Space {
     World = 'world'
 }
 
-var control;
-var selectedObject;
+let control;
+let selectedObject: GameObject;
 
 export default {
+
     name: 'Editor',
     components: {
         Renderer  // obtenir l'instance de renderer
     },
+
     setup() {
         console.log("setup editor");
-        init();
+
+        initEditor();
+        //return { count, controlRef, selectedObjectState }
+    },
+    mounted() {
+        console.log("Editor mounted");
     },
     data() {
         return {
-            toto: Renderer.monAutreKebab, // on envoi toto au template
-            selectedObject: selectedObject,
+            selectedObjectRef: null,
         }
     },
     methods: {
-        boom: () => {
-            selectObject(GameObject.gameObjects[0]);
+
+        selectObjectA() {
+            // for (const entry of GameObject.gameObjects) {
+
+            //     console.log(entry);
+            // }
+            this.selectObject(GameObject.getById(161));
+            this.count++;
+        },
+        selectObjectB() {
+            this.selectObject(GameObject.getById(164));
+        },
+        setControlMode(controlMode: String) {
+            var cm: ControlMode = ControlMode.Translate;
+            switch (controlMode) {
+                case 'Translate':
+                    cm = ControlMode.Translate;
+                    break;
+                case 'Rotate':
+                    cm = ControlMode.Rotate;
+                    break;
+                case 'Scale':
+                    cm = ControlMode.Scale;
+            }
+            control.setMode(cm);
+        },
+        setSpace(space: String) {
+            var s: Space = Space.Local;
+            switch (space) {
+                case 'local':
+                    s = Space.Local;
+                    break;
+                case 'world':
+                    s = Space.World;
+            }
+            control.setSpace(s);
+
+        },
+        selectObject(gameObject: GameObject) {
+
+            if (gameObject != undefined) {
+                selectedObject = gameObject;
+                this.selectedObjectRef = selectedObject;
+                control.attach(gameObject);
+            } else {
+                alert("object not found");
+            }
+
+            // var f = document.getElementById("fsm-name");
+            // if (gameObject.finiteStateMachines.length == 0) {
+            //     // @ts-ignore
+            //     f.innerHTML = "Aucun Automate Fini dans cet objet";
+            //     // @ts-ignore
+            //     fsmEditor.style.display = 'none';
+            // } else {
+            //     // @ts-ignore
+            //     f.innerHTML = gameObject.name + "->" + gameObject.finiteStateMachines[0].name + "->StateA";
+
+            // }
+
         }
-    }
+    },
+
 }
 
-function init() {
+function initEditor() {
 
     const renderer = Renderer.getRenderer();
     const camera = Renderer.getCamera();
@@ -152,6 +226,7 @@ function init() {
     scene.fog = new THREE.Fog(0xa0a0a0, 200, 1000);
 
     control = new TransformControls(camera, renderer.domElement);
+
     const orbit = new OrbitControls(camera, renderer.domElement);
     orbit.mouseButtons = {
         LEFT: THREE.MOUSE.ROTATE,
@@ -161,7 +236,7 @@ function init() {
     orbit.update();
     orbit.addEventListener('change', Renderer.updateRender);
 
-    
+
     // control.addEventListener('change', engine.render);
     control.addEventListener('dragging-changed', (event: any) => {
         orbit.enabled = !event.value;
@@ -173,69 +248,55 @@ function init() {
     scene.add(control);
 
     // ground
-        const mesh = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
-        mesh.rotation.x = - Math.PI / 2;
-        mesh.receiveShadow = true;
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
+    mesh.rotation.x = - Math.PI / 2;
+    mesh.receiveShadow = true;
 
-        scene.add(mesh);
+    scene.add(mesh);
 
-        const grid = new THREE.GridHelper(10, 20, 0x000000, 0x000000);
-        // grid.material.opacity = 0.2;
-        // grid.material.transparent = true;
-        scene.add(grid);
+    const grid = new THREE.GridHelper(10, 20, 0x000000, 0x000000);
+    // grid.material.opacity = 0.2;
+    // grid.material.transparent = true;
+    scene.add(grid);
 
-        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
-        hemiLight.position.set(0, 200, 0);
-        scene.add(hemiLight);
+    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
+    hemiLight.position.set(0, 200, 0);
+    scene.add(hemiLight);
 
-        const dirLight = new THREE.DirectionalLight(0xffffff);
-        dirLight.position.set(0, 200, 100);
-        dirLight.castShadow = true;
-        dirLight.shadow.camera.top = 180;
-        dirLight.shadow.camera.bottom = - 100;
-        dirLight.shadow.camera.left = - 120;
-        dirLight.shadow.camera.right = 120;
-        scene.add(dirLight);
+    const dirLight = new THREE.DirectionalLight(0xffffff);
+    dirLight.position.set(0, 200, 100);
+    dirLight.castShadow = true;
+    dirLight.shadow.camera.top = 180;
+    dirLight.shadow.camera.bottom = - 100;
+    dirLight.shadow.camera.left = - 120;
+    dirLight.shadow.camera.right = 120;
+    scene.add(dirLight);
 
-        scene.add(new THREE.CameraHelper(dirLight.shadow.camera));
+    scene.add(new THREE.CameraHelper(dirLight.shadow.camera));
 
-        const playerCarGO = new GameObject('Player Car');
-        // var car: Car = new Car();
+    const playerCarGO = new GameObject('Player Car');
+    var car: Car = new Car();
 
-        // playerCarGO.addFSM('PlayerCar State Machine');
+    playerCarGO.addFSM('PlayerCar State Machine');
 
-        //  scene.add(car);
+    scene.add(car);
 
-        // car.scale.set(0.025, 0.025, 0.025);
+    car.scale.set(0.025, 0.025, 0.025);
 
-        // playerCarGO.attach(car);
+    playerCarGO.attach(car);
 
-        scene.add(playerCarGO);
-        //selectObject(playerCarGO);
+    scene.add(playerCarGO);
+
+   // selectObject(playerCarGO);
 
 }
 
-const selectObject = (gameObject: GameObject)=> {
 
-    // if (gameObject != undefined) {
-    selectedObject = gameObject;
-    control.attach(gameObject);
-
-    // var f = document.getElementById("fsm-name");
-    // if (gameObject.finiteStateMachines.length == 0) {
-    //     // @ts-ignore
-    //     f.innerHTML = "Aucun Automate Fini dans cet objet";
-    //     // @ts-ignore
-    //     fsmEditor.style.display = 'none';
-    // } else {
-    //     // @ts-ignore
-    //     f.innerHTML = gameObject.name + "->" + gameObject.finiteStateMachines[0].name + "->StateA";
-
-    // }
-    // }else{
-    //     alert("object not found");
-    // }
+function traverseTest() {
+    console.log("mody");
 }
+
+
 
 // engine.camera.position.z = 5;
 
