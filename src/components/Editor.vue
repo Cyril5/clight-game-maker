@@ -31,16 +31,12 @@
                     <h3>Position : </h3>
                     <div class="position" style="display: flex; justify-content: space-between;">
                         <div class="local">
-                            <label for="posx">X : </label>
-                            <input type="number" id="posx" v-model="selectedObjectRef.position.x" width="5">
-                            <label for="posx">Y : </label>
-                            <input type="number" id="posy" v-model="selectedObjectRef.position.y" width="5">
-                            <label for="posx">Z : </label>
-                            <input type="number" id="posz" v-model="selectedObjectRef.position.z" width="5">
-
-                            <!-- <p>{{ selectedObjectRef.position }}</p> -->
-                            <!-- <p>{{ selectedObjectRef.position.y }}</p>
-                            <p>{{ selectedObjectRef.position.z }}</p> -->
+                            <label for="posx">X : {{selectedObjPosXRef.toFixed(5)}} </label>
+                            <!-- <input type="number" id="posx" v-model="selectedObjectRef.position.x" width="5"> -->
+                            <label for="posx">Y : {{selectedObjPosYRef.toFixed(5)}}</label>
+                            <!-- <input type="number" id="posy" v-model="selectedObjPosYRef" width="5"> -->
+                            <label for="posx">Z : {{selectedObjPosZRef.toFixed(5)}}</label>
+                            <!-- <input type="number" id="posz" v-model="selectedObjPosZRef" width="5"> -->
                         </div>
                         <!-- <div class="world" v-if="control.space == 'world'">
                             <p>MX : {{ selectedObjectRef.getWorldPos().x }}</p>
@@ -139,19 +135,97 @@ export default {
     setup() {
         console.log("setup editor");
 
-        initEditor();
         //return { count, controlRef, selectedObjectState }
-    },
-    mounted() {
-        console.log("Editor mounted");
     },
     data() {
         return {
             selectedObjectRef: null,
+            selectedObjPosXRef: 0,
+            selectedObjPosYRef: 0,
+            selectedObjPosZRef: 0,
         }
     },
     methods: {
+        initEditor() {
 
+            const renderer = Renderer.getRenderer();
+            const camera = Renderer.getCamera();
+            const scene = Renderer.getMainScene();
+
+            scene.background = new THREE.Color(0xb0a0a0);
+            scene.fog = new THREE.Fog(0xa0a0a0, 200, 1000);
+
+            control = new TransformControls(camera, renderer.domElement);
+
+            const orbit = new OrbitControls(camera, renderer.domElement);
+            orbit.mouseButtons = {
+                LEFT: THREE.MOUSE.ROTATE,
+                MIDDLE: THREE.MOUSE.MIDDLE,
+                RIGHT: THREE.MOUSE.PAN
+            };
+            orbit.update();
+            orbit.addEventListener('change', Renderer.updateRender);
+
+
+            // control.addEventListener('change', engine.render);
+            control.addEventListener('dragging-changed', (event: any) => {
+                orbit.enabled = !event.value;
+            });
+            control.addEventListener('objectChange', (event: any) => {
+                this.selectedObjPosXRef = selectedObject.position.x;
+                this.selectedObjPosYRef = selectedObject.position.y;
+                this.selectedObjPosZRef = selectedObject.position.z;
+            });
+
+            control.setSize(1.5);
+            control.setSpace(Space.Local);
+
+            control.setScaleSnap(0.01);
+            scene.add(control);
+
+            // ground
+            const mesh = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
+            mesh.rotation.x = - Math.PI / 2;
+            mesh.receiveShadow = true;
+
+            scene.add(mesh);
+
+            const grid = new THREE.GridHelper(10, 20, 0x000000, 0x000000);
+            // grid.material.opacity = 0.2;
+            // grid.material.transparent = true;
+            scene.add(grid);
+
+            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
+            hemiLight.position.set(0, 200, 0);
+            scene.add(hemiLight);
+
+            const dirLight = new THREE.DirectionalLight(0xffffff);
+            dirLight.position.set(0, 200, 100);
+            dirLight.castShadow = true;
+            dirLight.shadow.camera.top = 180;
+            dirLight.shadow.camera.bottom = - 100;
+            dirLight.shadow.camera.left = - 120;
+            dirLight.shadow.camera.right = 120;
+            scene.add(dirLight);
+
+            scene.add(new THREE.CameraHelper(dirLight.shadow.camera));
+
+            const playerCarGO = new GameObject('Player Car');
+            var car: Car = new Car();
+
+            playerCarGO.addFSM('PlayerCar State Machine');
+
+            scene.add(car);
+
+            car.scale.set(0.025, 0.025, 0.025);
+
+            playerCarGO.attach(car);
+
+            scene.add(playerCarGO);
+
+            // selectObject(playerCarGO);
+
+        },
         selectObjectA() {
             // for (const entry of GameObject.gameObjects) {
 
@@ -213,83 +287,14 @@ export default {
 
         }
     },
+    mounted() {
+        console.log("Editor mounted");
+        this.initEditor();
+    },
 
 }
 
-function initEditor() {
 
-    const renderer = Renderer.getRenderer();
-    const camera = Renderer.getCamera();
-    const scene = Renderer.getMainScene();
-
-    scene.background = new THREE.Color(0xb0a0a0);
-    scene.fog = new THREE.Fog(0xa0a0a0, 200, 1000);
-
-    control = new TransformControls(camera, renderer.domElement);
-
-    const orbit = new OrbitControls(camera, renderer.domElement);
-    orbit.mouseButtons = {
-        LEFT: THREE.MOUSE.ROTATE,
-        MIDDLE: THREE.MOUSE.MIDDLE,
-        RIGHT: THREE.MOUSE.PAN
-    };
-    orbit.update();
-    orbit.addEventListener('change', Renderer.updateRender);
-
-
-    // control.addEventListener('change', engine.render);
-    control.addEventListener('dragging-changed', (event: any) => {
-        orbit.enabled = !event.value;
-    });
-    control.setSize(1.5);
-    control.setSpace(Space.Local);
-
-    control.setScaleSnap(0.01);
-    scene.add(control);
-
-    // ground
-    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
-    mesh.rotation.x = - Math.PI / 2;
-    mesh.receiveShadow = true;
-
-    scene.add(mesh);
-
-    const grid = new THREE.GridHelper(10, 20, 0x000000, 0x000000);
-    // grid.material.opacity = 0.2;
-    // grid.material.transparent = true;
-    scene.add(grid);
-
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
-    hemiLight.position.set(0, 200, 0);
-    scene.add(hemiLight);
-
-    const dirLight = new THREE.DirectionalLight(0xffffff);
-    dirLight.position.set(0, 200, 100);
-    dirLight.castShadow = true;
-    dirLight.shadow.camera.top = 180;
-    dirLight.shadow.camera.bottom = - 100;
-    dirLight.shadow.camera.left = - 120;
-    dirLight.shadow.camera.right = 120;
-    scene.add(dirLight);
-
-    scene.add(new THREE.CameraHelper(dirLight.shadow.camera));
-
-    const playerCarGO = new GameObject('Player Car');
-    var car: Car = new Car();
-
-    playerCarGO.addFSM('PlayerCar State Machine');
-
-    scene.add(car);
-
-    car.scale.set(0.025, 0.025, 0.025);
-
-    playerCarGO.attach(car);
-
-    scene.add(playerCarGO);
-
-   // selectObject(playerCarGO);
-
-}
 
 
 function traverseTest() {
