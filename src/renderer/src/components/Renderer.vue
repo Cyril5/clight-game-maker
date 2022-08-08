@@ -6,14 +6,13 @@
 
 import * as THREE from 'three';
 import { onMounted } from 'vue';
-import { GameObject } from '../../../engine/gameObject';
-import { OrbitControls } from '../../../engine/jsm/controls/OrbitControls';
-import { TransformControls } from '../../../engine/jsm/controls/TransformControls';
+import GameObject from '../../../engine/gameObject';
+
 import Stats from '../../../engine/jsm/libs/stats.module';
 
-// var renderer, camera, scene;
-// var control;
-// var selectedObject;
+let gameIsRunning = false;
+
+const clock = new THREE.Clock();
 const sizeX = 600;
 const sizeY = 480;
 const fov = 75;
@@ -39,49 +38,75 @@ export default {
     getMainScene(): THREE.Scene {
         return scene;
     },
-    updateRender():void {
+    updateRender(): void {
         render();
     },
     setup() {
         onMounted(initialize)
     },
+    startGame() {
+        for (const go of GameObject.gameObjects) {
+            const value = go[1]; // map value
+
+            if(!value.enabled)
+                continue; // passer à l'objet suivant
+
+            value.saveTransform();
+
+            if (value.finiteStateMachines.length > 0) {
+                for (const fsm of value.finiteStateMachines) {
+                    console.log(fsm);
+                    if (fsm.enabled) {
+                        fsm.start();
+                        console.log(fsm.getCurrState().code);
+                    }else{
+                        // TODO : callback qui lancera la fonction fsm.start quand la case enabled du fsm sera actif
+                        
+                    }
+                }
+            }
+        }
+
+        clock.start();
+        gameIsRunning = true;
+    }
 
 }
 
-    function initialize() {
+function initialize() {
 
-        console.log("renderer mounted");
-
-
-
-        // quand le composant est prêt
-
-        renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setSize(sizeX, sizeY);
-        renderer.shadowMap.enabled = true;
-
-        console.log(renderer.domElement);
+    console.log("renderer mounted");
 
 
 
-        camera.position.y = 10;
-        camera.position.z = 5;
+    // quand le composant est prêt
+
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(sizeX, sizeY);
+    renderer.shadowMap.enabled = true;
+
+    console.log(renderer.domElement);
 
 
-        const rendererDom = document.getElementById('renderer');
 
-        if (rendererDom) {
-            rendererDom.appendChild(stats.dom);
-            rendererDom.appendChild(renderer.domElement);
-        } else {
-            console.error('renderer dom id not found');
-        }
-        window.addEventListener('resize', onWindowResize);
+    camera.position.y = 10;
+    camera.position.z = 5;
 
-        
-        animate(undefined);
 
+    const rendererDom = document.getElementById('renderer');
+
+    if (rendererDom) {
+        rendererDom.appendChild(stats.dom);
+        rendererDom.appendChild(renderer.domElement);
+    } else {
+        console.error('renderer dom id not found');
     }
+    window.addEventListener('resize', onWindowResize);
+
+
+    animate(undefined);
+
+}
 
 
 

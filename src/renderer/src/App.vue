@@ -1,6 +1,18 @@
-<script setup lang="ts">
-import Versions from './components/Versions.vue';
+<script lang="ts">
+// import Versions from './components/Versions.vue';
+import { provide } from 'vue';
+import store from './store/store';
 import EditorVue from './components/Editor.vue';
+
+export default {
+  components: {
+    EditorVue
+  },
+  setup() {
+    provide('store',store)
+  }
+}
+
 </script>
 
 <template>

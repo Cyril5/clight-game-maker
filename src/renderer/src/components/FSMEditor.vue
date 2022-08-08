@@ -1,46 +1,45 @@
 <template>
-    <div id="fsm">
 
+    <div id="fsm-editor" v-if="store.currentFSM.value"> 
         <div class="group" style="display: flex; justify-content: center;">
-            <h3 id="fsm-name" style="color: #fff;">{{ fsm.gameObject.name }}->{{ fsm.name }}-></h3>
+            <h3 id="fsm-name" style="color: #fff;">{{ store.currentFSM.value.gameObject.name }}->{{store.currentFSM.value.name}}-></h3>
             <select name="fsm-states" id="fsm-states">
-                    <option value="stateA">State A</option>
-                </select>
+                <option value="stateA">State A</option>
+            </select>
         </div>
-                    <div style="display: flex; justify-content: center;">
-            <p>Fichier : Assets/FSM States/stateA.json</p>
-            <button id="changeStateFileBtn">Changer</button>
+    
+        <div style="display: flex; justify-content: center;">
+            <label for="avatar">Fichier de l'état :</label>
+            <input type="file" id="changeStateFileBtn" @change="setStateFile" accept="application/json">
+            <p>Fichier : {{ store.currentFSM.value.getCurrState().filename }}</p>
         </div>
+        <button @click="executeCmd">Executer Commande</button>
 
-
-        <button v-on:click="addState">Ajouter Etat</button>
-        <button id="saveStateABtn">Enregistrer</button>
+        <button @click="addState">Ajouter Etat</button>
+    </div>
+        <button id="saveStateABtn" @click="saveState">Enregistrer</button>
         <button>Enregistrer Sous</button>
 
-
-
-        <div style="display:flex;">
-
-            <div id="stateA_workspace" style="width:50%;height:480px;"></div>
-
-            <div class="group">
-                <textarea id="code-editor"></textarea>
-                <div id="console" style="width: 100%; height: 200px; background-color: black;"></div>
-                <button id="clearConsoleBtn">Effacer</button>
-            </div>
-
+    <!-- Doit être déjà crée même si le fsm est null -->
+    <div class="div" style="display:flex">
+        <div id="state_workspace" style="width:50%;height:480px;"></div>
+        <div id="wksp-toolbox"></div>
+        <div class="group">
+            <textarea id="code-editor"></textarea>
+            <div id="console" style="width: 100%; height: 200px; background-color: black;"></div>
+            <button id="clearConsoleBtn">Effacer</button>
         </div>
-
-        <button v-on:click="executeCmd">Executer Commande</button>
     </div>
+
+
+
+
 </template>
 
 <script lang="ts">
-import Editor from './Editor.vue';
+import { inject } from 'vue';
 import Blockly from 'blockly';
 import '../../../engine/blocks/blocksDefs';
-// import 'blockly/blockly_compressed.js';
-// import 'blockly/blocks_compressed.js';
 
 // //import DarkTheme from '../node_modules/@blockly/theme-dark/src/index.js';
 import LusineBlocksDarkTheme from '../../../engine/blocks/themes/lusine-gm-dark'
@@ -49,11 +48,13 @@ import * as CodeMirror from 'codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/dracula.css';
 import 'codemirror/mode/javascript/javascript.js';
-import GameObject from '../../../engine/gameObject';
-import { FiniteStateMachine } from '../../../engine/statesmachine/fsm';
 
+import GameObject from '../../../engine/gameObject';
+
+let store;
 let codeEditor: any;
-let demoWorkspace: any;
+const fs = require('fs');
+let demoWorkspace : any;
 
 export default {
 
@@ -62,37 +63,80 @@ export default {
     },
 
     setup() {
+        store = inject('store');
 
 
-    },
-    data() {
-        return {
-        }
-    },
-    methods: {
-        addState() {
+        const addState = () => {
             console.log("ajout d'un etat");
             // this.fsm.addState();
-        },
-        executeCmd() {
+        };
+
+        const saveState = () => {
+            if (store.currentFSM.value.getCurrState().filename == '') {
+
+            }
+        };
+
+        const setStateFile = (event) => {
+            console.log(event.target.value);
+        }
+
+        const executeCmd = () => {
+
+            console.log("hbhsqdh");
+
+            console.log(store.currentFSM.value);
+
             const g = GameObject.getById(161);
-            g.finiteStateMachines[0].getCurrState().code = "let test = require('./test_require.js');";
+            g.finiteStateMachines[0].getCurrState().code = "let test = require('../test_require.js');";
             // g.finiteStateMachines[0].getCurrState().code += "\n\nconsole.log(GameObject.getById(161));";
             alert(g.finiteStateMachines[0].getCurrState().code);
             g.finiteStateMachines[0].getCurrState().runCode();
+        };
+
+
+        return {
+            store,
+            addState,
+            saveState,
+            setStateFile,
+            executeCmd,
         }
+
     },
-    props: {
-        fsm: null,
-    },
+loadState(){
+
+    if(!store) {
+        alert("store is undefined \n Veuillez recommencer l'opération");
+        return;
+    }
+
+    demoWorkspace.clear();
+    if (store.currentFSM.value.getCurrState().filename != '') {
+        fs.readFile(store.currentFSM.value.getCurrState().filename, 'utf8', (err, data) => {
+            if (err) {
+                console.error(err);
+                alert("Une erreur c'est produite pendant l'ouverture de StateA :\n\n" + err);
+                return;
+            }
+
+            Blockly.serialization.workspaces.load(JSON.parse(data), demoWorkspace);
+        });
+    }
+},
     mounted() {
 
+        console.log('fsm editor mounted');
+
+        // All Components is ready
         //IMPORT TOOLBOX
         const ajax = new XMLHttpRequest();
         ajax.open("GET", "src/assets/blocks/toolbox.xml", false);
         ajax.send();
         //document.body.innerHTML += ajax.responseText;
-        document.getElementById('fsm').innerHTML += ajax.responseText;
+
+        // NE pas mettre d'autres éléments html sur cet div 
+        document.getElementById('wksp-toolbox').innerHTML += ajax.responseText;
 
         const toolbox = document.getElementById('toolbox'); // récupère l'id toolbox du fichier xml
 
@@ -160,9 +204,39 @@ export default {
             oneBasedIndex: true
         };
 
-        const stateA_workspace = document.getElementById("stateA_workspace") as string | Element;
-        if (stateA_workspace) {
-            demoWorkspace = Blockly.inject(stateA_workspace, options as any)
+        const state_workspace = document.getElementById("state_workspace") as string | Element;
+
+        const saveWorkspace = () => {
+            const json = Blockly.serialization.workspaces.save(store.workspaceState.value);
+
+            fs.writeFile(
+                store.currentFSM.value.filename, JSON.stringify(json), err => {
+                    if (err) {
+                        alert("Une erreur c'est produite pendant la sauvegarde de StateA :\n\n" + err);
+                        console.log(err);
+                    }
+                }
+            );
+        };
+
+        const onChangeWorkspace = (event: { type: string; }) => {
+
+            let workspaceCode = Blockly.JavaScript.workspaceToCode(demoWorkspace);
+
+            store.currentFSM.value.getCurrState().code = workspaceCode;
+
+            codeEditor.setValue(workspaceCode);
+
+            if (event.type == Blockly.Events.BLOCK_MOVE) {
+                if (store.currentFSM.value.getCurrState().filename != '') {
+                    //saveWorkspace();
+                }
+            }
+        }
+
+
+        if (state_workspace) {
+            demoWorkspace = Blockly.inject(state_workspace, options as any)
             demoWorkspace.addChangeListener(onChangeWorkspace);
         }
 
@@ -176,31 +250,13 @@ export default {
             mode: 'javascript',
             theme: 'dracula'
         });
-    },
 
 
-}
 
-function onChangeWorkspace(event: { type: string; }) {
-
-    // @ts-ignore
-    let workspaceCode = Blockly.JavaScript.workspaceToCode(demoWorkspace);
-
-    // // @ts-ignore
-    // if (Editor.getInstance().playerCarGO)
-    //     // @ts-ignore
-
-    Editor.getSelectedObject().finiteStateMachines[0].getCurrState().code = workspaceCode;
-
-    codeEditor.setValue(workspaceCode);
-
-    //console.log(event);
-
-    if (event.type == Blockly.Events.BLOCK_MOVE) {
-        // @ts-ignore
-        //Editor.getInstance().saveDemoWorkspace();
     }
 }
+
+
 
 
 

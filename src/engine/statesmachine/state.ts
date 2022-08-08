@@ -13,6 +13,7 @@ import {FiniteStateMachine} from './fsm';
       code : string = '';
       private gameObject : GameObject | undefined;
       name = 'StateA';
+      filename : string = '';
   
       // local variables
       userVariables = {
@@ -41,7 +42,7 @@ import {FiniteStateMachine} from './fsm';
         // Callback : qui peut contenir que des if else if vers des actions de sorties vers des transitions
         // Du code est généré automatiquement quand l'utilisateur ajoute une transitions vers un autre état.
       }
-  
+
   
       runCode() { // run state code
         

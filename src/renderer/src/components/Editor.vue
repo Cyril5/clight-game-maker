@@ -5,21 +5,21 @@
 
         <div id="objectsList">
             <h2>Objets</h2>
-            <button id="selectObjABtn" v-if="objARef" v-on:click="selectObjectA()">{{ objARef.name }} (ID:
+            <button id="selectObjABtn" v-if="objARef" @click="selectObjectA()">{{ objARef.name }} (ID:
                 {{ objARef.id }}})</button>
             <div class="child" v-if="objBRef">
-                <button id="selectObjBBtn" v-on:click="selectObjectB()">{{ objBRef.name }} (ID: {{ objBRef.id
+                <button id="selectObjBBtn" @click="selectObjectB()">{{ objBRef.name }} (ID: {{ objBRef.id
                 }})</button>
             </div>
         </div>
 
         <div class="left">
-            <button id="translateModeBtn" v-on:click="setControlMode('Translate')">Pos</button>
-            <button id="rotateModeBtn" v-on:click="setControlMode('Rotate')">Rot</button>
-            <button id="scaleModeBtn" v-on:click="setControlMode('Scale')">Scale</button>
-            <button id="localSpaceBtn" v-on:click="setSpace('local')">Local</button>
-            <button id="worldSpaceBtn" v-on:click="setSpace('world')">Monde</button>
-            <button id="startGameBtn" v-on:click="startGame()">Start</button>
+            <button id="translateModeBtn" @click="setControlMode('Translate')">Pos</button>
+            <button id="rotateModeBtn" @click="setControlMode('Rotate')">Rot</button>
+            <button id="scaleModeBtn" @click="setControlMode('Scale')">Scale</button>
+            <button id="localSpaceBtn" @click="setSpace('local')">Local</button>
+            <button id="worldSpaceBtn" @click="setSpace('world')">Monde</button>
+            <button id="startGameBtn" @click="startGame()">Start</button>
             <button id="stopGameBtn" disabled>Stop</button>
 
             <Renderer />
@@ -28,12 +28,12 @@
 
         <div class="right">
 
-            <PropertiesBar v-if="selectedObjRtv" :obj="selectedObjRtv" :transform="transformComponent" />
+            <PropertiesBar  :transform="transformComponent"/>
 
         </div>
 
     </div>
-    <FSMEditor v-if="fsmComponent.fsm" :fsm="fsmComponent.fsm"/>
+    <FSMEditor />
 
 
 
@@ -41,21 +41,20 @@
 
 <script lang="ts">
 
-import { reactive, ref } from 'vue';
+import { reactive, ref, inject } from 'vue';
 
 import * as THREE from 'three';
 
 import GameObject from '../../../engine/gameObject';
 import { OrbitControls } from '../../../engine/jsm/controls/OrbitControls';
 import { TransformControls } from '../../../engine/jsm/controls/TransformControls';
-import * as fs from 'fs';
 
 import { Car } from '../gameProjects/runTraffic/Assets/Prefabs/car';
 
 import Renderer from './Renderer.vue';
 import PropertiesBar from './PropertiesBar.vue';
 import FSMEditor from './FSMEditor.vue';
-import { FiniteStateMachine } from '../../../engine/statesmachine/fsm';
+
 
 enum ControlMode {
     Translate = 'translate',
@@ -69,9 +68,7 @@ enum Space {
 }
 
 let control;
-let selectedObject: GameObject;
-let codeEditor: any;
-// let demoWorkspace: any;
+
 
 export default {
 
@@ -84,7 +81,12 @@ export default {
     },
 
     setup() {
+
+        const store : any = inject('store');
+
+
         console.log("setup editor");
+
 
         //return { count, controlRef, selectedObjectState }
         // const transformRtv = reactive({
@@ -96,14 +98,23 @@ export default {
             scale: new THREE.Vector3(1, 1, 1),
         });
 
-        let fsmComponent = reactive({
-            fsm: null
-        })
+        const selectObject = (gameObject: GameObject)=> {
 
-        let selectedObjRtv = ref(null);
+            if (gameObject != undefined) {
+                console.log(store);
+                store.selectedObj.value = gameObject;
+                // store.currentFSM.value = store.selectedObj.value.finiteStateMachines[0];
+                control.attach(gameObject);
+            } else {
+                alert("object not found");
+            }
+        }
 
-
-        return { selectedObjRtv, transformComponent,fsmComponent }
+        return { 
+            store,
+            transformComponent, 
+            selectObject,
+        }
     },
     data() {
         return {
@@ -112,6 +123,7 @@ export default {
         }
     },
     methods: {
+
         initEditor() {
 
             const renderer = Renderer.getRenderer();
@@ -141,14 +153,14 @@ export default {
 
                 switch (control.mode) {
                     case ControlMode.Translate:
-                        this.transformComponent.position.copy(selectedObject.position);
+                        this.transformComponent.position.copy(store.selectedObj.value.position);
                         break;
 
                     case ControlMode.Rotate:
-                        this.transformComponent.rotation.copy(selectedObject.rotation);
+                        this.transformComponent.rotation.copy(store.selectedObj.value.rotation);
                         break;
                     case ControlMode.Scale:
-                        this.transformComponent.scale.copy(selectedObject.scale);
+                        this.transformComponent.scale.copy(store.selectedObj.value.scale);
                         break;
                 }
 
@@ -191,6 +203,7 @@ export default {
             var car: Car = new Car();
 
             playerCarGO.addFSM('PlayerCar State Machine');
+            playerCarGO.finiteStateMachines[0].getCurrState().filename = 'src/renderer/src/gameProjects/runTraffic/Assets/FSM States/stateA.json';
 
             scene.add(car);
 
@@ -205,39 +218,9 @@ export default {
 
             this.selectObject(playerCarGO);
 
-
-            // }
-            // else {
-            //     console.error('workspace id not found');
-            // }
-
-
-
-
         },
-        startGame() {
-            selectedObject.saveTransform();
-
-            for (const go of GameObject.gameObjects) {
-                const value = go[1]; // map value
-                //if(value.length > 0) {
-                console.log(value.finiteStateMachines);
-
-                for(const fsm of value.finiteStateMachines) {
-                    console.log(fsm);
-                    if (fsm.enabled) {
-                        fsm.start();
-                        console.log(fsm.getCurrState().code);
-                    }
-                }
-            }
-
-            // GameObject.gameObjects.forEach(element => {
-            //     console.log(element.finiteStateMachines);
-            // });
-
-            // Engine.clock.start();
-            // Engine.gameIsRunning = true;
+        startGame() { 
+            Renderer.startGame();
         },
         selectObjectA() {
             // for (const entry of GameObject.gameObjects) {
@@ -275,26 +258,13 @@ export default {
             control.setSpace(s);
 
         },
-        selectObject(gameObject: GameObject) {
 
-            if (gameObject != undefined) {
-                selectedObject = gameObject;
-                this.selectedObjectRef = selectedObject;
-                this.selectedObjRtv = selectedObject;
-                this.fsmComponent.fsm = selectedObject.finiteStateMachines[0];
-                control.attach(gameObject);
-            } else {
-                alert("object not found");
-            }
-        }
     },
     mounted() {
         console.log("Editor mounted");
         this.initEditor();
     },
-    getSelectedObject() {
-        return selectedObject;
-    }
+
 
 }
 

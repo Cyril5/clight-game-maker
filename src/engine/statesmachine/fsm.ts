@@ -8,7 +8,7 @@ import {GameObject} from '../gameObject';
         enabled = true;
         states:Array<State> = [];
         
-        private _currState:State;
+        private _currState:State | undefined;
         currWorkspaceBlocks: any; // STATE A (workspaces block)
     
         gameObject; // au gameObject à qui est relié le FSM
@@ -18,25 +18,28 @@ import {GameObject} from '../gameObject';
             this.name = name;
             // INIT VARS (avant le new state)
             this.gameObject = gameObject;
-
             this.addState();
-    
             // this.currState.gameObject = this.gameObject;
         }
 
         addState():State {
             const newState = new State(this);
             this.states.push(newState);
+
+            if(this.states.length == 1)
+                this.setState(newState);
+                
             return newState;
         }
     
         setState(state:State) {
-            this._currState.onExitState();
+            if(this._currState)
+                this._currState.onExitState();
             this._currState = state;
             this._currState.onEnterState();
         }
 
-        getCurrState() : State {
+        getCurrState() : State  {
             return this._currState;
         }
     
