@@ -17,8 +17,6 @@ Blockly.Blocks['state_onenterstate'] = {
 const mathfClass = 'Mathf';
 const currState = 'this';
 const dir = '../';
-const MATHF_CLASS_IMPORT = [mathfClass,dir+'math/mathf.js'];
-
 
 // BLOCK STUBS
 BlocklyJS['fsm_init'] = function(/** @type {any} */ block: any) {
@@ -93,9 +91,9 @@ BlocklyJS['gameobject_this'] = function(/** @type {any} */ block: any) {
 
 BlocklyJS['gameobject_find_by_id'] = function(block: any) {
 
-  var value_id = BlocklyJS.valueToCode(block, 'ID', BlocklyJS.ORDER_ATOMIC);
+  var value_id = BlocklyJS.valueToCode(block, 'ID', BlocklyJS.ORDER_NONE);
   // TODO: Assemble JavaScript into code variable.
-  var code = GameObject.getVarClassName()+'.getById('+value_id+')'; 
+  var code = 'GameObject.getById('+value_id+')'; 
   // TODO: Change ORDER_NONE to the correct strength.
 
   return [code, BlocklyJS.ORDER_NONE];
@@ -134,7 +132,7 @@ import { GameObjectSetRotationNumbersBlock } from "./gameObject/gameobject_setro
 import { GameObjectTranslateForwardBlock } from "./gameObject/gameobject_translate_forward_block";
 import { Vector3dBlocks } from "./vector3d_blocks";
 import { InputsBlocks } from "./inputs/inputs_blocks";
-import GameObject from '../gameObject';
+import {GameObject} from '../gameObject';
 import { Debug } from '../debug';
 
 

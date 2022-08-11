@@ -1,6 +1,6 @@
 export class Mathf {
     static getVarClassName() {
-      return '__'+Mathf.name;
+      return Mathf.name;
     }
     static getDistClassFilePath() {
       return '../../../dist/src/math/mathf.js';

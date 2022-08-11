@@ -5,12 +5,9 @@
             <button>X</button>
         </div>
         <button @click="editFSM">Editer</button>
-        <input type="checkbox" checked name="enabled" id="enabled" class="checkbox">Actif
+        <input type="checkbox" v-model="fsm.enabled" checked name="enabled" id="enabled" class="checkbox">Actif
         <div style="display: flex;">
             <p>Etat Initial :</p>
-            <select name="fsm-states" id="fsm-states">
-                    <option value="stateA">State A</option>
-            </select>
         </div>
         <p>Nb Etats : {{fsm.states.length}}</p>
     </div>

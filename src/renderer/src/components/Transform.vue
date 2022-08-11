@@ -43,7 +43,7 @@
 
 <script lang="ts">
 
-import GameObject from '../../../engine/gameObject';
+import {GameObject} from '../../../engine/gameObject';
 import * as THREE from 'three';
 
 export default {

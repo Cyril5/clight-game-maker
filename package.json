@@ -1,9 +1,9 @@
 {
   "name": "lusine-game-maker",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "An Electron application with Vue and TypeScript",
   "main": "./out/main/index.js",
-  "author": "example.com",
+  "author": "Cyril5",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
@@ -41,6 +41,7 @@
     "prettier": "^2.6.1",
     "typescript": "^4.5.5",
     "vite": "^2.9.1",
+    "concurrently": "^7.3.0",
     "vue": "^3.2.31"
   }
 }

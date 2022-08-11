@@ -1,7 +1,9 @@
 export class Debug {
 
+    firstDebugTest = 'WAHHH';
+
     static getVarClassName() {
-      return '__'+Debug.name;
+      return Debug.name;
     }
 
     static getDistClassFilePath() {

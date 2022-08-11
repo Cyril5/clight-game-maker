@@ -1,7 +1,7 @@
 
 export class Game {
     static getVarClassName() {
-      return '__'+Game.name;
+      return Game.name;
     }
 
     static getDistClassFilePath() {

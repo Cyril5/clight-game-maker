@@ -4,9 +4,10 @@
 
 <script lang="ts">
 
+import { Debug } from '../../../engine/debug';
 import * as THREE from 'three';
 import { onMounted } from 'vue';
-import GameObject from '../../../engine/gameObject';
+import {GameObject} from '../../../engine/gameObject';
 
 import Stats from '../../../engine/jsm/libs/stats.module';
 
@@ -45,23 +46,29 @@ export default {
         onMounted(initialize)
     },
     startGame() {
+        console.log("Engine game starts");
+
         for (const go of GameObject.gameObjects) {
             const value = go[1]; // map value
 
-            if(!value.enabled)
-                continue; // passer à l'objet suivant
+            // if(!value.enabled)
+            //     continue; // passer à l'objet suivant
 
-            value.saveTransform();
+            console.log(value);
 
-            if (value.finiteStateMachines.length > 0) {
-                for (const fsm of value.finiteStateMachines) {
-                    console.log(fsm);
-                    if (fsm.enabled) {
-                        fsm.start();
-                        console.log(fsm.getCurrState().code);
-                    }else{
-                        // TODO : callback qui lancera la fonction fsm.start quand la case enabled du fsm sera actif
-                        
+            if(value.enabled) { // si l'objet est actif
+                value.saveTransform();
+    
+                if (value.finiteStateMachines.length > 0) {
+                    for (const fsm of value.finiteStateMachines) {
+                        console.log(fsm);
+                        if (fsm.enabled) {
+                            fsm.start();
+                            console.log(fsm.getCurrState().code);
+                        }else{
+                            // TODO : callback qui lancera la fonction fsm.start quand la case enabled du fsm sera actif
+                            
+                        }
                     }
                 }
             }

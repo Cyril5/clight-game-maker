@@ -13,10 +13,10 @@
             <input type="file" id="changeStateFileBtn" @change="setStateFile" accept="application/json">
             <p>Fichier : {{ store.currentFSM.value.getCurrState().filename }}</p>
         </div>
-        <button @click="executeCmd">Executer Commande</button>
+        <!-- <button @click="executeCmd">Executer Commande</button> -->
 
-        <button @click="addState">Ajouter Etat</button>
     </div>
+        <button @click="addState">Ajouter Etat</button>
         <button id="saveStateABtn" @click="saveState">Enregistrer</button>
         <button>Enregistrer Sous</button>
 
@@ -49,7 +49,12 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/dracula.css';
 import 'codemirror/mode/javascript/javascript.js';
 
-import GameObject from '../../../engine/gameObject';
+import {GameObject} from '../../../engine/gameObject';
+
+import toolboxXml from '../assets/blocks/toolbox.xml?raw'; // ?raw to import as string
+
+// import { Debug } from '../../../engine/debug';
+
 
 let store;
 let codeEditor: any;
@@ -81,17 +86,24 @@ export default {
             console.log(event.target.value);
         }
 
-        const executeCmd = () => {
+        const executeJSCode = (code:string) => {
+            setTimeout(code,0);
+        }
 
-            console.log("hbhsqdh");
+
+        const executeCmd = () => {
 
             console.log(store.currentFSM.value);
 
             const g = GameObject.getById(161);
-            g.finiteStateMachines[0].getCurrState().code = "let test = require('../test_require.js');";
+            //g.finiteStateMachines[0].getCurrState().code = "let test = require('test_require.js');";
             // g.finiteStateMachines[0].getCurrState().code += "\n\nconsole.log(GameObject.getById(161));";
-            alert(g.finiteStateMachines[0].getCurrState().code);
-            g.finiteStateMachines[0].getCurrState().runCode();
+            //alert(g.finiteStateMachines[0].getCurrState().code);
+            //g.finiteStateMachines[0].getCurrState().runCode();
+
+                // eval("alert(GameObject)"); // works
+            console.log(store.currentFSM.value.getCurrState().runCode());
+
         };
 
 
@@ -125,18 +137,17 @@ loadState(){
     }
 },
     mounted() {
+        // All Components are ready
 
         console.log('fsm editor mounted');
 
-        // All Components is ready
         //IMPORT TOOLBOX
-        const ajax = new XMLHttpRequest();
-        ajax.open("GET", "src/assets/blocks/toolbox.xml", false);
-        ajax.send();
-        //document.body.innerHTML += ajax.responseText;
+        // const ajax = new XMLHttpRequest();
+        // ajax.open("GET", "./assets/blocks/toolbox.xml", false);
+        // ajax.send();
 
         // NE pas mettre d'autres éléments html sur cet div 
-        document.getElementById('wksp-toolbox').innerHTML += ajax.responseText;
+        document.getElementById('wksp-toolbox').innerHTML += toolboxXml;
 
         const toolbox = document.getElementById('toolbox'); // récupère l'id toolbox du fichier xml
 

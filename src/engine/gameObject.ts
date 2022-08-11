@@ -2,7 +2,9 @@
 import * as THREE from 'three';
 import {FiniteStateMachine} from './statesmachine/fsm';
 
-export default class GameObject extends THREE.Object3D {
+export class GameObject extends THREE.Object3D {
+
+        enabled = true;
     
         initTransform = {
             'position': new THREE.Vector3(0,0,0),
@@ -44,10 +46,6 @@ export default class GameObject extends THREE.Object3D {
     
         }
 
-        static getVarClassName() : string {return '__'+GameObject.name};
-        static getDistClassFilePath() : string {return '../../../dist/src/gameObject.js'};
-
-    
         resetTransform() {
             console.log(this.initTransform.position);
             this.position.copy(this.initTransform.position);
@@ -92,7 +90,7 @@ export default class GameObject extends THREE.Object3D {
     
     
     }
-//module.exports = {GameObject: GameObject};
+module.exports = {GameObject: GameObject};
 
 
 

@@ -1,4 +1,4 @@
-import GameObject from "../../../../../../engine/gameObject";
+import {GameObject} from "../../../../../../engine/gameObject";
 import { Mathf } from "../../../../../../engine/math/mathf";
 import { Random } from "../../../../../../engine/math/random.js";
 import { Wheel } from "./wheel.js";

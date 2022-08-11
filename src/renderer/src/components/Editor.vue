@@ -45,7 +45,7 @@ import { reactive, ref, inject } from 'vue';
 
 import * as THREE from 'three';
 
-import GameObject from '../../../engine/gameObject';
+import {GameObject} from '../../../engine/gameObject';
 import { OrbitControls } from '../../../engine/jsm/controls/OrbitControls';
 import { TransformControls } from '../../../engine/jsm/controls/TransformControls';
 
@@ -110,10 +110,16 @@ export default {
             }
         }
 
+        const startGame = ()=>{
+            console.log("Game Started");
+            Renderer.startGame();
+        }
+
         return { 
             store,
             transformComponent, 
             selectObject,
+            startGame
         }
     },
     data() {
@@ -218,9 +224,6 @@ export default {
 
             this.selectObject(playerCarGO);
 
-        },
-        startGame() { 
-            Renderer.startGame();
         },
         selectObjectA() {
             // for (const entry of GameObject.gameObjects) {

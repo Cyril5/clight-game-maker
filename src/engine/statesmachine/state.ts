@@ -1,7 +1,10 @@
 import Blockly from 'blockly';
-import { Debug } from '../debug';
+
+// IMPORTS pour l'execution en temps réel ne pas supprimer 
+import { Debug } from '../../engine/debug';
+import {GameObject} from '../../engine/gameObject';
+
 import { Game } from '../game';
-import GameObject from '../gameObject';
 import { Mathf } from '../math/mathf';
 
 import {FiniteStateMachine} from './fsm';
@@ -45,20 +48,22 @@ import {FiniteStateMachine} from './fsm';
 
   
       runCode() { // run state code
+
         
-  
-          var requires = '';
-
-          const classes = [Debug,Game,GameObject,Mathf];
-
-          classes.forEach(cls => {
-            if(this.code.includes(cls.getVarClassName())) {
-              requires+= "const "+cls.getVarClassName()+" = require('"+cls.getDistClassFilePath()+"')."+cls.name+";\n";
+        try {
+          // Importation des classes en dev pour l'execution des codes en temps réel
+          [GameObject,Mathf].forEach(cls => {
+            if(typeof(cls)==='undefined') {
+              console.log('import '+cls.name+' class');
+              setTimeout(cls.toString(),0);
             }
           });
-          const code = requires+='\n'+this.code;
-
-          console.log(code);
+        } catch (error) {
+            alert("Erreur lors de l'importation d'une classe. \n"+error);
+        }
+          
+        
+          console.log(this.code);
   
           // Generate JavaScript code and run it.
           (window as any).LoopTrap = 1000;
@@ -66,7 +71,7 @@ import {FiniteStateMachine} from './fsm';
       
           Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
           try {
-            eval(code);
+            eval(this.code);
           } catch (e : any) {
             Debug.writeInConsole(this.name+"->"+e.message+" - line : ("+e.lineNumbers+")",'#ff0000');
             alert(e);
