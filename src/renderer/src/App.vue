@@ -1,22 +1,27 @@
 <script lang="ts">
 // import Versions from './components/Versions.vue';
-import { provide } from 'vue';
+import { inject, provide } from 'vue';
 import store from './store/store';
 import EditorVue from './components/Editor.vue';
+import WelcomeVue from './components/Welcome.vue';
 
 export default {
   components: {
-    EditorVue
+    EditorVue,
+    WelcomeVue
   },
   setup() {
-    provide('store',store)
+    provide('store', store);
+
+    console.log(store.assetsDir.value);
   }
 }
 
 </script>
 
 <template>
-    <EditorVue/>
+  <WelcomeVue />
+  <EditorVue/>
   <!-- <Versions></Versions>
   <svg viewBox="0 0 900 300">
     <use xlink:href="./assets/icons.svg#electron" />

@@ -1,6 +1,7 @@
 
 import * as THREE from 'three';
 import {FiniteStateMachine} from './statesmachine/fsm';
+import Editor from '@renderer/components/Editor.vue';
 
 export class GameObject extends THREE.Object3D {
 

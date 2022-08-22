@@ -1,16 +1,18 @@
 <template>
 
-
     <div class="container">
-
         <div id="objectsList">
             <h2>Objets</h2>
-            <button id="selectObjABtn" v-if="objARef" @click="selectObjectA()">{{ objARef.name }} (ID:
-                {{ objARef.id }}})</button>
-            <div class="child" v-if="objBRef">
-                <button id="selectObjBBtn" @click="selectObjectB()">{{ objBRef.name }} (ID: {{ objBRef.id
-                }})</button>
+            <!-- <h2>SIZE : {{gameObjectsLstRef}}</h2> -->
+
+            <!-- <h2 v-if="objARef">TEST : {{objARef.name}}</h2> -->
+
+            <div v-for="[key, go] in gameObjectsLstRef">
+                <button v-if="go.parent.type ==='Scene'" @click="selectObject(go)">{{go.name}} (ID: {{go.id}})</button>
+                <button class="child" v-for="child in go.children" @click="selectObject(child)">{{child.name}}</button>
             </div>
+
+            <!-- <button v-if="objARef.value" @click="selectObjectA()">{{ objARef.value.name }}</button> -->
         </div>
 
         <div class="left">
@@ -49,11 +51,11 @@ import {GameObject} from '../../../engine/gameObject';
 import { OrbitControls } from '../../../engine/jsm/controls/OrbitControls';
 import { TransformControls } from '../../../engine/jsm/controls/TransformControls';
 
-import { Car } from '../gameProjects/runTraffic/Assets/Prefabs/car';
-
 import Renderer from './Renderer.vue';
 import PropertiesBar from './PropertiesBar.vue';
 import FSMEditor from './FSMEditor.vue';
+
+let store : any;
 
 
 enum ControlMode {
@@ -69,6 +71,10 @@ enum Space {
 
 let control;
 
+let objARef;
+
+// let objBRef;
+let gameObjectsLstRef;
 
 export default {
 
@@ -79,11 +85,14 @@ export default {
         PropertiesBar,
         FSMEditor
     },
-
     setup() {
 
-        const store : any = inject('store');
+        objARef = ref<GameObject>();
+        gameObjectsLstRef = ref();
 
+        console.log(objARef);
+
+        store = inject('store');
 
         console.log("setup editor");
 
@@ -101,7 +110,6 @@ export default {
         const selectObject = (gameObject: GameObject)=> {
 
             if (gameObject != undefined) {
-                console.log(store);
                 store.selectedObj.value = gameObject;
                 // store.currentFSM.value = store.selectedObj.value.finiteStateMachines[0];
                 control.attach(gameObject);
@@ -117,18 +125,18 @@ export default {
 
         return { 
             store,
+            objARef,
             transformComponent, 
             selectObject,
-            startGame
-        }
-    },
-    data() {
-        return {
-            objARef: ref(null),
-            objBRef: ref(null),
+            startGame,
+            gameObjectsLstRef
         }
     },
     methods: {
+        setObjARef(go:GameObject ) {
+            objARef.value = go;
+        },
+        getObjBRef() {return objBRef },
 
         initEditor() {
 
@@ -178,62 +186,13 @@ export default {
             control.setScaleSnap(0.01);
             scene.add(control);
 
-            // ground
-            const mesh = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
-            mesh.rotation.x = - Math.PI / 2;
-            mesh.receiveShadow = true;
+           const grid = new THREE.GridHelper(10, 20, 0x000000, 0x000000);
+          // grid.material.opacity = 0.2;
+          // grid.material.transparent = true;
+          scene.add(grid);
 
-            scene.add(mesh);
+        
 
-            const grid = new THREE.GridHelper(10, 20, 0x000000, 0x000000);
-            // grid.material.opacity = 0.2;
-            // grid.material.transparent = true;
-            scene.add(grid);
-
-            const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
-            hemiLight.position.set(0, 200, 0);
-            scene.add(hemiLight);
-
-            const dirLight = new THREE.DirectionalLight(0xffffff);
-            dirLight.position.set(0, 200, 100);
-            dirLight.castShadow = true;
-            dirLight.shadow.camera.top = 180;
-            dirLight.shadow.camera.bottom = - 100;
-            dirLight.shadow.camera.left = - 120;
-            dirLight.shadow.camera.right = 120;
-            scene.add(dirLight);
-
-            scene.add(new THREE.CameraHelper(dirLight.shadow.camera));
-
-            const playerCarGO = new GameObject('Player Car');
-            var car: Car = new Car();
-
-            playerCarGO.addFSM('PlayerCar State Machine');
-            playerCarGO.finiteStateMachines[0].getCurrState().filename = 'src/renderer/src/gameProjects/runTraffic/Assets/FSM States/stateA.json';
-
-            scene.add(car);
-
-            car.scale.set(0.025, 0.025, 0.025);
-
-            playerCarGO.attach(car);
-
-            scene.add(playerCarGO);
-
-            this.objARef = playerCarGO;
-            this.objBRef = car;
-
-            this.selectObject(playerCarGO);
-
-        },
-        selectObjectA() {
-            // for (const entry of GameObject.gameObjects) {
-
-            //     console.log(entry);
-            // }
-            this.selectObject(GameObject.getById(161));
-        },
-        selectObjectB() {
-            this.selectObject(GameObject.getById(164));
         },
         setControlMode(controlMode: String) {
             var cm: ControlMode = ControlMode.Translate;
@@ -266,6 +225,12 @@ export default {
     mounted() {
         console.log("Editor mounted");
         this.initEditor();
+
+        // A Améliorer
+        setInterval(()=>{
+            gameObjectsLstRef.value = new Map(GameObject.gameObjects); 
+        },1000) 
+
     },
 
 

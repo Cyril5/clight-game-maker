@@ -1,24 +1,119 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog, webContents } from 'electron'
 import * as path from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { electronApp, optimizer, is } from '@electron-toolkit/utils';
+
+import { Project } from '../renderer/src/project';
+
+let mainWindow;
+
+const fs = require('fs');
+const ProgressBar = require('electron-progressbar');
+const prompt = require('electron-prompt');
+
+let projectDirectory = '';
+
+ipcMain.handle("createProject", async (event, message) => {
+  return await createProject(event);
+});
+
+
+const createProject = (event : any) => {
+  return new Promise<void>((resolve) => {
+    let progressBar;
+
+    prompt({
+      title: 'Créer un nouveau projet',
+      label: 'Nom du Projet',
+      value: 'Mon Nouveau Projet',
+      inputAttrs: {
+        type: 'input',
+        required: true
+      },
+      type: 'input',
+      useHtmlLabel: true,
+    }).then((r) => {
+      if (r === null) {
+        console.log('user cancelled');
+      } else {
+
+        dialog.showMessageBoxSync(mainWindow, {
+          'title': 'Créer un nouveau projet',
+          'type': 'info',
+          'message': 'Veuillez selectionner un répertoire lequel sera stocké le contenu de votre projet. \n'
+            + 'Lusine créera un sous répertoire avec le nom du projet',
+        });
+
+        dialog.showOpenDialog({ properties: ['openDirectory'] }).then(result => {
+
+          let currDir = result.filePaths[0];
+
+          if (result.canceled)
+            return;
+
+          progressBar = new ProgressBar({
+            text: 'Création du projet',
+            detail: 'Veuillez patientez...'
+          }, app);
+
+          progressBar
+            .on('completed', function () {
+              console.info(`completed...`);
+              progressBar.detail = 'Task completed. Exiting...';
+            })
+            .on('aborted', function () {
+              console.info(`aborted...`);
+            });
+
+          projectDirectory = path.join(currDir,r);
+
+          Project.makeProjectAssets(projectDirectory);
+
+          progressBar.setCompleted();
+
+          dialog.showMessageBoxSync({
+            'message': 'Le projet a été crée avec succès !',
+            'type': 'info'
+          });
+
+
+          event.sender.send('setProjectDir', projectDirectory);
+          mainWindow.setTitle('Lusine Game Maker 3D Alpha 0.1 - '+projectDirectory);
+
+          resolve();
+
+
+        }).catch(err => {
+          console.error(err);
+          dialog.showErrorBox('Erreur', err.message);
+          progressBar.close();
+        });
+      }
+    })
+      .catch(console.error);
+  });
+};
+
+
+
+
 
 function createWindow(): void {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 960,
-    height: 720,
+  mainWindow = new BrowserWindow({
+    width: 1920,
+    height: 1080,
     show: false,
-    autoHideMenuBar: true,
+    autoHideMenuBar: false,
     ...(process.platform === 'linux'
       ? {
-          icon: path.join(__dirname, '../../build/icon.png')
-        }
+        icon: path.join(__dirname, '../../build/icon.png')
+      }
       : {}),
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
-      
       nodeIntegration: true,
-      contextIsolation: false
+      enableRemoteModule:true,
+      contextIsolation: false,
     }
   })
 
@@ -34,10 +129,11 @@ function createWindow(): void {
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
   } else {
     mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'))
   }
+
 }
 
 // This method will be called when Electron has finished

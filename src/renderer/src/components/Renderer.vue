@@ -11,6 +11,7 @@ import {GameObject} from '../../../engine/gameObject';
 
 import Stats from '../../../engine/jsm/libs/stats.module';
 
+
 let gameIsRunning = false;
 
 const clock = new THREE.Clock();
@@ -26,6 +27,9 @@ const stats = Stats();
 
 export default {
     name: "Renderer",
+    components: {
+
+    },
     data() {
         return {
         }
@@ -64,7 +68,7 @@ export default {
                         console.log(fsm);
                         if (fsm.enabled) {
                             fsm.start();
-                            console.log(fsm.getCurrState().code);
+                            console.log(fsm.getBaseState().code);
                         }else{
                             // TODO : callback qui lancera la fonction fsm.start quand la case enabled du fsm sera actif
                             

@@ -1,6 +1,7 @@
 
 import {State} from './state';
 import {GameObject} from '../gameObject';
+import { Project } from '@renderer/project';
 
     export class FiniteStateMachine {
     
@@ -9,6 +10,7 @@ import {GameObject} from '../gameObject';
         states:Array<State> = [];
         
         private _currState:State | undefined;
+        
         currWorkspaceBlocks: any; // STATE A (workspaces block)
     
         gameObject; // au gameObject à qui est relié le FSM
@@ -18,16 +20,17 @@ import {GameObject} from '../gameObject';
             this.name = name;
             // INIT VARS (avant le new state)
             this.gameObject = gameObject;
-            this.addState();
             // this.currState.gameObject = this.gameObject;
         }
 
-        addState():State {
-            const newState = new State(this);
+        addState(name:string):State {
+            alert(Project.getAssetsDir());
+            const newState = new State(this,Project.getStatesDir()+"/"+name+".json");
             this.states.push(newState);
 
-            if(this.states.length == 1)
+            if(this.states.length == 1) {
                 this.setState(newState);
+            }
                 
             return newState;
         }
@@ -39,8 +42,8 @@ import {GameObject} from '../gameObject';
             this._currState.onEnterState();
         }
 
-        getCurrState() : State  {
-            return this._currState;
+        getBaseState() : State  {
+            return this.states[0];
         }
     
         start() {

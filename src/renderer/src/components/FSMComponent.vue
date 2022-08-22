@@ -41,10 +41,15 @@ export default {
             store.currentFSM.value = props.fsm; // currentFSM est dans le store
             console.log(store.currentFSM.value);
 
-            if(store.currentFSM.value.getCurrState().filename == '') {
-                alert("Aucun fichier n'a été défini pour "+store.currentFSM.value.getCurrState().name
-                +"\n l'état ne pourra pas être sauvegardé");
+            if(store.currentFSM.value.getBaseState()===undefined) {
+                alert("Aucun état de base à été défini sur cet automate fini \n Veuillez en ajoutez un.");
+            }else{
+                if(store.currentFSM.value.getBaseState().filename == '') {
+                    alert("Aucun fichier n'a été défini pour "+store.currentFSM.value.getBaseState().name
+                    +"\n l'état ne pourra pas être sauvegardé");
+                }
             }
+
 
             FSMEditor.loadState();
 

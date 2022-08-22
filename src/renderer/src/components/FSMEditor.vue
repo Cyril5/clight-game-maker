@@ -1,27 +1,26 @@
 <template>
 
-    <div id="fsm-editor" v-if="store.currentFSM.value"> 
+    <div id="fsm-editor" v-if="store.currentFSM.value">
         <div class="group" style="display: flex; justify-content: center;">
-            <h3 id="fsm-name" style="color: #fff;">{{ store.currentFSM.value.gameObject.name }}->{{store.currentFSM.value.name}}-></h3>
+            <h3 id="fsm-name" style="color: #fff;">{{ store.currentFSM.value.gameObject.name
+            }}->{{ store.currentFSM.value.name }}-></h3>
             <select name="fsm-states" id="fsm-states">
                 <option value="stateA">State A</option>
             </select>
         </div>
-    
+
         <div style="display: flex; justify-content: center;">
-            <label for="avatar">Fichier de l'état :</label>
-            <input type="file" id="changeStateFileBtn" @change="setStateFile" accept="application/json">
-            <p>Fichier : {{ store.currentFSM.value.getCurrState().filename }}</p>
+            <p>Fichier : {{ store.currentFSM.value.getBaseState().filename }}</p>
         </div>
         <!-- <button @click="executeCmd">Executer Commande</button> -->
 
     </div>
-        <button @click="addState">Ajouter Etat</button>
-        <button id="saveStateABtn" @click="saveState">Enregistrer</button>
-        <button>Enregistrer Sous</button>
+    <button @click="addState">Ajouter Etat</button>
+    <button id="saveStateABtn" @click="saveState">Enregistrer</button>
+    <button>Enregistrer Sous</button>
 
     <!-- Doit être déjà crée même si le fsm est null -->
-    <div class="div" style="display:flex">
+    <div class="div">
         <div id="state_workspace" style="width:50%;height:480px;"></div>
         <div id="wksp-toolbox"></div>
         <div class="group">
@@ -49,7 +48,7 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/dracula.css';
 import 'codemirror/mode/javascript/javascript.js';
 
-import {GameObject} from '../../../engine/gameObject';
+import { GameObject } from '../../../engine/gameObject';
 
 import toolboxXml from '../assets/blocks/toolbox.xml?raw'; // ?raw to import as string
 
@@ -59,7 +58,7 @@ import toolboxXml from '../assets/blocks/toolbox.xml?raw'; // ?raw to import as 
 let store;
 let codeEditor: any;
 const fs = require('fs');
-let demoWorkspace : any;
+let demoWorkspace: any;
 
 export default {
 
@@ -86,8 +85,8 @@ export default {
             console.log(event.target.value);
         }
 
-        const executeJSCode = (code:string) => {
-            setTimeout(code,0);
+        const executeJSCode = (code: string) => {
+            setTimeout(code, 0);
         }
 
 
@@ -101,7 +100,7 @@ export default {
             //alert(g.finiteStateMachines[0].getCurrState().code);
             //g.finiteStateMachines[0].getCurrState().runCode();
 
-                // eval("alert(GameObject)"); // works
+            // eval("alert(GameObject)"); // works
             console.log(store.currentFSM.value.getCurrState().runCode());
 
         };
@@ -116,26 +115,25 @@ export default {
         }
 
     },
-loadState(){
+    loadState() {
 
-    if(!store) {
-        alert("store is undefined \n Veuillez recommencer l'opération");
-        return;
-    }
+        demoWorkspace.clear();
 
-    demoWorkspace.clear();
-    if (store.currentFSM.value.getCurrState().filename != '') {
-        fs.readFile(store.currentFSM.value.getCurrState().filename, 'utf8', (err, data) => {
-            if (err) {
-                console.error(err);
-                alert("Une erreur c'est produite pendant l'ouverture de StateA :\n\n" + err);
-                return;
-            }
+        if(store.currentFSM.value.getBaseState()===undefined)
+            return;
 
-            Blockly.serialization.workspaces.load(JSON.parse(data), demoWorkspace);
-        });
-    }
-},
+        if (store.currentFSM.value.getBaseState().filename != '') {
+            fs.readFile(store.currentFSM.value.getBaseState().filename, 'utf8', (err, data) => {
+                if (err) {
+                    console.error(err);
+                    alert("Une erreur c'est produite pendant l'ouverture de StateA :\n\n" + err);
+                    return;
+                }
+
+                Blockly.serialization.workspaces.load(JSON.parse(data), demoWorkspace);
+            });
+        }
+    },
     mounted() {
         // All Components are ready
 
@@ -234,13 +232,13 @@ loadState(){
 
             let workspaceCode = Blockly.JavaScript.workspaceToCode(demoWorkspace);
 
-            store.currentFSM.value.getCurrState().code = workspaceCode;
+            store.currentFSM.value.getBaseState().code = workspaceCode;
 
             codeEditor.setValue(workspaceCode);
 
             if (event.type == Blockly.Events.BLOCK_MOVE) {
-                if (store.currentFSM.value.getCurrState().filename != '') {
-                    //saveWorkspace();
+                if (store.currentFSM.value.getBaseState().filename != '') {
+                    saveWorkspace();
                 }
             }
         }
@@ -267,8 +265,10 @@ loadState(){
     }
 }
 
-
-
-
-
 </script>
+
+<style lang="scss">
+#state_workspace {
+    z-index: -1;
+}
+</style>

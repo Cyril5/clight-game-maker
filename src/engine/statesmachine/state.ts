@@ -24,9 +24,10 @@ import {FiniteStateMachine} from './fsm';
       }
       
   
-      constructor(fsm : FiniteStateMachine) {
+      constructor(fsm : FiniteStateMachine,filename:string) {
           this.fsm = fsm;
           this.gameObject = fsm.gameObject;
+          this.filename = filename;
       }
   
       onEnterState() {
