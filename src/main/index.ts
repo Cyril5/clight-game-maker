@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, dialog, webContents } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import * as path from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 
@@ -6,7 +6,6 @@ import { Project } from '../renderer/src/project';
 
 let mainWindow;
 
-const fs = require('fs');
 const ProgressBar = require('electron-progressbar');
 const prompt = require('electron-prompt');
 
@@ -15,6 +14,28 @@ let projectDirectory = '';
 ipcMain.handle("createProject", async (event, message) => {
   return await createProject(event);
 });
+
+ipcMain.handle("openProject", async(event)=>{
+  return await openProject(event);
+});
+
+const openProject = (event: any) =>{
+  return new Promise<void>((resolve)=>{
+
+    dialog.showOpenDialog({ properties: ['openDirectory'] }).then(result => {
+      projectDirectory = result.filePaths[0];
+
+      // Checker si c'est un projet valid
+
+      event.sender.send('projectOpenedReply', projectDirectory);
+      mainWindow.setTitle('Lusine Game Maker 3D Alpha 0.1 - '+projectDirectory);
+      resolve();
+    }).catch((err)=>{
+        console.error(err);
+        dialog.showErrorBox('Erreur', err.message);
+    })
+  });
+}
 
 
 const createProject = (event : any) => {
@@ -76,7 +97,7 @@ const createProject = (event : any) => {
           });
 
 
-          event.sender.send('setProjectDir', projectDirectory);
+          event.sender.send('projectCreatedReply', projectDirectory);
           mainWindow.setTitle('Lusine Game Maker 3D Alpha 0.1 - '+projectDirectory);
 
           resolve();

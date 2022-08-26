@@ -1,41 +1,63 @@
 <template>
+    <div class="tabs">
+        <button @click="setEditorMode('LEVEL')">Editeur de niveau</button>
+        <button @click="setEditorMode('FSM_STATES')">Editeur d'états</button>
+        <button id="startGameBtn" @click="startGame()">Start</button>
+        <button id="stopGameBtn" disabled>Stop</button>
+    </div>
 
-    <div class="container">
-        <div id="objectsList">
-            <h2>Objets</h2>
-            <!-- <h2>SIZE : {{gameObjectsLstRef}}</h2> -->
+    <div class="state-editor-tab" v-show="store.editorMode.value === 'FSM_STATES'">
+        <StatesEditor />
+    </div>
 
-            <!-- <h2 v-if="objARef">TEST : {{objARef.name}}</h2> -->
+    <div class="level-editor-tab" v-show="store.editorMode.value === 'LEVEL'">
+        <div class="container">
 
-            <div v-for="[key, go] in gameObjectsLstRef">
-                <button v-if="go.parent.type ==='Scene'" @click="selectObject(go)">{{go.name}} (ID: {{go.id}})</button>
-                <button class="child" v-for="child in go.children" @click="selectObject(child)">{{child.name}}</button>
+            <div id="objectsList">
+                <h2>Objets</h2>
+                <!-- <h2>SIZE : {{gameObjectsLstRef}}</h2> -->
+
+                <!-- <h2 v-if="objARef">TEST : {{objARef.name}}</h2> -->
+
+                <div v-for="[key, go] in gameObjectsLstRef">
+                    <button v-if="go.parent.type === 'Scene'" @click="selectObject(go)">{{ go.name }} (ID:
+                        {{ go.id }})</button>
+                    <button class="child" v-for="child in go.children" @click="selectObject(child)">{{ child.name
+                    }}</button>
+                </div>
+
+                <!-- <button v-if="objARef.value" @click="selectObjectA()">{{ objARef.value.name }}</button> -->
             </div>
 
-            <!-- <button v-if="objARef.value" @click="selectObjectA()">{{ objARef.value.name }}</button> -->
-        </div>
+            <div class="left">
+                <button id="translateModeBtn" @click="setControlMode('Translate')">Pos</button>
+                <button id="rotateModeBtn" @click="setControlMode('Rotate')">Rot</button>
+                <button id="scaleModeBtn" @click="setControlMode('Scale')">Scale</button>
+                <button id="localSpaceBtn" @click="setSpace('local')">Local</button>
+                <button id="worldSpaceBtn" @click="setSpace('world')">Monde</button>
 
-        <div class="left">
-            <button id="translateModeBtn" @click="setControlMode('Translate')">Pos</button>
-            <button id="rotateModeBtn" @click="setControlMode('Rotate')">Rot</button>
-            <button id="scaleModeBtn" @click="setControlMode('Scale')">Scale</button>
-            <button id="localSpaceBtn" @click="setSpace('local')">Local</button>
-            <button id="worldSpaceBtn" @click="setSpace('world')">Monde</button>
-            <button id="startGameBtn" @click="startGame()">Start</button>
-            <button id="stopGameBtn" disabled>Stop</button>
 
-            <Renderer />
+                <Renderer />
 
-        </div>
+            </div>
 
-        <div class="right">
+            <div class="right">
 
-            <PropertiesBar  :transform="transformComponent"/>
+                <PropertiesBar :transform="transformComponent" />
+
+            </div>
 
         </div>
+        <FSMEditor />
 
     </div>
-    <FSMEditor />
+
+    <div class="group">
+
+        <div id="console" style="width: 100%; height: 200px; background-color: black;"></div>
+        <button id="clearConsoleBtn">Effacer</button>
+    </div>
+
 
 
 
@@ -47,16 +69,24 @@ import { reactive, ref, inject } from 'vue';
 
 import * as THREE from 'three';
 
-import {GameObject} from '../../../engine/gameObject';
+import { GameObject } from '../../../engine/gameObject';
 import { OrbitControls } from '../../../engine/jsm/controls/OrbitControls';
 import { TransformControls } from '../../../engine/jsm/controls/TransformControls';
 
 import Renderer from './Renderer.vue';
 import PropertiesBar from './PropertiesBar.vue';
 import FSMEditor from './FSMEditor.vue';
+import StatesEditor from './StatesEditor.vue';
+import { Debug } from '../../../engine/debug';
+import { StateFile } from '../../../engine/statesmachine/stateFile';
 
-let store : any;
+let store: any;
 
+enum EditorMode {
+    Level = 'LEVEL',
+    FSMStates = 'FSM_STATES',
+    GameRunning = 'GAME_RUNNING'
+}
 
 enum ControlMode {
     Translate = 'translate',
@@ -83,7 +113,8 @@ export default {
         Renderer // obtenir l'instance de renderer
         ,
         PropertiesBar,
-        FSMEditor
+        FSMEditor,
+        StatesEditor,
     },
     setup() {
 
@@ -107,7 +138,7 @@ export default {
             scale: new THREE.Vector3(1, 1, 1),
         });
 
-        const selectObject = (gameObject: GameObject)=> {
+        const selectObject = (gameObject: GameObject) => {
 
             if (gameObject != undefined) {
                 store.selectedObj.value = gameObject;
@@ -118,25 +149,37 @@ export default {
             }
         }
 
-        const startGame = ()=>{
+        const startGame = () => {
+            store.editorMode.value = "LEVEL";
             console.log("Game Started");
             Renderer.startGame();
         }
 
-        return { 
+        const setEditorMode = (mode: string) => {
+            store.editorMode.value = mode;
+        }
+
+        return {
             store,
             objARef,
-            transformComponent, 
+            transformComponent,
             selectObject,
+            setEditorMode,
             startGame,
-            gameObjectsLstRef
+            gameObjectsLstRef,
+            editorMode: EditorMode,
         }
     },
     methods: {
-        setObjARef(go:GameObject ) {
+        setObjARef(go: GameObject) {
             objARef.value = go;
         },
-        getObjBRef() {return objBRef },
+        getObjBRef() { return objBRef },
+
+        addStateToList(stateFile: StateFile) { // Ajoute un state à la liste global des états
+            alert('Fichier état ajouté : ' + stateFile.getFileName());
+            store.editorRtv.states.push(stateFile);
+        },
 
         initEditor() {
 
@@ -186,12 +229,12 @@ export default {
             control.setScaleSnap(0.01);
             scene.add(control);
 
-           const grid = new THREE.GridHelper(10, 20, 0x000000, 0x000000);
-          // grid.material.opacity = 0.2;
-          // grid.material.transparent = true;
-          scene.add(grid);
+            const grid = new THREE.GridHelper(10, 20, 0x000000, 0x000000);
+            // grid.material.opacity = 0.2;
+            // grid.material.transparent = true;
+            scene.add(grid);
 
-        
+
 
         },
         setControlMode(controlMode: String) {
@@ -227,9 +270,14 @@ export default {
         this.initEditor();
 
         // A Améliorer
-        setInterval(()=>{
-            gameObjectsLstRef.value = new Map(GameObject.gameObjects); 
-        },1000) 
+        setInterval(() => {
+            gameObjectsLstRef.value = new Map(GameObject.gameObjects);
+        }, 1000)
+
+        window.addEventListener('error', (event) => {
+            Debug.writeInConsole(event.type + ' ' + event.message, '#ff0000');
+        });
+
 
     },
 
@@ -309,4 +357,13 @@ export default {
 
 </script>
 
+<style lang="scss">
+.tabs {
+    width: 100%;
+    text-align: center;
 
+    button {
+        background-color: green;
+    }
+}
+</style>

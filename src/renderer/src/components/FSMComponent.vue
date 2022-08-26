@@ -2,7 +2,7 @@
     <div class="component">
         <div class="bar">
             <input v-model="fsm.name" type="text"/>(Automate Fini)
-            <button>X</button>
+            <button @click="deleteFSM">X</button>
         </div>
         <button @click="editFSM">Editer</button>
         <input type="checkbox" v-model="fsm.enabled" checked name="enabled" id="enabled" class="checkbox">Actif
@@ -49,12 +49,11 @@ export default {
                     +"\n l'état ne pourra pas être sauvegardé");
                 }
             }
-
-
-            FSMEditor.loadState();
-
-                
         };
+
+        const deleteFSM = ()=>{
+            props.fsm.delete();
+        }
 
 
         return {

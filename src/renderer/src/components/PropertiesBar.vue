@@ -12,6 +12,10 @@
         </div>
 
     </div>
+    <div v-else>
+        <h2>Aucun objet sélectionné</h2>
+        <p>Sélectionnez un objet dans la liste à gauche de l'écran</p>
+    </div>
 </template>
 
 <script lang="ts">

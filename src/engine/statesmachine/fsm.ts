@@ -1,19 +1,23 @@
 
 import {State} from './state';
 import {GameObject} from '../gameObject';
-import { Project } from '@renderer/project';
+import Utils from '../utils';
 
     export class FiniteStateMachine {
     
+        private static allInstances : Array<FiniteStateMachine> = [];
+
         name;
         enabled = true;
         states:Array<State> = [];
+
+        static getAll() {
+            return FiniteStateMachine.allInstances;
+        }
         
         private _currState:State | undefined;
         
-        currWorkspaceBlocks: any; // STATE A (workspaces block)
-    
-        gameObject; // au gameObject à qui est relié le FSM
+        gameObject; // le gameObject relié au FSM
     
     
         constructor(name :string, gameObject : GameObject) {
@@ -21,11 +25,20 @@ import { Project } from '@renderer/project';
             // INIT VARS (avant le new state)
             this.gameObject = gameObject;
             // this.currState.gameObject = this.gameObject;
+            this.addState();
+            FiniteStateMachine.allInstances.push(this);
         }
 
-        addState(name:string):State {
-            alert(Project.getAssetsDir());
-            const newState = new State(this,Project.getStatesDir()+"/"+name+".json");
+        delete() {
+            Utils.removeElementFromArray(this,FiniteStateMachine.allInstances);
+        }
+
+        addState(name:string='Nouvel Etat'):State {
+
+            let newState : State;
+            newState = new State(this,undefined);
+            newState.setProps(name,undefined);
+
             this.states.push(newState);
 
             if(this.states.length == 1) {
@@ -40,6 +53,11 @@ import { Project } from '@renderer/project';
                 this._currState.onExitState();
             this._currState = state;
             this._currState.onEnterState();
+        }
+
+        removeState(state:State) {
+            
+            Utils.removeElementInArray(state,this.states);
         }
 
         getBaseState() : State  {

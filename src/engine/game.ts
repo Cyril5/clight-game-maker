@@ -4,6 +4,7 @@ import Renderer from '@renderer/components/Renderer.vue';
 import Editor from '@renderer/components/Editor.vue';
 import { GameObject } from "./gameObject";
 import { Car } from "@renderer/gameProjects/runTraffic/Assets/Prefabs/car";
+import { Project } from "@renderer/project";
 
 export class Game {
     static getVarClassName() {
@@ -48,7 +49,8 @@ export class Game {
           const car: Car = new Car();
 
           playerCarGO.addFSM('PlayerCar State Machine');
-          playerCarGO.finiteStateMachines[0].addState("StateA");
+          // le premier état est créer automatiquement
+          playerCarGO.finiteStateMachines[0].getBaseState().setProps("StateA",Project.getStatesDir()+"/StateA.json");
 
           
           Renderer.getMainScene().add(car);

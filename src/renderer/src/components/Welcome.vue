@@ -39,10 +39,7 @@ export default {
     },
     setup() {
 
-
         const show = ref(true);
-
-        const fs = require('fs');
 
         const {ipcRenderer}  = require('electron');
 
@@ -51,20 +48,26 @@ export default {
         }
 
         const openProject = () => {
-            Project.setDir("C:/Users/cyril/Desktop/tests/Lusine Projects/Mon Nouveau Projet");
+            ipcRenderer.invoke('openProject');
         }
 
         // Réponse après que le projet soit créé
-         ipcRenderer.on('setProjectDir', (event, arg) => {
+         ipcRenderer.on('projectCreatedReply', (event, arg) => {
             console.log(arg);
             Project.setDir(arg); // obligé de le refaire ici car cela ne fonctionne pas dans le main process d'electron
             store.assetsDir.value = Project.getAssetsDir();
             show.value = false;
             //Game.createGOTest();
             new Game();
+         });
 
-
-         })
+         // Réponse après qu'on ouvre un projet
+         ipcRenderer.on('projectOpenedReply', (event, arg) => {
+            Project.setDir(arg); // obligé de le refaire ici car cela ne fonctionne pas dans le main process d'electron
+            store.assetsDir.value = Project.getAssetsDir();
+            show.value = false;
+            new Game(); // TODO ouvrir un projet
+         });
 
 
         return {
