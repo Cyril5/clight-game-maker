@@ -58,7 +58,8 @@ export default {
 
         return {
             store,
-            editFSM
+            editFSM,
+            deleteFSM
         }
     },
     mounted() {

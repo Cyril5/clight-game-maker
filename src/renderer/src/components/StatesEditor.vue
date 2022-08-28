@@ -1,7 +1,7 @@
 <template>
     <h2>Editeur d'états</h2>
     <div style="display: flex; justify-content: center;">
-        <p>Fichier : {{ store.statesEditorRtv.currState.filename }}</p>
+        <p>Fichier : {{ store.statesEditorRtv.currStateFile.filename }}</p>
     </div>
 
     <button @click="createState">Nouveau</button>
@@ -20,7 +20,8 @@
         <div class="states-list">
             <ul>
                 <li>FSM States</li>
-                <li v-for="state in store.editorRtv.states"><button>{{ state.getFileName() }}</button></li>
+                <li v-for="sf in store.editorRtv.states" @dblclick="loadState(sf)"><button>{{ sf.getFileName()
+                }}</button></li>
             </ul>
 
         </div>
@@ -57,6 +58,8 @@ let workspaceBlocks;
 let currStateFile;
 let codeEditor: any;
 
+let loadState; // callback
+
 export default {
 
     name: 'StatesEditor',
@@ -67,7 +70,19 @@ export default {
         store = inject('store');
 
         const saveState = () => {
-            store.statesEditorRtv.currState.generateCode();
+            const json = Blockly.serialization.workspaces.save(workspaceBlocks);
+
+            fs.writeFile(
+                Project.getStatesDir() + '/' + currStateFile.filename, JSON.stringify(json), err => {
+                    if (err) {
+                        alert("Une erreur c'est produite pendant la sauvegarde de StateA :\n\n" + err);
+                        console.log(err);
+                        return;
+                    }
+                }
+            );
+
+            updateStateCode();
         }
 
         const createState = () => {
@@ -75,7 +90,7 @@ export default {
             const filename = 'State' + Project.lastStateFileId;
             Project.createStateFile(filename);
 
-            const stateFile = new StateFile(filename);
+            const stateFile = new StateFile(filename + ".json");
 
             Editor.methods.addStateToList(stateFile);
 
@@ -83,52 +98,60 @@ export default {
 
         }
 
+        const updateStateCode = () => {
+
+            // 1 : rechercher tous les états (dans chaques fsm) qui ont le state file en cours d'enregistrement
+            const finiteStateMachines = FiniteStateMachine.getAll();
+            let totalStates = 0;
+            for (const fsm of finiteStateMachines) {
+                for (const state of fsm.states) {
+                    if (state.statefile === currStateFile) {
+                        state.code = Blockly.JavaScript.workspaceToCode(workspaceBlocks);
+                        totalStates++;
+                    }
+                }
+            }
+            alert("Le code du fichier " + currStateFile.filename + " a été modifié sur " + totalStates + " États");
+        };
+
+        loadState = (stateFile: StateFile) => {
+
+            store.editorMode.value = 'FSM_STATES';
+
+
+            store.statesEditorRtv.currStateFile = stateFile;
+
+
+            currStateFile = store.statesEditorRtv.currStateFile;
+
+            console.log(store.statesEditorRtv.currStateFile);
+
+            try {
+                //TODO : vérifier si il y a déjà un state ouvert dans l'éditeur avant de remplacer 
+                fs.readFile(Project.getStatesDir() + '/' + currStateFile.filename, 'utf8', (err, data) => {
+                    if (err) {
+                        console.error(err);
+                        throw err;
+                    }
+                    Blockly.serialization.workspaces.load(JSON.parse(data), workspaceBlocks);
+
+                });
+            } catch (error) {
+                console.error(error);
+                alert("Une erreur c'est produite pendant l'ouverture de " + currStateFile.filename + " :\n\n" + error);
+            }
+
+        };
+
         return {
             store,
             saveState,
             createState,
+            loadState
         }
     },
 
-    updateStateCode() {
-        currStateFile = store.statesEditorRtv.stateFile;
 
-        // 1 : rechercher tous les états (dans chaques fsm) qui ont le state file en cours d'enregistrement
-        const finiteStateMachines = FiniteStateMachine.getAll();
-        for (const fsm of finiteStateMachines) {
-            for (const state of fsm) {
-                if (state.stateFile == currState) {
-                    state.code = Blockly.JavaScript.workspaceToCode(workspaceBlocks);
-                }
-            }
-        }
-    },
-    loadState(stateFile: StateFile) {
-
-        store.editorMode.value = 'FSM_STATES';
-
-        store.statesEditorRtv.currState = stateFile;
-
-        currStateFile = store.statesEditorRtv.currState;
-
-
-
-        //TODO : vérifier si il y a déjà un state ouvert dans l'éditeur avant de remplacer 
-        if (!store.statesEditorRtv.currState) {
-
-        }
-
-        fs.readFile(currStateFile.filename, 'utf8', (err, data) => {
-            if (err) {
-                console.error(err);
-                alert("Une erreur c'est produite pendant l'ouverture de " + currStateFile + " :\n\n" + err);
-                return;
-            }
-
-            Blockly.serialization.workspaces.load(JSON.parse(data), workspaceBlocks);
-        });
-
-    },
     mounted() {
         console.log("states editor mounted");
         codeEditor = CodeMirror.fromTextArea(document.getElementById('code-editor') as HTMLTextAreaElement, {

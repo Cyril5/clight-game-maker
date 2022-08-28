@@ -1,6 +1,8 @@
 const fs = require('fs');
 
 import stateA from './gameProjects/runTraffic/Assets/FSM States/stateA.json';
+import baseStateFile from './assets/baseStateFile.json';
+
 export class Project {
 
     static lastStateFileId = 0;
@@ -31,16 +33,16 @@ export class Project {
         fs.mkdirSync(dir+"/Assets/FSM States");
         fs.mkdirSync(dir+"/Assets/Prefabs");
 
-        this.createStateFile('StateA.json',JSON.stringify(stateA));
+        this.createStateFile('StateA.json');
 
 
         // Copy state file
         //fs.copyFile(stateA,statesFolder)
     }
 
-    static createStateFile(name,data='') {
+    static createStateFile(name,data=JSON.stringify(baseStateFile)) {
         this.lastStateFileId++;
-        fs.appendFile(this.statesFolder+'/'+name+".json",data,(err,content)=>{
+        fs.writeFile(this.statesFolder+'/'+name+".json",data,(err,content)=>{
             if(err) throw err;
             return;
         });

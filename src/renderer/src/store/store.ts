@@ -13,7 +13,7 @@ const state = reactive({
 })
 
 const statesEditorRtv = reactive({
-    currState: StateFile,
+    currStateFile: StateFile,
 });
 
 const editorRtv = reactive({

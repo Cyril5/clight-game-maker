@@ -1,0 +1,25 @@
+{
+    "blocks": {
+        "languageVersion": 0,
+        "blocks": [
+            {
+                "type": "state_onenterstate",
+                "id": "qR!d~M;.3(MYILS/~U}?",
+                "x": 13,
+                "y": 13
+            },
+            {
+                "type": "state_onupdatestate",
+                "id": "sL$gv+35hkeGjXN?z)Je",
+                "x": 13,
+                "y": 113
+            },
+            {
+                "type": "state_onexitstate",
+                "id": "mct859.!olsLQ`NtHCgg",
+                "x": 12,
+                "y": 212
+            }
+        ]
+    }
+}

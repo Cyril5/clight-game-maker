@@ -177,7 +177,6 @@ export default {
         getObjBRef() { return objBRef },
 
         addStateToList(stateFile: StateFile) { // Ajoute un state à la liste global des états
-            alert('Fichier état ajouté : ' + stateFile.getFileName());
             store.editorRtv.states.push(stateFile);
         },
 

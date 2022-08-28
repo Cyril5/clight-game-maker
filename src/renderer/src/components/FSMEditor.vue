@@ -17,9 +17,9 @@
             <div class="state" v-for="state in store.currentFSM.value.states">
                 =>
                 <input v-model="state.name" type="text" />
-                <select name="states" id="pet-select">
+                <select name="states" @change="setStateFileToState(state,$event)">
                     <option value="">--Aucun Fichier d'État--</option>
-                    <option v-for="stateFile in store.editorRtv.states" :value="state.statefile">{{ stateFile.getFileName() }}</option>
+                    <option v-for="(stateFile,index) in store.editorRtv.states" :value="index">{{ stateFile.getFileName() }}</option>
                 </select>
                 <button @click="editState(state)">Editer</button>
                 <button @click="removeState(state)">Retirer</button>
@@ -42,6 +42,7 @@ import { inject } from 'vue';
 
 import { GameObject } from '../../../engine/gameObject';
 import StatesEditor from '@renderer/components/StatesEditor.vue';
+import { State } from '../../../engine/statesmachine/state';
 
 let store;
 const fs = require('fs');
@@ -62,14 +63,24 @@ export default {
             store.currentFSM.value.addState();
         };
 
-        const editState = (state) => {
-            if (state.filename === undefined) {
+        const setStateFileToState = (state : State,event) => {
+            console.log(event.target.value);
+            const index = event.target.value;
+            state.statefile = store.editorRtv.states[index];
+            
+        }
+
+        const editState = (state : State) => {
+
+            console.log(state);
+
+            if (state.statefile === undefined) {
                 alert("L'état : '" + state.name + "' est relié à aucun fichier \n " +
                     "Pour relier un fichier a l'état: sélectionné le nom du fichier dans " +
                     "la liste déroulante de l'état. Sinon le créer dans l'éditeur d'états puis le relier");
                 return;
             }
-            StatesEditor.loadState(state);
+            StatesEditor.loadState(state.statefile);
         }
 
         const removeState = (state) => {
@@ -119,6 +130,7 @@ export default {
             executeCmd,
             editState,
             removeState,
+            setStateFileToState
         }
 
     },
@@ -130,18 +142,7 @@ export default {
 
 
 
-        const saveWorkspace = () => {
-            const json = Blockly.serialization.workspaces.save(store.statesEditorRtv.currState);
 
-            fs.writeFile(
-                store.currentFSM.value.filename, JSON.stringify(json), err => {
-                    if (err) {
-                        alert("Une erreur c'est produite pendant la sauvegarde de StateA :\n\n" + err);
-                        console.log(err);
-                    }
-                }
-            );
-        };
 
 
 

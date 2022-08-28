@@ -4,7 +4,7 @@ export class StateFile {
     private jsonData : any;
 
     constructor(filename:string) {
-        this.filename = filename+".json";
+        this.filename = filename;
     }
 
     getFileName() {

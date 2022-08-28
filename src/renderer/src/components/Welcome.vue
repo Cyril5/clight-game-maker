@@ -5,7 +5,7 @@
         <!-- Modal content -->
         <div class="modal-content">
             <div class="modal-header">
-                <span class="close" @click="show=false">&times;</span>
+                <span class="close" @click="show = false">&times;</span>
                 <h2>Bienvenue dans Lusine Game Maker</h2>
             </div>
 
@@ -30,8 +30,12 @@
 import * as THREE from 'three';
 import { Project } from '@renderer/project';
 import store from '@renderer/store/store';
+import Editor from './Editor.vue';
 import { Game } from '../../../engine/game';
 import { ref } from 'vue';
+import { StateFile } from '../../../engine/statesmachine/stateFile';
+
+const fs = require('fs');
 
 export default {
     name: 'Welcome',
@@ -41,7 +45,7 @@ export default {
 
         const show = ref(true);
 
-        const {ipcRenderer}  = require('electron');
+        const { ipcRenderer } = require('electron');
 
         const createProject = () => {
             ipcRenderer.invoke('createProject');
@@ -52,22 +56,39 @@ export default {
         }
 
         // Réponse après que le projet soit créé
-         ipcRenderer.on('projectCreatedReply', (event, arg) => {
+        ipcRenderer.on('projectCreatedReply', (event, arg) => {
             console.log(arg);
             Project.setDir(arg); // obligé de le refaire ici car cela ne fonctionne pas dans le main process d'electron
             store.assetsDir.value = Project.getAssetsDir();
             show.value = false;
             //Game.createGOTest();
             new Game();
-         });
+        });
 
-         // Réponse après qu'on ouvre un projet
-         ipcRenderer.on('projectOpenedReply', (event, arg) => {
+        // Réponse après qu'on ouvre un projet
+        ipcRenderer.on('projectOpenedReply', (event, arg) => {
             Project.setDir(arg); // obligé de le refaire ici car cela ne fonctionne pas dans le main process d'electron
             store.assetsDir.value = Project.getAssetsDir();
             show.value = false;
             new Game(); // TODO ouvrir un projet
-         });
+
+            // Pour chaques fichier states dans le dossier Assets/FSM States
+            fs.readdir(Project.getStatesDir(), (err, files) => {
+
+                if(err) {
+                    console.error(err.message);
+                    alert(err.message);
+                    return;
+                }
+
+                let stateFile : StateFile;
+                    for (const file of files) {
+                        console.log(file);
+                        stateFile = new StateFile(file);
+                        Editor.methods.addStateToList(stateFile);
+                    }
+                });
+            });
 
 
         return {
