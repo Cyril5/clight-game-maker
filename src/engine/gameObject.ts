@@ -91,7 +91,6 @@ export class GameObject extends THREE.Object3D {
     
     
     }
-module.exports = {GameObject: GameObject};
 
 
 

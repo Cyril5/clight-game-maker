@@ -1,16 +1,16 @@
 <template>
     <div class="tabs">
-        <button @click="setEditorMode('LEVEL')">Editeur de niveau</button>
-        <button @click="setEditorMode('FSM_STATES')">Editeur d'états</button>
-        <button id="startGameBtn" @click="startGame()">Start</button>
-        <button id="stopGameBtn" disabled>Stop</button>
+        <button @click="setEditorMode('LEVEL')" v-if="store.editorMode.value!='GAME_RUNNING'">Editeur de niveau</button>
+        <button @click="setEditorMode('FSM_STATES')" v-if="store.editorMode.value!='GAME_RUNNING'">Editeur d'états</button>
+        <button id="startGameBtn" @click="startGame()" v-if="store.editorMode.value!='GAME_RUNNING'">Start</button>
+        <button id="stopGameBtn" @click="stopGame()">Stop</button>
     </div>
 
-    <div class="state-editor-tab" v-show="store.editorMode.value === 'FSM_STATES'">
+    <div class="state-editor-tab" v-show="store.editorMode.value === 'FSM_STATES'"> 
         <StatesEditor />
     </div>
 
-    <div class="level-editor-tab" v-show="store.editorMode.value === 'LEVEL'">
+    <div class="level-editor-tab" v-show="store.editorMode.value === 'LEVEL' || store.editorMode.value === 'GAME_RUNNING'">
         <div class="container">
 
             <div id="objectsList">
@@ -65,7 +65,7 @@
 
 <script lang="ts">
 
-import { reactive, ref, inject } from 'vue';
+import { reactive, ref, inject, onRenderTracked } from 'vue';
 
 import * as THREE from 'three';
 
@@ -121,8 +121,6 @@ export default {
         objARef = ref<GameObject>();
         gameObjectsLstRef = ref();
 
-        console.log(objARef);
-
         store = inject('store');
 
         console.log("setup editor");
@@ -150,9 +148,15 @@ export default {
         }
 
         const startGame = () => {
-            store.editorMode.value = "LEVEL";
+            store.editorMode.value = "GAME_RUNNING";
             console.log("Game Started");
             Renderer.startGame();
+        }
+
+        const stopGame = ()=>{
+            store.editorMode.value = "LEVEL";
+            console.log("Game Stoped");
+            Renderer.stopGame();
         }
 
         const setEditorMode = (mode: string) => {
@@ -166,6 +170,7 @@ export default {
             selectObject,
             setEditorMode,
             startGame,
+            stopGame,
             gameObjectsLstRef,
             editorMode: EditorMode,
         }
@@ -177,7 +182,7 @@ export default {
         getObjBRef() { return objBRef },
 
         addStateToList(stateFile: StateFile) { // Ajoute un state à la liste global des états
-            store.editorRtv.states.push(stateFile);
+            store.editorRtv.states.set(stateFile.getFileName(),stateFile);
         },
 
         initEditor() {

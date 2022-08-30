@@ -1,34 +1,34 @@
 <template>
     <h2>Editeur d'états</h2>
     <div style="display: flex; justify-content: center;">
-        <p>Fichier : {{ store.statesEditorRtv.currStateFile.filename }}</p>
+        <p>Fichier : {{  store.statesEditorRtv.currStateFile.filename  }}</p>
     </div>
 
     <button @click="createState">Nouveau</button>
     <button id="saveStateABtn" @click="saveState">Enregistrer</button>
     <button>Enregistrer Sous</button>
 
-    <div id="blocklyArea"></div>
-    <div id="state_workspace"></div>
 
     <div class="container">
         <div class="code">
 
+            <div id="blocklyArea"></div>
+            <div id="state_workspace"></div>
             <textarea id="code-editor" style="width:100%;height:480px;"></textarea>
         </div>
 
         <div class="states-list">
             <ul>
                 <li>FSM States</li>
-                <li v-for="sf in store.editorRtv.states" @dblclick="loadState(sf)"><button>{{ sf.getFileName()
-                }}</button></li>
+                <li v-for="sf in store.editorRtv.states" @dblclick="loadState(sf[1])"><button>
+                        {{  sf[1].getFileName()  }}
+                    </button></li>
             </ul>
 
         </div>
     </div>
 
     <div id="wksp-toolbox"></div>
-
 </template>
 
 <script lang="ts">
@@ -47,18 +47,16 @@ import 'codemirror/theme/dracula.css';
 import 'codemirror/mode/javascript/javascript.js';
 import { Project } from '@renderer/project';
 import Editor from '@renderer/components/Editor.vue';
+import StatesEditor from '@renderer/components/StatesEditor.vue';
 import { StateFile } from '../../../engine/statesmachine/stateFile';
-import { FiniteStateMachine } from '../../../engine/statesmachine/fsm';
-import { load } from 'core/serialization/workspaces';
+
 
 const fs = require('fs');
 
 let store: any;
 let workspaceBlocks;
-let currStateFile;
+let currStateFile: StateFile;
 let codeEditor: any;
-
-let loadState; // callback
 
 export default {
 
@@ -70,19 +68,8 @@ export default {
         store = inject('store');
 
         const saveState = () => {
-            const json = Blockly.serialization.workspaces.save(workspaceBlocks);
 
-            fs.writeFile(
-                Project.getStatesDir() + '/' + currStateFile.filename, JSON.stringify(json), err => {
-                    if (err) {
-                        alert("Une erreur c'est produite pendant la sauvegarde de StateA :\n\n" + err);
-                        console.log(err);
-                        return;
-                    }
-                }
-            );
-
-            updateStateCode();
+            Editor.methods.saveState();
         }
 
         const createState = () => {
@@ -94,29 +81,35 @@ export default {
 
             Editor.methods.addStateToList(stateFile);
 
-            loadState(stateFile);
+            this.methods.loadState(stateFile);
 
         }
 
-        const updateStateCode = () => {
+        return {
+            store,
+            saveState,
+            createState,
+        }
+    },
+    methods: {
 
-            // 1 : rechercher tous les états (dans chaques fsm) qui ont le state file en cours d'enregistrement
-            const finiteStateMachines = FiniteStateMachine.getAll();
-            let totalStates = 0;
-            for (const fsm of finiteStateMachines) {
-                for (const state of fsm.states) {
-                    if (state.statefile === currStateFile) {
-                        state.code = Blockly.JavaScript.workspaceToCode(workspaceBlocks);
-                        totalStates++;
+        saveState() {
+            const json = Blockly.serialization.workspaces.save(workspaceBlocks);
+
+            fs.writeFile(
+                Project.getStatesDir() + '/' + currStateFile.getFileName(), JSON.stringify(json), err => {
+                    if (err) {
+                        alert("Une erreur c'est produite pendant la sauvegarde de StateA :\n\n" + err);
+                        console.log(err);
+                        return;
                     }
                 }
-            }
-            alert("Le code du fichier " + currStateFile.filename + " a été modifié sur " + totalStates + " États");
-        };
+            );
+            StatesEditor.updateStateCode();
+        },
+        loadState(stateFile: StateFile, autoReplaceFile : boolean =false) {
 
-        loadState = (stateFile: StateFile) => {
-
-            store.editorMode.value = 'FSM_STATES';
+            //store.editorMode.value = 'FSM_STATES';
 
 
             store.statesEditorRtv.currStateFile = stateFile;
@@ -124,34 +117,88 @@ export default {
 
             currStateFile = store.statesEditorRtv.currStateFile;
 
-            console.log(store.statesEditorRtv.currStateFile);
+            //TODO : vérifier si il y a déjà un state ouvert dans l'éditeur avant de remplacer 
+            if(autoReplaceFile) {
+
+            }
 
             try {
-                //TODO : vérifier si il y a déjà un state ouvert dans l'éditeur avant de remplacer 
-                fs.readFile(Project.getStatesDir() + '/' + currStateFile.filename, 'utf8', (err, data) => {
+                fs.readFile(Project.getStatesDir() + '/' + currStateFile.getFileName(), 'utf8', (err, data) => {
                     if (err) {
                         console.error(err);
                         throw err;
                     }
-                    Blockly.serialization.workspaces.load(JSON.parse(data), workspaceBlocks);
+
+                    const json = JSON.parse(data);
+                    if (json.blocks === undefined || json.blocks.blocks === undefined) {
+                        console.warn(currStateFile.getFileName() + " has not blocks");
+                    } 
+                    
+                    Blockly.serialization.workspaces.load(json, workspaceBlocks);
+
+                    StatesEditor.updateStateCode();
 
                 });
             } catch (error) {
                 console.error(error);
-                alert("Une erreur c'est produite pendant l'ouverture de " + currStateFile.filename + " :\n\n" + error);
+                alert("Une erreur c'est produite pendant l'ouverture de " + currStateFile.getFileName() + " :\n\n" + error);
             }
 
-        };
 
-        return {
-            store,
-            saveState,
-            createState,
-            loadState
+
+        },
+        updateAllStateFilesCode() {
+            console.log("Updating states file code...");
+            // Mettre à jour le code dans les states files car pour le moment ont est obligé de passer
+            // par le biai d'un workspace pour générer le code javascript
+            // Attendre que le code soit changé avant de passer au suivant
+            // TODO : Améliorer le sysyème avec une promise dans loadstate
+
+            fs.readdir(Project.getStatesDir(), (err, files) => {
+                let timeToWait = 0;
+                let intervalTime = 200;
+                files.forEach((file: string) => {
+                    let stateFile: StateFile;
+                    stateFile = store.editorRtv.states.get(file);
+
+                    setTimeout(()=>{
+                        this.loadState(stateFile);
+                    },timeToWait)
+                    timeToWait += intervalTime;
+                    
+                });
+            });
+
+            // for (const sf of store.editorRtv.states) {
+            //     stateFile = sf[1];
+            //     this.loadState(stateFile);
+            // }
         }
     },
+    updateStateCode() 
+    {
+        let code = Blockly.JavaScript.workspaceToCode(workspaceBlocks);
+        if(code=="") {
+            code = "Debug.writeInConsole('WARN : "+currStateFile.getFileName()+" has not code (execution ignored)');";
+        }// convert to empty string code
 
+        currStateFile.outputCode = code;
+        console.log(currStateFile.getFileName() + " code updated");
 
+        // 1 : rechercher tous les états (dans chaques fsm) qui ont le state file en cours d'enregistrement
+        // const finiteStateMachines = FiniteStateMachine.getAll();
+        // let totalStates = 0;
+        // for (const fsm of finiteStateMachines) {
+        //     for (const state of fsm.states) {
+        //         console.log(state);
+        //         if (state.statefile.getFileName() === currStateFile.getFileName()) {
+        //             state.code = Blockly.JavaScript.workspaceToCode(workspaceBlocks);
+        //             totalStates++;
+        //         }
+        //     }
+        // }
+        // alert("Le code du fichier " + currStateFile.getFileName() + " a été modifié sur " + totalStates + " États");
+    },
     mounted() {
         console.log("states editor mounted");
         codeEditor = CodeMirror.fromTextArea(document.getElementById('code-editor') as HTMLTextAreaElement, {
@@ -275,12 +322,12 @@ export default {
         onResize();
         Blockly.svgResize(workspaceBlocks);
 
-
         //Cacher la première catégorie quand on edite un FSM State
         const getToolbox: any = workspaceBlocks.getToolbox();
         const fsmCategory = getToolbox.getToolboxItems()[0];
         fsmCategory.hide();
 
+        //store.editorMode.value = 'LEVEL';
 
     }
 }

@@ -17,6 +17,7 @@ export class Project {
         this.assetsFolder = dir+"/Assets";
         this.statesFolder = this.assetsFolder+"/FSM States";
         this.prefabsFolder = this.assetsFolder+"/Prefabs";
+
     }
 
     static getAssetsDir() {
@@ -34,6 +35,8 @@ export class Project {
         fs.mkdirSync(dir+"/Assets/Prefabs");
 
         this.createStateFile('StateA.json');
+
+
 
 
         // Copy state file

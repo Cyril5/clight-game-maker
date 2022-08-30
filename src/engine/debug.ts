@@ -10,9 +10,8 @@ export class Debug {
         return '../../../dist/src/debug.js';
     }
 
-    static writeInConsole(msg: string,color: string) {
+    static writeInConsole(msg: string,color: string='#ffffff') {
         const element = '<p style="color: '+color+'">'+msg+'</p>';
-        console.log(element);
         //@ts-ignore
         document.getElementById('console').innerHTML += element;
     }

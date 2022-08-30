@@ -17,10 +17,10 @@ const statesEditorRtv = reactive({
 });
 
 const editorRtv = reactive({
-    states: Array<StateFile>(), //States File
+    states: new Map<string, StateFile>(), //States File
 });
 
-const editorMode = ref('LEVEL'); // FSM_STATES, LEVEL, GAME_RUNNING
+const editorMode = ref('FSM_STATES'); // FSM_STATES, LEVEL, GAME_RUNNING
 const assetsDir = ref<string>();
 const selectedObj = ref<GameObject>();
 const currentFSM = ref<FiniteStateMachine>();

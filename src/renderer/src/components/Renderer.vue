@@ -7,9 +7,11 @@
 import { Debug } from '../../../engine/debug';
 import * as THREE from 'three';
 import { onMounted } from 'vue';
-import {GameObject} from '../../../engine/gameObject';
+import { GameObject } from '../../../engine/gameObject';
 
 import Stats from '../../../engine/jsm/libs/stats.module';
+import { Game } from '../../../engine/game';
+import { Mathf } from '../../../engine/math/mathf';
 
 
 let gameIsRunning = false;
@@ -49,8 +51,14 @@ export default {
     setup() {
         onMounted(initialize)
     },
+    stopGame() {
+        console.log("Engine game stoped");
+        clock.stop();
+        gameIsRunning = false;
+    },
     startGame() {
-        console.log("Engine game starts");
+        console.log("Engine game is running");
+
 
         for (const go of GameObject.gameObjects) {
             const value = go[1]; // map value
@@ -60,18 +68,17 @@ export default {
 
             console.log(value);
 
-            if(value.enabled) { // si l'objet est actif
+            if (value.enabled) { // si l'objet est actif
                 value.saveTransform();
-    
+
                 if (value.finiteStateMachines.length > 0) {
                     for (const fsm of value.finiteStateMachines) {
                         console.log(fsm);
                         if (fsm.enabled) {
                             fsm.start();
-                            console.log(fsm.getBaseState().code);
-                        }else{
+                        } else {
                             // TODO : callback qui lancera la fonction fsm.start quand la case enabled du fsm sera actif
-                            
+
                         }
                     }
                 }
@@ -121,7 +128,7 @@ function initialize() {
 
 
 
-function render() {
+const render = () => {
 
     if (renderer === undefined) {
         console.error('renderer is undefined');
@@ -132,17 +139,36 @@ function render() {
 }
 
 
-function animate(timestamp: any): void {
+const animate = (timestamp: any): void => {
 
     requestAnimationFrame(animate);
 
     stats.update();
     render();
 
-    // if (gameIsRunning) {
-    //     Game.deltaTime = this.clock.getDelta();
-    //     this.gameLoop();
-    // }
+    if (gameIsRunning) {
+        Game.deltaTime = clock.getDelta();
+        gameLoop();
+    }
+}
+
+const gameLoop = () => {
+    for (const go of GameObject.gameObjects) {
+        const value = go[1]; // map value
+
+        if (value.enabled) { // si l'objet est actif
+            if (value.finiteStateMachines.length > 0) {
+                for (const fsm of value.finiteStateMachines) {
+                    if (fsm.enabled) {
+                        fsm.update();
+                    } else {
+                        // TODO : callback qui lancera la fonction fsm.start quand la case enabled du fsm sera actif
+
+                    }
+                }
+            }
+        }
+    }
 }
 
 function onWindowResize() {

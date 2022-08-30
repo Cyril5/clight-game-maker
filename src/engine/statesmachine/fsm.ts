@@ -2,6 +2,7 @@
 import {State} from './state';
 import {GameObject} from '../gameObject';
 import Utils from '../utils';
+import { StateFile } from './stateFile';
 
     export class FiniteStateMachine {
     
@@ -30,14 +31,13 @@ import Utils from '../utils';
         }
 
         delete() {
-            Utils.removeElementFromArray(this,FiniteStateMachine.allInstances);
+            Utils.removeElementInArray(this,FiniteStateMachine.allInstances);
         }
 
-        addState(name:string='Nouvel Etat'):State {
+        addState(name:string='Nouvel Etat',statefile: StateFile | undefined):State {
 
-            let newState : State;
-            newState = new State(this,undefined);
-            newState.setProps(name,undefined);
+            const newState = new State(this,statefile);
+            newState.name = name;
 
             this.states.push(newState);
 
@@ -83,14 +83,6 @@ import Utils from '../utils';
             this._currState._leaveStateChecks();
             this._currState.onUpdateState();
         }
-    
-
-        // showCode() {
-        //     // Generate JavaScript code and display it.
-        //     (Blockly.JavaScript as any).INFINITE_LOOP_TRAP = null;
-        //     var code = (Blockly.JavaScript as any).workspaceToCode(demoWorkspace);
-        //     alert(code);
-        // }
     
     }
 

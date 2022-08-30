@@ -2,24 +2,25 @@
 
     <div id="fsm-editor" v-if="store.currentFSM.value">
         <div class="group" style="display: flex; justify-content: center;">
-            <h3 id="fsm-name" style="color: #fff;">{{ store.currentFSM.value.gameObject.name
-            }}->{{ store.currentFSM.value.name }}</h3>
+            <h3 id="fsm-name" style="color: #fff;">{{  store.currentFSM.value.gameObject.name 
+                }}->{{  store.currentFSM.value.name  }}</h3>
             <!-- <select name="fsm-states" id="fsm-states">
                 <option value="stateA">State A</option>
             </select> -->
         </div>
         <p>Double cliquez sur un état orange pour l'éditer</p>
 
-        {{store.editorRtv.states.length}}
+        {{ store.editorRtv.states.length }}
 
         <div class="statesArea">
             <button class="start">Départ</button>
             <div class="state" v-for="state in store.currentFSM.value.states">
                 =>
                 <input v-model="state.name" type="text" />
-                <select name="states" @change="setStateFileToState(state,$event)">
+                <select name="states" @change="setStateFileToState(state, $event)">
                     <option value="">--Aucun Fichier d'État--</option>
-                    <option v-for="(stateFile,index) in store.editorRtv.states" :value="index">{{ stateFile.getFileName() }}</option>
+                    <option v-for="(stateFile, index) in store.editorRtv.states" :value="stateFile[1].getFileName()">{{
+                         stateFile[1].getFileName()  }}</option> 
                 </select>
                 <button @click="editState(state)">Editer</button>
                 <button @click="removeState(state)">Retirer</button>
@@ -63,24 +64,36 @@ export default {
             store.currentFSM.value.addState();
         };
 
-        const setStateFileToState = (state : State,event) => {
+        const setStateFileToState = (state: State, event) => {
             console.log(event.target.value);
             const index = event.target.value;
-            state.statefile = store.editorRtv.states[index];
-            
-        }
 
-        const editState = (state : State) => {
+            const value = store.editorRtv.states.get(index);
 
             console.log(state);
 
-            if (state.statefile === undefined) {
+            if (value) {
+                state.statefile = value;
+                console.log(state.statefile.outputCode);
+            }else{
+                state.statefile = undefined;
+            }
+
+        }
+
+        const editState = (state: State) => {
+
+            console.log(state);
+
+            if (state.statefile === undefined || state.statefile.getFileName() == "") {
                 alert("L'état : '" + state.name + "' est relié à aucun fichier \n " +
                     "Pour relier un fichier a l'état: sélectionné le nom du fichier dans " +
                     "la liste déroulante de l'état. Sinon le créer dans l'éditeur d'états puis le relier");
                 return;
             }
-            StatesEditor.loadState(state.statefile);
+
+            store.editorMode.value = "FSM_STATES";
+            StatesEditor.methods.loadState(state.statefile,true);
         }
 
         const removeState = (state) => {

@@ -1,7 +1,8 @@
 export class StateFile {
 
     private filename : string;
-    private jsonData : any;
+    
+    outputCode : string = '';
 
     constructor(filename:string) {
         this.filename = filename;

@@ -7,7 +7,7 @@ export class DeltaTimeBlock {
 
     constructor() {
         const name = 'delta_time';
-        const code = Game.getVarClassName()+'.deltaTime';
+        const code = 'Game.deltaTime';
 
         Blockly.Blocks[name] = {
             init: function() {
