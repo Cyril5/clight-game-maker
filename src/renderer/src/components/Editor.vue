@@ -1,9 +1,9 @@
 <template>
     <div class="tabs">
-        <button @click="setEditorMode('LEVEL')" v-if="store.editorMode.value!='GAME_RUNNING'">Editeur de niveau</button>
+        <button @click="setEditorMode('LEVEL')" v-if="store.editorMode.value!='GAME_RUNNING'"><font-awesome-icon icon="fa-solid fa-chess-knight" /> Editeur de niveau</button>
         <button @click="setEditorMode('FSM_STATES')" v-if="store.editorMode.value!='GAME_RUNNING'">Editeur d'états</button>
-        <button id="startGameBtn" @click="startGame()" v-if="store.editorMode.value!='GAME_RUNNING'">Start</button>
-        <button id="stopGameBtn" @click="stopGame()">Stop</button>
+        <button id="startGameBtn" @click="startGame()" v-if="store.editorMode.value!='GAME_RUNNING'"><font-awesome-icon icon="fa-solid fa-play" /></button>
+        <button id="stopGameBtn" @click="stopGame()" v-if="store.editorMode.value=='GAME_RUNNING'"><font-awesome-icon icon="fa-solid fa-stop" /></button>
     </div>
 
     <div class="state-editor-tab" v-show="store.editorMode.value === 'FSM_STATES'"> 
@@ -30,11 +30,11 @@
             </div>
 
             <div class="left">
-                <button id="translateModeBtn" @click="setControlMode('Translate')">Pos</button>
-                <button id="rotateModeBtn" @click="setControlMode('Rotate')">Rot</button>
-                <button id="scaleModeBtn" @click="setControlMode('Scale')">Scale</button>
+                <button id="translateModeBtn" @click="setControlMode('Translate')"><font-awesome-icon icon="fa-solid fa-up-down-left-right" /></button>
+                <button id="rotateModeBtn" @click="setControlMode('Rotate')"><font-awesome-icon icon="fa-solid fa-rotate" /></button>
+                <button id="scaleModeBtn" @click="setControlMode('Scale')"><font-awesome-icon icon="fa-solid fa-maximize" /></button>
                 <button id="localSpaceBtn" @click="setSpace('local')">Local</button>
-                <button id="worldSpaceBtn" @click="setSpace('world')">Monde</button>
+                <button id="worldSpaceBtn" @click="setSpace('world')">Monde <font-awesome-icon icon="fa-solid fa-earth-europe" /></button>
 
 
                 <Renderer />
@@ -65,7 +65,8 @@
 
 <script lang="ts">
 
-import { reactive, ref, inject, onRenderTracked } from 'vue';
+
+import { reactive, ref, inject } from 'vue';
 
 import * as THREE from 'three';
 
@@ -139,8 +140,8 @@ export default {
         const selectObject = (gameObject: GameObject) => {
 
             if (gameObject != undefined) {
-                store.selectedObj.value = gameObject;
-                // store.currentFSM.value = store.selectedObj.value.finiteStateMachines[0];
+                store.editorRtv.selectedObj = gameObject;
+                // store.currentFSM.value = store.editorRtv.selectedObj.finiteStateMachines[0];
                 control.attach(gameObject);
             } else {
                 alert("object not found");
@@ -214,14 +215,14 @@ export default {
 
                 switch (control.mode) {
                     case ControlMode.Translate:
-                        this.transformComponent.position.copy(store.selectedObj.value.position);
+                        this.transformComponent.position.copy(store.editorRtv.selectedObj.position);
                         break;
 
                     case ControlMode.Rotate:
-                        this.transformComponent.rotation.copy(store.selectedObj.value.rotation);
+                        this.transformComponent.rotation.copy(store.editorRtv.selectedObj.rotation);
                         break;
                     case ControlMode.Scale:
-                        this.transformComponent.scale.copy(store.selectedObj.value.scale);
+                        this.transformComponent.scale.copy(store.editorRtv.selectedObj.scale);
                         break;
                 }
 
@@ -365,6 +366,10 @@ export default {
 .tabs {
     width: 100%;
     text-align: center;
+
+    #stopGameBtn {
+        background-color: red;
+    }
 
     button {
         background-color: green;

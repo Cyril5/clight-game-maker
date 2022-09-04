@@ -1,12 +1,12 @@
 <template>
-    <div class="properties-bar" v-if="store.selectedObj.value">
+    <div class="properties-bar" v-if="store.editorRtv.selectedObj">
 
         <div class="components">
-            <h2>{{ store.selectedObj.value.name }}</h2>
+            <h2>{{ store.editorRtv.selectedObj.name }}</h2>
             <input type="checkbox" name="" checked id="">Actif
-            <!-- <Transform :position="transform.position" :rotation="transform.rotation" :scale="transform.scale" /> -->
+            <TransformComponent/> 
 
-            <FSMComponent v-for="(item, index) in store.selectedObj.value.finiteStateMachines" :fsm="item" :index="index"/>
+            <FSMComponent v-for="(item, index) in store.editorRtv.selectedObj.finiteStateMachines" :fsm="item" :index="index"/>
 
             <button id="addFSMBtn" @click="addFSM">Ajouter une machine d'Etat sur l'objet</button>
         </div>
@@ -19,32 +19,28 @@
 </template>
 
 <script lang="ts">
-import Transform from "./Transform.vue";
-import FSMComponent from "./FSMComponent.vue";
-import GameObject from "../../../engine/gameObject";
-import { inject, ref } from "vue";
+import TransformComponent from "./editorcomponents/TransformComponent.vue";
+import FSMComponent from "./editorcomponents/FSMComponent.vue";
+import { inject } from "vue";
 
 export default {
 
     name: 'PropertiesBar',
     components: {
-        Transform,
+        TransformComponent,
         FSMComponent,
     },
     setup() {
         const store = inject('store');
         
         const addFSM = ()=> {
-            store.selectedObj.value.addFSM('Nouvel Automate Fini');
+            store.editorRtv.selectedObj.addFSM('Nouvel Automate Fini');
         }
 
         return {
             store,
             addFSM
         }
-    },
-    props: {
-        transform: null,
     },
 }
 </script>

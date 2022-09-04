@@ -1,6 +1,6 @@
 {
   "name": "lusine-game-maker",
-  "version": "0.0.1",
+  "version": "0.1.2a",
   "description": "An Electron application with Vue and TypeScript",
   "main": "./out/main/index.js",
   "author": "Cyril5",
@@ -17,15 +17,20 @@
     "build:linux": "npm run build && electron-builder --linux --config"
   },
   "dependencies": {
+    "@blockly/block-plus-minus": "^3.0.22",
     "@electron-toolkit/preload": "^1.0.1",
     "@electron-toolkit/utils": "^1.0.2",
     "@electron/remote": "^2.0.8",
+    "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/free-solid-svg-icons": "^6.2.0",
+    "@fortawesome/vue-fontawesome": "^3.0.1",
     "blockly": "^8.0.4",
     "codemirror": "^5.65.7",
     "electron-progressbar": "^2.0.1",
     "electron-promise-ipc": "^2.2.4",
     "electron-prompt": "^1.7.0",
     "electron-updater": "^4.6.5",
+    "path-browserify": "^1.0.1",
     "sass": "^1.54.4",
     "sass-loader": "^13.0.2",
     "three": "^0.143.0"

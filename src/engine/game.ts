@@ -3,10 +3,21 @@ import Renderer from '@renderer/components/Renderer.vue';
 
 import Editor from '@renderer/components/Editor.vue';
 import { GameObject } from "./gameObject";
-import { Car } from "../renderer/src/gameProjects/runTraffic/Assets/Prefabs/car";
+import { Car } from "../renderer/src/car";
 import { Mathf } from "./math/mathf";
 
 export class Game {
+
+  static instance : Game;
+
+  static getInstance() {
+    if(this.instance===undefined) {
+      this.instance = new Game();
+    }
+    return this.instance;
+  }
+
+  static deltaTime = 0;
 
     static getVarClassName() {
       return Game.name;
@@ -20,18 +31,19 @@ export class Game {
       Renderer.getMainScene().add(mesh);
     }
 
-    static deltaTime = 0;
 
-    constructor() {
+
+    private constructor() {
 
       try {
         // Importation des classes en dev pour l'execution des codes en temps réel
-        const classes = [GameObject, Mathf, Game];
+        const classes = [];
+        let t = 2000;
         for (const cls of classes) {
   
           //if (typeof (cls) === 'undefined') {
-          console.log('import ' + cls.name + ' class');
-          setTimeout(cls.toString(), 0);
+            setTimeout(cls.toString(),t);
+          t+=1000;
           //}
         }
       } catch (error) {
@@ -62,18 +74,18 @@ export class Game {
           Renderer.getMainScene().add(dirLight);
 
           const playerCarGO = new GameObject('Player Car');
-          const car: Car = new Car();
+          // const car: Car = new Car();
 
           playerCarGO.addFSM('PlayerCar State Machine');
           // le premier état est créer automatiquement
           playerCarGO.finiteStateMachines[0].getBaseState().name = "State A";
 
           
-          Renderer.getMainScene().add(car);
+          // Renderer.getMainScene().add(car);
           
-          car.scale.set(0.025, 0.025, 0.025);
+          // car.scale.set(0.025, 0.025, 0.025);
           
-          playerCarGO.attach(car);
+          // playerCarGO.attach(car);
           
           Renderer.getMainScene().add(playerCarGO);
           

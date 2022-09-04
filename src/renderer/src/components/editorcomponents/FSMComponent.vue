@@ -15,11 +15,9 @@
 
 <script lang="ts">
 
-import { GameObject } from '../../../engine/gameObject';
-import * as THREE from 'three';
-import { FiniteStateMachine } from '../../../engine/statesmachine/fsm';
-import FSMEditor from './FSMEditor.vue';
 import { inject } from 'vue';
+import FSMEditor from '../FSMEditor.vue';
+import { FiniteStateMachine } from '@engine/statesmachine/fsm';
 
 export default {
 
@@ -29,7 +27,7 @@ export default {
     },
     props:{
         index: 0,
-        fsm: FiniteStateMachine,
+        fsm: null,
     },
     setup(props : any) {
 

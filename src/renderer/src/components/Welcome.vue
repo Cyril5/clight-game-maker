@@ -32,7 +32,6 @@ import store from '@renderer/store/store';
 import Editor from './Editor.vue';
 import { Game } from '../../../engine/game';
 import { ref } from 'vue';
-import { StateFile } from '../../../engine/statesmachine/stateFile';
 import StatesEditor from './StatesEditor.vue';
 
 const fs = require('fs');
@@ -62,7 +61,7 @@ export default {
             store.assetsDir.value = Project.getAssetsDir();
             show.value = false;
             //Game.createGOTest();
-            new Game();
+            Game.getInstance(); // initialize a new game
             store.editorMode.value = 'LEVEL';
 
             try {
@@ -77,31 +76,16 @@ export default {
             Project.setDir(arg); // obligé de le refaire ici car cela ne fonctionne pas dans le main process d'electron
             store.assetsDir.value = Project.getAssetsDir();
             show.value = false;
-            new Game(); // TODO ouvrir un projet
+            Game.getInstance(); // TODO ouvrir un projet
             store.editorMode.value = 'LEVEL';
 
-            // Pour chaques fichier states dans le dossier Assets/FSM States
-            fs.readdir(Project.getStatesDir(), (err, files) => {
-
-                if (err) {
-                    console.error(err.message);
-                    alert(err.message);
-                    return;
-                }
-
-                let stateFile: StateFile;
-                for (const file of files) {
-                    console.log(file);
-                    stateFile = new StateFile(file);
-                    Editor.methods.addStateToList(stateFile);
-                }
-
-                try {
+            
+            try {
                     StatesEditor.methods.updateAllStateFilesCode();
                 } catch (err) {
                     alert("Erreur pendant la génération du code dans tous les états : \n" + err.message);
-                }
-            });
+            }
+
 
         });
 

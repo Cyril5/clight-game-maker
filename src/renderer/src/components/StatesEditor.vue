@@ -34,7 +34,9 @@
 <script lang="ts">
 import { inject } from 'vue';
 import Blockly from 'blockly';
-import '../../../engine/blocks/blocksDefs';
+import '@engine/blocks/blocksDefs';
+import '@blockly/block-plus-minus';
+import * as Fr from 'blockly/msg/fr';
 
 
 // //import DarkTheme from '../node_modules/@blockly/theme-dark/src/index.js';
@@ -50,7 +52,7 @@ import Editor from '@renderer/components/Editor.vue';
 import StatesEditor from '@renderer/components/StatesEditor.vue';
 import { StateFile } from '../../../engine/statesmachine/stateFile';
 
-
+const path = require('path');
 const fs = require('fs');
 
 let store: any;
@@ -74,14 +76,14 @@ export default {
 
         const createState = () => {
             console.log('creating state file');
-            const filename = 'State' + Project.lastStateFileId;
+            const filename = 'State' + Project.lastStateFileId+'.json';
             Project.createStateFile(filename);
 
-            const stateFile = new StateFile(filename + ".json");
+            const stateFile = new StateFile(filename);
 
             Editor.methods.addStateToList(stateFile);
 
-            this.methods.loadState(stateFile);
+            StatesEditor.methods.loadState(stateFile);
 
         }
 
@@ -107,23 +109,25 @@ export default {
             );
             StatesEditor.updateStateCode();
         },
-        loadState(stateFile: StateFile, autoReplaceFile : boolean =false) {
+        loadState(stateFile: StateFile, autoReplaceFile: boolean = false) {
 
             //store.editorMode.value = 'FSM_STATES';
 
 
             store.statesEditorRtv.currStateFile = stateFile;
 
-
+            
+            
             currStateFile = store.statesEditorRtv.currStateFile;
+            console.log(currStateFile);
 
             //TODO : vérifier si il y a déjà un state ouvert dans l'éditeur avant de remplacer 
-            if(autoReplaceFile) {
+            if (autoReplaceFile) {
 
             }
 
             try {
-                fs.readFile(Project.getStatesDir() + '/' + currStateFile.getFileName(), 'utf8', (err, data) => {
+                fs.readFile(path.join(Project.getStatesDir(), currStateFile.getFileName()), 'utf8', (err, data) => {
                     if (err) {
                         console.error(err);
                         throw err;
@@ -132,8 +136,8 @@ export default {
                     const json = JSON.parse(data);
                     if (json.blocks === undefined || json.blocks.blocks === undefined) {
                         console.warn(currStateFile.getFileName() + " has not blocks");
-                    } 
-                    
+                    }
+
                     Blockly.serialization.workspaces.load(json, workspaceBlocks);
 
                     StatesEditor.updateStateCode();
@@ -154,19 +158,32 @@ export default {
             // Attendre que le code soit changé avant de passer au suivant
             // TODO : Améliorer le sysyème avec une promise dans loadstate
 
+            // Pour chaques fichier states dans le dossier Assets/FSM States
             fs.readdir(Project.getStatesDir(), (err, files) => {
+
+                if (err) {
+                    console.error(err.message);
+                    alert(err.message);
+                    return;
+                }
+
                 let timeToWait = 0;
                 let intervalTime = 200;
-                files.forEach((file: string) => {
-                    let stateFile: StateFile;
-                    stateFile = store.editorRtv.states.get(file);
 
-                    setTimeout(()=>{
-                        this.loadState(stateFile);
-                    },timeToWait)
-                    timeToWait += intervalTime;
+                files.forEach((file: string) => {
                     
+                    console.log(file);
+                    let stateFile = new StateFile(file);
+                    Editor.methods.addStateToList(stateFile);
+                    //for (const sf of store.editorRtv.states) {
+                        setTimeout(() => {
+                            this.loadState(stateFile);
+                        }, timeToWait)
+                        timeToWait += intervalTime;
+                    //}
                 });
+
+
             });
 
             // for (const sf of store.editorRtv.states) {
@@ -175,11 +192,10 @@ export default {
             // }
         }
     },
-    updateStateCode() 
-    {
+    updateStateCode() {
         let code = Blockly.JavaScript.workspaceToCode(workspaceBlocks);
-        if(code=="") {
-            code = "Debug.writeInConsole('WARN : "+currStateFile.getFileName()+" has not code (execution ignored)');";
+        if (code == "") {
+            code = "Debug.writeInConsole('WARN : " + currStateFile.getFileName() + " has not code (execution ignored)');";
         }// convert to empty string code
 
         currStateFile.outputCode = code;
@@ -291,6 +307,7 @@ export default {
 
         const blocklyArea = document.getElementById("blocklyArea");
 
+        Blockly.setLocale(Fr);
 
         const state_workspace = document.getElementById("state_workspace") as string | Element;
 
@@ -326,6 +343,8 @@ export default {
         const getToolbox: any = workspaceBlocks.getToolbox();
         const fsmCategory = getToolbox.getToolboxItems()[0];
         fsmCategory.hide();
+
+
 
         //store.editorMode.value = 'LEVEL';
 

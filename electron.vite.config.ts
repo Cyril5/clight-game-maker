@@ -3,6 +3,7 @@ import { defineConfig } from 'electron-vite'
 import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
+
   main: {
     build: {
       rollupOptions: {
@@ -18,11 +19,16 @@ export default defineConfig({
     }
   },
   renderer: {
+    esbuild: {
+      minify: false,
+    },
     resolve: {
       alias: {
-        '@renderer': resolve('src/renderer/src')
+        '@renderer': resolve('src/renderer/src'),
+        '@engine' : resolve('src/engine'),
+        path: "path-browserify",
       }
     },
     plugins: [vue()]
-  }
+  },
 })

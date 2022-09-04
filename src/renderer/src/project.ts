@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-import stateA from './gameProjects/runTraffic/Assets/FSM States/stateA.json';
+import stateA from '../../gameProjects/runTraffic/Assets/FSM States/stateA.json';
 import baseStateFile from './assets/baseStateFile.json';
 
 export class Project {
@@ -12,11 +12,14 @@ export class Project {
     private static statesFolder = '';
     private static prefabsFolder = '';
 
+    private static path = require("path");
+
     static setDir(dir) {
+
         this.directory = dir;
-        this.assetsFolder = dir+"/Assets";
-        this.statesFolder = this.assetsFolder+"/FSM States";
-        this.prefabsFolder = this.assetsFolder+"/Prefabs";
+        this.assetsFolder = this.path.join(dir,"Assets");
+        this.statesFolder = this.path.join(this.assetsFolder,"FSM States");
+        this.prefabsFolder = this.path.join(this.assetsFolder,"Prefabs");
 
     }
 
@@ -28,24 +31,22 @@ export class Project {
         return this.statesFolder;
     }
 
-    static makeProjectAssets(dir) { // Appelé depuis le main process d'electron
-        fs.mkdirSync(dir);
-        fs.mkdirSync(dir+'/Assets');
-        fs.mkdirSync(dir+"/Assets/FSM States");
-        fs.mkdirSync(dir+"/Assets/Prefabs");
+    static makeProjectAssets() { // Appelé depuis le main process d'electron
+
+        fs.mkdirSync(this.directory);
+        fs.mkdirSync(this.assetsFolder); 
+        fs.mkdirSync(this.statesFolder);
+        fs.mkdirSync(this.prefabsFolder);
 
         this.createStateFile('StateA.json');
-
-
-
 
         // Copy state file
         //fs.copyFile(stateA,statesFolder)
     }
 
-    static createStateFile(name,data=JSON.stringify(baseStateFile)) {
+    static createStateFile(filename,data=JSON.stringify(baseStateFile)) {
         this.lastStateFileId++;
-        fs.writeFile(this.statesFolder+'/'+name+".json",data,(err,content)=>{
+        fs.writeFile(this.path.join(this.statesFolder,filename),data,(err,content)=>{
             if(err) throw err;
             return;
         });

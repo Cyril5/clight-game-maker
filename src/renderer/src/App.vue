@@ -5,6 +5,7 @@ import store from './store/store';
 import EditorVue from './components/Editor.vue';
 import WelcomeVue from './components/Welcome.vue';
 
+
 export default {
   components: {
     EditorVue,

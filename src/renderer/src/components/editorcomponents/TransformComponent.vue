@@ -4,13 +4,13 @@
         <div class="position" style="display: flex; justify-content: space-between;">
             <div class="content">
                 <label for="posx">X : </label>
-                <input type="number" step="0.1" id="posx" v-model="position.x">
+                <input type="number" step="0.1" id="posx" v-model="store.editorRtv.selectedObj.position.x">
                 <label for="posxy">Y :</label>
-                <input type="number" step="0.1" id="posy" v-model="position.y">
+                <input type="number" step="0.1" id="posy" @change="setPosX()"  v-model="store.editorRtv.selectedObj.position.y">
                 <label for="posez">Z : </label>
-                <input type="number" step="0.1" id="posz" v-model="position.z">
-                <p>{{position}}</p>
+                <input type="number" step="0.1" id="posz" v-model="store.editorRtv.selectedObj.position.z">
                 <h4>Position dans le monde</h4>
+                <p>{{store.editorRtv.selectedObj.getWorldPos()}}</p>
                 <!-- <p>{{obj.getWorldPos()}}</p> -->
             </div>
         </div>
@@ -18,51 +18,49 @@
                 <div class="rotation" style="display: flex; justify-content: space-between;">
             <div class="content">
                 <label for="posx">X : </label>
-                <input type="number" step="0.1" id="posx" v-model="rotation.x">
+                <input type="number" step="0.1" id="posx">
                 <label for="posx">Y :</label>
-                <input type="number" step="0.1" id="posy" v-model="rotation.y">
+                <input type="number" step="0.1" id="posy">
                 <label for="posx">Z : </label>
-                <input type="number" step="0.1" id="posz" v-model="rotation.z">
-                <p>{{rotation}}</p>
+                <input type="number" step="0.1" id="posz">
+                <p>{{}}</p>
             </div>
         </div>
                 <h3>Echelle</h3>
                 <div class="rotation" style="display: flex; justify-content: space-between;">
             <div class="content">
                 <label for="posx">X : </label>
-                <input type="number" step="0.01" id="posx" v-model="scale.x">
+                <input type="number" step="0.01" id="posx">
                 <label for="posx">Y :</label>
-                <input type="number" step="0.01" id="posy" v-model="scale.y">
+                <input type="number" step="0.01" id="posy">
                 <label for="posx">Z : </label>
-                <input type="number" step="0.01" id="posz" v-model="scale.z">
-                <p>{{scale}}</p>
+                <input type="number" step="0.01" id="posz">
+                <p>{{}}</p>
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-
-import {GameObject} from '../../../engine/gameObject';
-import * as THREE from 'three';
+import { inject } from 'vue';
 
 export default {
 
-    name: 'Editor',
+    
+    name: 'TransformComponent',
     components: {
     },
-
+    
     setup() {
+        const store = inject('store');
+
+        return {
+            store,
+        }
     },
     data() {
         return {
             }
-    },
-    props:{
-        obj: GameObject,
-        position: new THREE.Vector3(0,0,0),
-        rotation: new THREE.Vector3(0,0,0),
-        scale: new THREE.Vector3(1,1,1)
     },
     methods: {
         

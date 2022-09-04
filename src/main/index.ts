@@ -86,8 +86,9 @@ const createProject = (event : any) => {
             });
 
           projectDirectory = path.join(currDir,r);
-
-          Project.makeProjectAssets(projectDirectory);
+          
+          Project.setDir(projectDirectory);
+          Project.makeProjectAssets();
 
           progressBar.setCompleted();
 

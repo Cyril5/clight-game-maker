@@ -1,10 +1,11 @@
-import {GameObject} from "../../../../../../engine/gameObject";
-import { Mathf } from "../../../../../../engine/math/mathf";
-import { Random } from "../../../../../../engine/math/random.js";
-import { Wheel } from "./wheel.js";
+import { Mathf } from "@engine/math/mathf";
+import { Random } from "@engine/math/random";
+import { Wheel } from "../../gameProjects/runTraffic/Assets/Prefabs/wheel.js";
 import * as THREE from "three";
+import {GameObject} from "@engine/gameObject";
 
-class Car extends GameObject { 
+
+export class Car extends GameObject { 
 
     constructor() {
         super('Car Group');
@@ -107,5 +108,3 @@ class Car extends GameObject {
         return new THREE.CanvasTexture(canvas);
     }
 }
-
-export { Car };
