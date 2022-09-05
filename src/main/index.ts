@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, Menu, dialog } from 'electron'
 import * as path from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 
@@ -192,3 +192,57 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+
+const menu = Menu.buildFromTemplate([
+  {
+    label: "Fichier",
+    submenu: [
+      {
+        label: "Nouveau Projet",
+        click: ()=>{
+
+        },
+      },
+      {
+        label: "Ouvrir Projet",
+        click: ()=>{
+
+        },
+        accelerator: "CmdOrCtrl+O"
+      }
+    ]
+  },
+  {
+    label: "Ajouter un objet",
+    submenu: [
+      {
+        label: "Model 3D",
+        click: ()=>{
+          mainWindow.webContents.send("addObjectOfType","3D_MODEL");
+        },
+      },
+      {
+        label: "Programmable",
+        click: ()=>{
+
+        },
+      }
+    ]
+  },
+  {
+    label: "Debug",
+    submenu: [
+      { role: 'reload' },
+      { role: 'forceReload' },
+      { role: 'toggleDevTools' },
+      { type: 'separator' },
+      { role: 'resetZoom' },
+      { role: 'zoomIn' },
+      { role: 'zoomOut' },
+      { type: 'separator' },
+      { role: 'togglefullscreen' }
+    ]
+  }
+]);
+
+Menu.setApplicationMenu(menu);

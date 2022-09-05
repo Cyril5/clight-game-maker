@@ -18,7 +18,7 @@ export class GameObject extends THREE.Object3D {
             World: 1
         }
         
-        group = new THREE.Group();
+
         private worldPosition  = new THREE.Vector3();
 
         static gameObjects = new Map(); // private map(int, GameObject)
@@ -35,15 +35,16 @@ export class GameObject extends THREE.Object3D {
                 alert("GameObject id already exists in gameObjects map");
             
             this.name = name;
+            // this.group.name = 'Group';
             
-            const geometry = new THREE.BoxGeometry(1, 1, 1);
-            const material = new THREE.MeshPhongMaterial({ color: 0x119999 });
-            const cube = new THREE.Mesh(geometry, material);
-            cube.position.y = 0.5;
-            this.group.add(cube);
+            // const geometry = new THREE.BoxGeometry(1, 1, 1);
+            // const material = new THREE.MeshPhongMaterial({ color: 0x119999 });
+            // const cube = new THREE.Mesh(geometry, material);
+            // cube.position.y = 0.5;
+            // this.group.add(cube);
             
     
-            this.add(this.group);
+            // this.add(this.group);
     
         }
 

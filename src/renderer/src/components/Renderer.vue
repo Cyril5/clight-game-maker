@@ -12,6 +12,7 @@ import { GameObject } from '../../../engine/gameObject';
 import Stats from '../../../engine/jsm/libs/stats.module';
 import { Game } from '../../../engine/game';
 import { Mathf } from '../../../engine/math/mathf';
+import { ProgrammableGO } from '@engine/entities/programmablego';
 
 
 let gameIsRunning = false;
@@ -61,6 +62,11 @@ export default {
 
 
         for (const go of GameObject.gameObjects) {
+
+            if(!(go instanceof ProgrammableGO)) {
+                continue;
+            }
+
             const value = go[1]; // map value
 
             // if(!value.enabled)

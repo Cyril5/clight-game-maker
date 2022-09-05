@@ -1,40 +1,50 @@
 <template>
     <div class="tabs">
-        <button @click="setEditorMode('LEVEL')" v-if="store.editorMode.value!='GAME_RUNNING'"><font-awesome-icon icon="fa-solid fa-chess-knight" /> Editeur de niveau</button>
-        <button @click="setEditorMode('FSM_STATES')" v-if="store.editorMode.value!='GAME_RUNNING'">Editeur d'états</button>
-        <button id="startGameBtn" @click="startGame()" v-if="store.editorMode.value!='GAME_RUNNING'"><font-awesome-icon icon="fa-solid fa-play" /></button>
-        <button id="stopGameBtn" @click="stopGame()" v-if="store.editorMode.value=='GAME_RUNNING'"><font-awesome-icon icon="fa-solid fa-stop" /></button>
+        <button @click="setEditorMode('LEVEL')" v-if="store.editorMode.value!='GAME_RUNNING'">
+            <font-awesome-icon icon="fa-solid fa-chess-knight" /> Editeur de niveau
+        </button>
+        <button @click="setEditorMode('FSM_STATES')" v-if="store.editorMode.value!='GAME_RUNNING'">Editeur
+            d'états</button>
+        <button id="startGameBtn" @click="startGame()" v-if="store.editorMode.value!='GAME_RUNNING'">
+            <font-awesome-icon icon="fa-solid fa-play" />
+        </button>
+        <button id="stopGameBtn" @click="stopGame()" v-if="store.editorMode.value=='GAME_RUNNING'">
+            <font-awesome-icon icon="fa-solid fa-stop" />
+        </button>
     </div>
 
-    <div class="state-editor-tab" v-show="store.editorMode.value === 'FSM_STATES'"> 
+    <div class="state-editor-tab" v-show="store.editorMode.value === 'FSM_STATES'">
         <StatesEditor />
     </div>
 
-    <div class="level-editor-tab" v-show="store.editorMode.value === 'LEVEL' || store.editorMode.value === 'GAME_RUNNING'">
+    <div class="level-editor-tab"
+        v-show="store.editorMode.value === 'LEVEL' || store.editorMode.value === 'GAME_RUNNING'">
         <div class="container">
 
             <div id="objectsList">
-                <h2>Objets</h2>
-                <!-- <h2>SIZE : {{gameObjectsLstRef}}</h2> -->
-
-                <!-- <h2 v-if="objARef">TEST : {{objARef.name}}</h2> -->
-
-                <div v-for="[key, go] in gameObjectsLstRef">
+                <ObjectsList />
+                <!-- <div v-for="[key, go] in gameObjectsLstRef">
                     <button v-if="go.parent.type === 'Scene'" @click="selectObject(go)">{{ go.name }} (ID:
                         {{ go.id }})</button>
                     <button class="child" v-for="child in go.children" @click="selectObject(child)">{{ child.name
                     }}</button>
-                </div>
-
-                <!-- <button v-if="objARef.value" @click="selectObjectA()">{{ objARef.value.name }}</button> -->
+                </div> -->
             </div>
 
             <div class="left">
-                <button id="translateModeBtn" @click="setControlMode('Translate')"><font-awesome-icon icon="fa-solid fa-up-down-left-right" /></button>
-                <button id="rotateModeBtn" @click="setControlMode('Rotate')"><font-awesome-icon icon="fa-solid fa-rotate" /></button>
-                <button id="scaleModeBtn" @click="setControlMode('Scale')"><font-awesome-icon icon="fa-solid fa-maximize" /></button>
+                <button id="translateModeBtn" @click="setControlMode('Translate')">
+                    <font-awesome-icon icon="fa-solid fa-up-down-left-right" />
+                </button>
+                <button id="rotateModeBtn" @click="setControlMode('Rotate')">
+                    <font-awesome-icon icon="fa-solid fa-rotate" />
+                </button>
+                <button id="scaleModeBtn" @click="setControlMode('Scale')">
+                    <font-awesome-icon icon="fa-solid fa-maximize" />
+                </button>
                 <button id="localSpaceBtn" @click="setSpace('local')">Local</button>
-                <button id="worldSpaceBtn" @click="setSpace('world')">Monde <font-awesome-icon icon="fa-solid fa-earth-europe" /></button>
+                <button id="worldSpaceBtn" @click="setSpace('world')">Monde
+                    <font-awesome-icon icon="fa-solid fa-earth-europe" />
+                </button>
 
 
                 <Renderer />
@@ -43,7 +53,7 @@
 
             <div class="right">
 
-                <PropertiesBar :transform="transformComponent" />
+                <PropertiesBar />
 
             </div>
 
@@ -66,7 +76,7 @@
 <script lang="ts">
 
 
-import { reactive, ref, inject } from 'vue';
+import { ref, inject } from 'vue';
 
 import * as THREE from 'three';
 
@@ -78,8 +88,11 @@ import Renderer from './Renderer.vue';
 import PropertiesBar from './PropertiesBar.vue';
 import FSMEditor from './FSMEditor.vue';
 import StatesEditor from './StatesEditor.vue';
-import { Debug } from '../../../engine/debug';
-import { StateFile } from '../../../engine/statesmachine/stateFile';
+import ObjectsList from './ObjectsList.vue';
+
+import { Debug } from '@engine/debug';
+import { StateFile } from '@engine/statesmachine/stateFile';
+import IPCRenderersEditor from '@renderer/ipc-renderers-editor';
 
 let store: any;
 
@@ -111,42 +124,26 @@ export default {
 
     name: 'Editor',
     components: {
-        Renderer // obtenir l'instance de renderer
-        ,
-        PropertiesBar,
-        FSMEditor,
-        StatesEditor,
-    },
+    Renderer // obtenir l'instance de renderer
+    ,
+    PropertiesBar,
+    FSMEditor,
+    StatesEditor,
+    ObjectsList
+},
     setup() {
 
         objARef = ref<GameObject>();
-        gameObjectsLstRef = ref();
 
         store = inject('store');
 
         console.log("setup editor");
 
 
-        //return { count, controlRef, selectedObjectState }
-        // const transformRtv = reactive({
-        //     position: new THREE.Vector3,
-        // })
-        let transformComponent = reactive({
-            position: new THREE.Vector3(0, 0, 0),
-            rotation: new THREE.Vector3(0, 0, 0),
-            scale: new THREE.Vector3(1, 1, 1),
-        });
+        // const selectObject = (gameObject: GameObject) => {
 
-        const selectObject = (gameObject: GameObject) => {
-
-            if (gameObject != undefined) {
-                store.editorRtv.selectedObj = gameObject;
-                // store.currentFSM.value = store.editorRtv.selectedObj.finiteStateMachines[0];
-                control.attach(gameObject);
-            } else {
-                alert("object not found");
-            }
-        }
+        //     this.methods.selectObject(gameObject);
+        // }
 
         const startGame = () => {
             store.editorMode.value = "GAME_RUNNING";
@@ -164,11 +161,13 @@ export default {
             store.editorMode.value = mode;
         }
 
+        new IPCRenderersEditor();
+
+
+
         return {
             store,
             objARef,
-            transformComponent,
-            selectObject,
             setEditorMode,
             startGame,
             stopGame,
@@ -180,12 +179,21 @@ export default {
         setObjARef(go: GameObject) {
             objARef.value = go;
         },
-        getObjBRef() { return objBRef },
-
+        selectObject(gameObject: GameObject) {
+            if (gameObject != undefined) {
+                store.editorRtv.selectedObj = gameObject;
+                // store.currentFSM.value = store.editorRtv.selectedObj.finiteStateMachines[0];
+                control.attach(gameObject);
+            } else {
+                alert("object not found");
+            }
+        },
         addStateToList(stateFile: StateFile) { // Ajoute un state à la liste global des états
             store.editorRtv.states.set(stateFile.getFileName(),stateFile);
         },
-
+        setParentToObject(source:GameObject,parent:GameObject) {
+            source.parent = parent;
+        },
         initEditor() {
 
             const renderer = Renderer.getRenderer();
@@ -210,22 +218,6 @@ export default {
             // control.addEventListener('change', engine.render);
             control.addEventListener('dragging-changed', (event: any) => {
                 orbit.enabled = !event.value;
-            });
-            control.addEventListener('objectChange', (event: any) => {
-
-                switch (control.mode) {
-                    case ControlMode.Translate:
-                        this.transformComponent.position.copy(store.editorRtv.selectedObj.position);
-                        break;
-
-                    case ControlMode.Rotate:
-                        this.transformComponent.rotation.copy(store.editorRtv.selectedObj.rotation);
-                        break;
-                    case ControlMode.Scale:
-                        this.transformComponent.scale.copy(store.editorRtv.selectedObj.scale);
-                        break;
-                }
-
             });
 
             control.setSize(1.5);
@@ -273,11 +265,6 @@ export default {
     mounted() {
         console.log("Editor mounted");
         this.initEditor();
-
-        // A Améliorer
-        setInterval(() => {
-            gameObjectsLstRef.value = new Map(GameObject.gameObjects);
-        }, 1000)
 
         window.addEventListener('error', (event) => {
             Debug.writeInConsole(event.type + ' ' + event.message, '#ff0000');

@@ -3,8 +3,10 @@ import Renderer from '@renderer/components/Renderer.vue';
 
 import Editor from '@renderer/components/Editor.vue';
 import { GameObject } from "./gameObject";
-import { Car } from "../renderer/src/car";
+import { Car } from "../gameProjects/runTraffic/Assets/Prefabs/car";
 import { Mathf } from "./math/mathf";
+import { ProgrammableGO } from "./entities/programmablego";
+import { Model } from "./entities/model";
 
 export class Game {
 
@@ -73,23 +75,23 @@ export class Game {
           dirLight.shadow.camera.right = 120;
           Renderer.getMainScene().add(dirLight);
 
-          const playerCarGO = new GameObject('Player Car');
-          // const car: Car = new Car();
+          const playerCarGO = new ProgrammableGO('Programmable Object');
+          const carModel: Model = new Model();
 
           playerCarGO.addFSM('PlayerCar State Machine');
           // le premier état est créer automatiquement
           playerCarGO.finiteStateMachines[0].getBaseState().name = "State A";
 
           
-          // Renderer.getMainScene().add(car);
+          Renderer.getMainScene().add(carModel);
           
           // car.scale.set(0.025, 0.025, 0.025);
           
-          // playerCarGO.attach(car);
+          playerCarGO.attach(carModel);
           
           Renderer.getMainScene().add(playerCarGO);
           
-          Editor.methods.setObjARef(playerCarGO);
+          //Editor.methods.setObjARef(playerCarGO);
           
 
           // Editor.methods.getObjBRef().value = car;

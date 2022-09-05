@@ -1,6 +1,6 @@
 import { Mathf } from "@engine/math/mathf";
 import { Random } from "@engine/math/random";
-import { Wheel } from "../../gameProjects/runTraffic/Assets/Prefabs/wheel.js";
+import { Wheel } from "./wheel.js";
 import * as THREE from "three";
 import {GameObject} from "@engine/gameObject";
 

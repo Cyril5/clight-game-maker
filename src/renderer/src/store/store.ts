@@ -16,7 +16,7 @@ const statesEditorRtv = reactive({
 });
 
 const editorRtv = reactive({
-    selectedObj: GameObject,
+    selectedObj: null,
     states: new Map<string, StateFile>(), //States File
 });
 
