@@ -1,6 +1,15 @@
 # lusine-game-maker
 
 An Electron application with Vue and TypesSript
+Lusine Game Maker 3D - Alpha 0.1 by Cyril5
+
+## Librairies utilisés
+- ElectronJS
+- Vue 3 with Vite 2
+- ThreeJS
+- Google Blockly
+- Codemirror 5
+- he-tree v.2 :  https://hetree.phphe.com/v2/
 
 ## Recommended IDE Setup
 

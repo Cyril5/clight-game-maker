@@ -2,7 +2,7 @@
 
     <div id="fsm-editor" v-if="store.currentFSM.value">
         <div class="group" style="display: flex; justify-content: center;">
-            <h3 id="fsm-name" style="color: #fff;">{{  store.currentFSM.value.gameObject.name 
+            <h3 id="fsm-name" style="color: #fff;">{{  store.currentFSM.value.gameObject.transform.name 
                 }}->{{  store.currentFSM.value.name  }}</h3>
             <!-- <select name="fsm-states" id="fsm-states">
                 <option value="stateA">State A</option>
@@ -48,9 +48,9 @@
 <script lang="ts">
 import { inject } from 'vue';
 
-import { GameObject } from '../../../engine/gameObject';
+import { GameObject } from '@engine/gameObject';
 import StatesEditor from '@renderer/components/StatesEditor.vue';
-import { State } from '../../../engine/statesmachine/state';
+import { State } from '@engine/statesmachine/state';
 
 let store;
 const fs = require('fs');

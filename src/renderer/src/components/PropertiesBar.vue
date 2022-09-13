@@ -2,11 +2,9 @@
     <div class="properties-bar" v-if="store.editorRtv.selectedObj">
 
         <div class="components">
-            <h2>{{ store.editorRtv.selectedObj.name }}</h2>
             <input type="checkbox" name="" checked id="">Actif
-
-            <input type="number" step="1" id="parentid" @change="setParentId($event)">
-            <label for="parentid">Parent ID :</label>
+            <!-- <input type="number" step="1" id="parentid" @change="setParentId($event)">
+            <label for="parentid">Parent ID :</label> -->
             <TransformComponent/> 
 
             <FSMComponent v-for="(item, index) in store.editorRtv.selectedObj.finiteStateMachines" :fsm="item" :index="index"/>
@@ -28,7 +26,7 @@ import Renderer from "./Renderer.vue";
 import { inject } from "vue";
 import Editor from "./Editor.vue";
 import store from "@renderer/store/store";
-import { GameObject } from "@engine/gameObject";
+// import { GameObject } from "@engine/gameObject";
 
 export default {
 
@@ -44,23 +42,23 @@ export default {
             store.editorRtv.selectedObj.addFSM('Nouvel Automate Fini');
         }
 
-        const setParentId = (event)=>{
-            const id : number = event.target.value;
-            console.log(id);
-            const parent = GameObject.getById(id);
-            console.log(parent);
-            if(id > 0 && parent) {
-                Editor.methods.setParentToObject(store.editorRtv.selectedObj,parent);
-            }else{
-                store.editorRtv.selectedObj.parent = Renderer.getMainScene();
-            }
+        // const setParentId = (event)=>{
+        //     const id : number = event.target.value;
+        //     console.log(id);
+        //     const parent = GameObject.getById(id);
+        //     console.log(parent);
+        //     if(id > 0 && parent) {
+        //         Editor.methods.setParentToObject(store.editorRtv.selectedObj,parent);
+        //     }else{
+        //         store.editorRtv.selectedObj.parent = Renderer.getMainScene();
+        //     }
 
-        }
+        // }
 
         return {
             store,
             addFSM,
-            setParentId,
+            // setParentId,
         }
     },
 }

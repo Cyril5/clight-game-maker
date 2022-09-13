@@ -19,10 +19,20 @@ ipcMain.handle("openProject", async(event)=>{
   return await openProject(event);
 });
 
+ipcMain.handle("exitApp",(event)=>{
+  app.quit();
+});
+
 const openProject = (event: any) =>{
   return new Promise<void>((resolve)=>{
 
     dialog.showOpenDialog({ properties: ['openDirectory'] }).then(result => {
+      
+      if(result.canceled)
+      {
+        console.log('user cancelled');
+        return;
+      }
       projectDirectory = result.filePaths[0];
 
       // Checker si c'est un projet valid
@@ -87,8 +97,9 @@ const createProject = (event : any) => {
 
           projectDirectory = path.join(currDir,r);
           
-          Project.setDir(projectDirectory);
-          Project.makeProjectAssets();
+          // BUG : [rollup-plugin-dynamic-import-variables] Unexpected token (1:0)
+          // Project.setDir(projectDirectory);
+          // Project.makeProjectAssets();
 
           progressBar.setCompleted();
 
@@ -134,8 +145,8 @@ function createWindow(): void {
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       nodeIntegration: true,
-      enableRemoteModule:true,
       contextIsolation: false,
+      enableRemoteModule:true,
     }
   })
 
@@ -209,6 +220,13 @@ const menu = Menu.buildFromTemplate([
 
         },
         accelerator: "CmdOrCtrl+O"
+      },
+      {
+        label: "Enregistrer Projet",
+        click: ()=>{
+          mainWindow.webContents.send("saveProject");
+        },
+        accelerator: "CmdOrCtrl+S"
       }
     ]
   },

@@ -40,7 +40,7 @@ import * as Fr from 'blockly/msg/fr';
 
 
 // //import DarkTheme from '../node_modules/@blockly/theme-dark/src/index.js';
-import LusineBlocksDarkTheme from '../../../engine/blocks/themes/lusine-gm-dark'
+import LusineBlocksDarkTheme from '@engine/blocks/themes/lusine-gm-dark'
 import toolboxXml from '../assets/blocks/toolbox.xml?raw'; // ?raw to import as string
 
 import * as CodeMirror from 'codemirror';
@@ -50,7 +50,7 @@ import 'codemirror/mode/javascript/javascript.js';
 import { Project } from '@renderer/project';
 import Editor from '@renderer/components/Editor.vue';
 import StatesEditor from '@renderer/components/StatesEditor.vue';
-import { StateFile } from '../../../engine/statesmachine/stateFile';
+import { StateFile } from '@engine/statesmachine/stateFile';
 
 const path = require('path');
 const fs = require('fs');

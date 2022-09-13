@@ -19,8 +19,7 @@ import { StateFile } from './stateFile';
         private _currState:State | undefined;
         
         gameObject; // le gameObject relié au FSM
-    
-    
+
         constructor(name :string, gameObject : GameObject) {
             this.name = name;
             // INIT VARS (avant le new state)
@@ -30,11 +29,22 @@ import { StateFile } from './stateFile';
             FiniteStateMachine.allInstances.push(this);
         }
 
+        serialize() {
+            let statesJSON : Array<any> = [];
+            for (const state of this.states) {
+                statesJSON.push(state.serialize());
+            }
+
+            return {
+                "states": statesJSON,
+            }
+        }
+
         delete() {
             Utils.removeElementInArray(this,FiniteStateMachine.allInstances);
         }
 
-        addState(name:string='Nouvel Etat',statefile: StateFile | undefined):State {
+        addState(name:string='Nouvel Etat',statefile?: StateFile | undefined):State {
 
             const newState = new State(this,statefile);
             newState.name = name;

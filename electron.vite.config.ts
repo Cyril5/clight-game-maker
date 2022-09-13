@@ -19,13 +19,13 @@ export default defineConfig({
     }
   },
   renderer: {
-    esbuild: {
-      minify: false,
-    },
+    // esbuild: {
+    //   minify: false,
+    // },
     resolve: {
       alias: {
         '@renderer': resolve('src/renderer/src'),
-        '@engine' : resolve('src/engine'),
+        '@engine': resolve('src/engine'),
         path: "path-browserify",
       }
     },

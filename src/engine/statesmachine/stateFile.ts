@@ -16,7 +16,9 @@ export class StateFile {
 
     }
 
-    rename() {
-
+    serialize() {
+        return {
+            "filename": this.filename,
+        }
     }
 }

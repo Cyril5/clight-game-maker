@@ -4,15 +4,14 @@
 
 <script lang="ts">
 
-import { Debug } from '../../../engine/debug';
 import * as THREE from 'three';
 import { onMounted } from 'vue';
-import { GameObject } from '../../../engine/gameObject';
 
-import Stats from '../../../engine/jsm/libs/stats.module';
-import { Game } from '../../../engine/game';
-import { Mathf } from '../../../engine/math/mathf';
+import { GameObject } from '@engine/gameObject';
+import Stats from '@engine/jsm/libs/stats.module';
 import { ProgrammableGO } from '@engine/entities/programmablego';
+import { Game } from '@engine/game';
+import { RendererManager } from '@renderer/rendererManager';
 
 
 let gameIsRunning = false;
@@ -33,19 +32,6 @@ export default {
     components: {
 
     },
-    data() {
-        return {
-        }
-    },
-    getCamera() {
-        return camera;
-    },
-    getRenderer(): THREE.WebGLRenderer {
-        return renderer;
-    },
-    getMainScene(): THREE.Scene {
-        return scene;
-    },
     updateRender(): void {
         render();
     },
@@ -62,10 +48,6 @@ export default {
 
 
         for (const go of GameObject.gameObjects) {
-
-            if(!(go instanceof ProgrammableGO)) {
-                continue;
-            }
 
             const value = go[1]; // map value
 
@@ -99,6 +81,7 @@ export default {
 
 function initialize() {
 
+
     console.log("renderer mounted");
 
 
@@ -107,6 +90,9 @@ function initialize() {
 
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(sizeX, sizeY);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.5;
     renderer.shadowMap.enabled = true;
 
     console.log(renderer.domElement);
@@ -121,41 +107,50 @@ function initialize() {
 
     if (rendererDom) {
         rendererDom.appendChild(stats.dom);
+        stats.dom.id = 'stats';
+        stats.dom.style = '';
         rendererDom.appendChild(renderer.domElement);
     } else {
         console.error('renderer dom id not found');
     }
     window.addEventListener('resize', onWindowResize);
 
-
     animate(undefined);
+
+    new RendererManager(renderer,camera,scene);
+
 
 }
 
-
-
+let then = 0;
 const render = () => {
 
     if (renderer === undefined) {
         console.error('renderer is undefined');
         return;
     }
-    // console.log('render');
+
     renderer.render(scene, camera);
+
 }
 
 
-const animate = (timestamp: any): void => {
+const animate = (now) => {
 
-    requestAnimationFrame(animate);
-
-    stats.update();
     render();
+    stats.update();
 
     if (gameIsRunning) {
-        Game.deltaTime = clock.getDelta();
+        Game.time = now * 0.001; // convert to seconds
+        // make sure delta time isn't too big.
+        Game.deltaTime = Math.min(Game.time - then, 1 / 20);
+
+        then = now;
         gameLoop();
     }
+
+
+    requestAnimationFrame(animate);
 }
 
 const gameLoop = () => {
@@ -185,3 +180,13 @@ function onWindowResize() {
 
 
 </script>
+<style lang="scss">
+#renderer {
+    position: relative;
+
+    #stats {
+        position: absolute;
+        margin: 1px;
+    }
+}
+</style>

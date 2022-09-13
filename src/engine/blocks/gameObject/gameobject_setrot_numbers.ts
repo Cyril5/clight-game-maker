@@ -54,7 +54,7 @@ export class GameObjectSetRotationNumbersBlock {
       const eulerY = Mathf.getVarClassName()+'.degToRad('+value_degy+')';
       const eulerZ = Mathf.getVarClassName()+'.degToRad('+value_degz+')';
 
-      var code = value_obj+'.rotation.set('+eulerX+','+eulerY+','+eulerZ+');\n';
+      var code = value_obj+'.transform.rotation.set('+eulerX+','+eulerY+','+eulerZ+');\n';
       return code;
     };
   }

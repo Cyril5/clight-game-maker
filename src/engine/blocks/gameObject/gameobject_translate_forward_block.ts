@@ -1,4 +1,4 @@
-import { LusineBlock } from "../lusineBlock.js";
+import { LusineBlock } from "../lusineBlock.js.js";
 import Blockly from 'blockly';
 import BlocklyJS from 'blockly/javascript';
 
@@ -36,7 +36,7 @@ export class GameObjectTranslateForwardBlock {
           var value_obj = BlocklyJS.valueToCode(block, 'OBJ', BlocklyJS.ORDER_ATOMIC);
           var value_distz = BlocklyJS.valueToCode(block, 'DISTZ', BlocklyJS.ORDER_ATOMIC);
           // TODO: Assemble JavaScript into code variable.
-          var code = value_obj+".translateZ("+value_distz+");\n";
+          var code = value_obj+".transform.translateZ("+value_distz+");\n";
           return code;
         };
     }

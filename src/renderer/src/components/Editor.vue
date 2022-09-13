@@ -21,14 +21,8 @@
         v-show="store.editorMode.value === 'LEVEL' || store.editorMode.value === 'GAME_RUNNING'">
         <div class="container">
 
-            <div id="objectsList">
+            <div id="objectsList" v-if="store.editorMode.value!='GAME_RUNNING'">
                 <ObjectsList />
-                <!-- <div v-for="[key, go] in gameObjectsLstRef">
-                    <button v-if="go.parent.type === 'Scene'" @click="selectObject(go)">{{ go.name }} (ID:
-                        {{ go.id }})</button>
-                    <button class="child" v-for="child in go.children" @click="selectObject(child)">{{ child.name
-                    }}</button>
-                </div> -->
             </div>
 
             <div class="left">
@@ -51,14 +45,14 @@
 
             </div>
 
-            <div class="right">
+            <div class="right" v-show="store.editorMode.value!='GAME_RUNNING'">
 
                 <PropertiesBar />
 
             </div>
 
         </div>
-        <FSMEditor />
+        <FSMEditor v-show="store.editorMode.value!='GAME_RUNNING'"/>
 
     </div>
 
@@ -76,23 +70,24 @@
 <script lang="ts">
 
 
-import { ref, inject } from 'vue';
+import { inject } from 'vue';
 
 import * as THREE from 'three';
 
 import { GameObject } from '../../../engine/gameObject';
-import { OrbitControls } from '../../../engine/jsm/controls/OrbitControls';
-import { TransformControls } from '../../../engine/jsm/controls/TransformControls';
+import { OrbitControls } from '@engine/jsm/controls/OrbitControls';
+import { TransformControls } from '@engine/jsm/controls/TransformControls';
+import { Debug } from '@engine/debug';
+import { StateFile } from '@engine/statesmachine/stateFile';
+import IPCRenderersEditor from '@renderer/ipc-renderers-editor';
 
 import Renderer from './Renderer.vue';
 import PropertiesBar from './PropertiesBar.vue';
 import FSMEditor from './FSMEditor.vue';
 import StatesEditor from './StatesEditor.vue';
 import ObjectsList from './ObjectsList.vue';
+import { RendererManager } from '@renderer/rendererManager';
 
-import { Debug } from '@engine/debug';
-import { StateFile } from '@engine/statesmachine/stateFile';
-import IPCRenderersEditor from '@renderer/ipc-renderers-editor';
 
 let store: any;
 
@@ -115,25 +110,20 @@ enum Space {
 
 let control;
 
-let objARef;
-
-// let objBRef;
 let gameObjectsLstRef;
 
 export default {
 
     name: 'Editor',
     components: {
-    Renderer // obtenir l'instance de renderer
-    ,
-    PropertiesBar,
-    FSMEditor,
-    StatesEditor,
-    ObjectsList
-},
+        Renderer // obtenir l'instance de renderer
+        ,
+        PropertiesBar,
+        FSMEditor,
+        StatesEditor,
+        ObjectsList
+    },
     setup() {
-
-        objARef = ref<GameObject>();
 
         store = inject('store');
 
@@ -151,7 +141,7 @@ export default {
             Renderer.startGame();
         }
 
-        const stopGame = ()=>{
+        const stopGame = () => {
             store.editorMode.value = "LEVEL";
             console.log("Game Stoped");
             Renderer.stopGame();
@@ -167,7 +157,6 @@ export default {
 
         return {
             store,
-            objARef,
             setEditorMode,
             startGame,
             stopGame,
@@ -176,29 +165,29 @@ export default {
         }
     },
     methods: {
-        setObjARef(go: GameObject) {
-            objARef.value = go;
-        },
-        selectObject(gameObject: GameObject) {
-            if (gameObject != undefined) {
+        // selectObject(uuid:string) {
+        //     this.selectObject(GameObject.gameObjects.get(uuid))
+        // },
+        selectObject(gameObject: GameObject |undefined) {
+            if (gameObject) {
                 store.editorRtv.selectedObj = gameObject;
                 // store.currentFSM.value = store.editorRtv.selectedObj.finiteStateMachines[0];
-                control.attach(gameObject);
+                control.attach(gameObject.transform);
             } else {
                 alert("object not found");
             }
         },
         addStateToList(stateFile: StateFile) { // Ajoute un state à la liste global des états
-            store.editorRtv.states.set(stateFile.getFileName(),stateFile);
+            store.editorRtv.states.set(stateFile.getFileName(), stateFile);
         },
-        setParentToObject(source:GameObject,parent:GameObject) {
-            source.parent = parent;
+        setParentToObject(source: GameObject, parent: GameObject) {
+            source.transform.parent = parent.transform;
         },
         initEditor() {
 
-            const renderer = Renderer.getRenderer();
-            const camera = Renderer.getCamera();
-            const scene = Renderer.getMainScene();
+            const renderer = RendererManager.getInstance().renderer;
+            const camera = RendererManager.getInstance().camera;
+            const scene = RendererManager.getInstance().scene;
 
             scene.background = new THREE.Color(0xb0a0a0);
             scene.fog = new THREE.Fog(0xa0a0a0, 200, 1000);
@@ -269,7 +258,6 @@ export default {
         window.addEventListener('error', (event) => {
             Debug.writeInConsole(event.type + ' ' + event.message, '#ff0000');
         });
-
 
     },
 

@@ -1,10 +1,10 @@
 import Blockly from 'blockly';
 
 // IMPORTS pour l'execution en temps réel ne pas supprimer 
-import { Debug } from '../../engine/debug';
-import { GameObject } from '../../engine/gameObject';
+import { Debug } from '../debug';
+import { GameObject } from '../gameObject';
 
-import Editor from '@renderer/components/Editor.vue';
+import Editor from '../../renderer/src/components/Editor.vue';
 
 import { StateFile } from './stateFile';
 
@@ -23,8 +23,6 @@ export class State {
 
   statefile: StateFile | undefined;
 
-  workspaceBlocks: any;
-
   // local variables
   userVariables = {
 
@@ -41,6 +39,14 @@ export class State {
       // L'état peut être non relié à un fichier
       this.statefile = stateFile;
       Editor.methods.addStateToList(this.statefile);
+    }
+  }
+
+  serialize() {
+    return {
+      "name": this.name,
+      "statefile": this.statefile,
+      "userVariables": this.userVariables,
     }
   }
 

@@ -49,7 +49,7 @@ export class GameObjectSetPosNumbersBlock {
       var dropdown_space = block.getFieldValue('SPACE');
       // TODO: Assemble JavaScript into code variable.
 
-      var code = value_obj + '.position.set(' + value_posx + ',' + value_posy + ',' + value_posz + ');\n';
+      var code = value_obj + '.transform.position.set(' + value_posx + ',' + value_posy + ',' + value_posz + ');\n';
       return code;
     };
 

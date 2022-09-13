@@ -36,7 +36,7 @@ export class GameObjectRotateYBlock {
           var value_degy = BlocklyJS.valueToCode(block, 'DEGY', BlocklyJS.ORDER_ATOMIC);
           // TODO: Assemble JavaScript into code variable.
           var yrad = Mathf.getVarClassName()+'.degToRad('+value_degy+')';
-          var code = value_obj+".rotateY("+yrad+");\n";
+          var code = value_obj+".transform.rotateY("+yrad+");\n";
           return code;
         };
     }

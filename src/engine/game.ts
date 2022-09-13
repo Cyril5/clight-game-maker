@@ -1,12 +1,13 @@
 import * as THREE from "three";
-import Renderer from '@renderer/components/Renderer.vue';
-
 import Editor from '@renderer/components/Editor.vue';
 import { GameObject } from "./gameObject";
-import { Car } from "../gameProjects/runTraffic/Assets/Prefabs/car";
 import { Mathf } from "./math/mathf";
 import { ProgrammableGO } from "./entities/programmablego";
 import { Model } from "./entities/model";
+import { WaterGO } from "./entities/watergo";
+import { SkyGO } from "./entities/skygo";
+import { Debug } from "./debug";
+import { RendererManager } from "../renderer/src/rendererManager";
 
 export class Game {
 
@@ -19,52 +20,45 @@ export class Game {
     return this.instance;
   }
 
+  static time = 0;
   static deltaTime = 0;
 
     static getVarClassName() {
       return Game.name;
     }
 
-    static createGOTest() {
-      alert('dfd');
-      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
-      mesh.rotation.x = - Math.PI / 2;
-      mesh.receiveShadow = true;
-      Renderer.getMainScene().add(mesh);
-    }
-
-
-
     private constructor() {
 
-      try {
-        // Importation des classes en dev pour l'execution des codes en temps réel
-        const classes = [];
-        let t = 2000;
-        for (const cls of classes) {
+      //try {
+      //   // Importation des classes en dev pour l'execution des codes en temps réel
+      //   const classes = [Debug,GameObject,Game,Mathf];
+      //   let t = 2000;
+      //   for (const cls of classes) {
   
-          //if (typeof (cls) === 'undefined') {
-            setTimeout(cls.toString(),t);
-          t+=1000;
-          //}
-        }
-      } catch (error) {
-        alert("Erreur lors de l'importation d'une classe. \n" + error);
-      }
+      //     //if (typeof (cls) === 'undefined') {
+      //       setTimeout(cls.toString(),t);
+      //     t+=1000;
+      //     //}
+      //   }
+      // } catch (error) {
+      //   alert("Erreur lors de l'importation d'une classe. \n" + error);
+      // }
 
           // ground
           const mesh = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
           mesh.rotation.x = - Math.PI / 2;
           mesh.receiveShadow = true;
 
-          console.warn(Renderer.getMainScene());
+          const scene = RendererManager.getInstance().scene;
 
-          Renderer.getMainScene().add(mesh);
+          console.warn(scene);
+
+          scene.add(mesh);
 
 
           const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
           hemiLight.position.set(0, 200, 0);
-          Renderer.getMainScene().add(hemiLight);
+          scene.add(hemiLight);
 
           const dirLight = new THREE.DirectionalLight(0xffffff);
           dirLight.position.set(0, 200, 100);
@@ -73,30 +67,37 @@ export class Game {
           dirLight.shadow.camera.bottom = - 100;
           dirLight.shadow.camera.left = - 120;
           dirLight.shadow.camera.right = 120;
-          Renderer.getMainScene().add(dirLight);
+          scene.add(dirLight);
 
-          const playerCarGO = new ProgrammableGO('Programmable Object');
+          //Water
+          // const water = new WaterGO();
+          // Renderer.getMainScene().add(water);
+
+          // // Sky
+          // const sky = new SkyGO();
+          // Renderer.getMainScene().add(sky);
+
+          const playerCarGO = new ProgrammableGO();
           const carModel: Model = new Model();
+          // carModel.import();
 
           playerCarGO.addFSM('PlayerCar State Machine');
-          // le premier état est créer automatiquement
+          //le premier état est créer automatiquement
           playerCarGO.finiteStateMachines[0].getBaseState().name = "State A";
 
           
-          Renderer.getMainScene().add(carModel);
+          scene.add(carModel.transform);
           
           // car.scale.set(0.025, 0.025, 0.025);
           
-          playerCarGO.attach(carModel);
-          
-          Renderer.getMainScene().add(playerCarGO);
-          
-          //Editor.methods.setObjARef(playerCarGO);
-          
+          // playerCarGO.transform.attach(carModel.transform);
 
-          // Editor.methods.getObjBRef().value = car;
+          carModel.setParent(playerCarGO);
 
-          //Editor.methods.selectObjectA();
+          scene.add(playerCarGO.transform);
+
+          console.log(GameObject.gameObjects);
+          
 
     }
 }

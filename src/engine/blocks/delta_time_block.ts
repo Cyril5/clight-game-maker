@@ -1,4 +1,4 @@
-import { LusineBlock } from "./lusineBlock.js";
+import { LusineBlock } from "./lusineBlock.js.js";
 
 import Blockly from 'blockly';
 import { Game } from "../game.js";

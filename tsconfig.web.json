@@ -1,11 +1,11 @@
 {
   "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
   "include": [
-    "src/engine/**/*",
+    "src/engine/src/**/*",
     "src/renderer/src/env.d.ts",
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.vue",
-    "src/preload/*.d.ts"
+    "src/preload/*.d.ts",
   ],
   "compilerOptions": {
     "composite": true,
@@ -14,7 +14,9 @@
       "@renderer/*": [
         "src/renderer/src/*"
       ],
-      "@engine/*": ["src/engine/*"]
+      "@engine/*": [
+        "src/engine/*"
+      ]
     }
   }
 }

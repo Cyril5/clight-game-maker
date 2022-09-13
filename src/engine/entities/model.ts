@@ -1,9 +1,15 @@
 import * as THREE from 'three';
-import { GameObject } from "@engine/gameObject";
-import { Random } from "@engine/math/random";
-import { Mathf } from '@engine/math/mathf';
+import { GameObject } from "../gameObject";
+import { Random } from "../math/random";
+import { Mathf } from '../math/mathf';
+import { Project } from '../../renderer/src/project';
+import { RendererManager } from '../../renderer/src/rendererManager';
+
+const fs = require('fs');
 
 export class Model extends GameObject {
+
+    private path = require('path');
 
     constructor() {
         super('Car Group');
@@ -23,7 +29,7 @@ export class Model extends GameObject {
         main.castShadow = true;
         main.receiveShadow = true;
         main.name = 'main';
-        this.add(main);
+        this.transform.add(main);
 
         //let carFrontTexture = this.getFrontTexture("ft");
         //carFrontTexture.center = new THREE.Vector2(0.5, 0.5);
@@ -47,20 +53,38 @@ export class Model extends GameObject {
         cabin.castShadow = true;
         cabin.receiveShadow = true;
         cabin.name = 'cabin';
-        this.add(cabin);
+        this.transform.add(cabin);
 
         const backWheel = new Wheel();
         backWheel.position.x = -18;
         backWheel.name = 'backWheel';
-        this.add(backWheel);
+        this.transform.add(backWheel);
 
         const frontWheel = new Wheel();
         frontWheel.position.x = 18;
         frontWheel.name = "frontWheel";
-        this.add(frontWheel);
+        this.transform.add(frontWheel);
 
-        this.setRotationFromEuler(new THREE.Euler(Mathf.degToRad(-90), Mathf.degToRad(0), Mathf.degToRad(-90)));
-    
+        this.transform.setRotationFromEuler(new THREE.Euler(Mathf.degToRad(-90), Mathf.degToRad(0), Mathf.degToRad(-90)));
+    }
+
+    private json;
+
+    exportToJSON() {
+        const filename = this.path.join(Project.getModelsDir(),"Car.json");
+        this.json = JSON.stringify(this.transform.toJSON());
+        Project.createFile(filename, this.json);
+    }
+
+    import() {
+        const jsonFile = fs.readFileSync(this.path.join(Project.getModelsDir(),"Car.json"), 'utf8');
+
+        const loadedObject = JSON.parse(jsonFile);
+        const loader = new THREE.ObjectLoader();
+
+        const loadedMesh = loader.parse(loadedObject);
+        loadedMesh.position.x -= 50;
+        RendererManager.getMainScene().add(loadedMesh);
     }
 }
 

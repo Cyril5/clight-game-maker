@@ -1,22 +1,25 @@
 <template>
     <h2>Objets</h2>
+
     <ul id="myUL">
         <li v-for="[key, go] in gameObjectsLstRef">
 
-            <div class="node" v-if="go.parent.type=='Scene'">
-                <span class="caret"><button @click="selectObject(go)">{{go.name}}
-                    (ID:{{go.id}})</button>
-            </span>
+            <div class="node" draggable="true" v-if="go.transform.parent.type=='Scene'">
+                <span class="caret"><button @click="selectObject(go)">{{go.transform.name}}
+                        (ID:{{go.id}})</button>
+                </span>
 
-            <ul class="nested" v-if="go.children">
-                <li v-for="child in go.children"><span class="caret"><button @click="selectObject(child)">{{child.name}}
-                    (ID:{{child.id}})</button></span>
-                    <ul class="nested">
-                        <li v-for="subchild in child.children"><span class="caret"><button @click="selectObject(subchild)">{{subchild.name}} (ID : {{subchild.id}})</button></span>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
+                <ul class="nested">
+                    <li v-for="child in go.transform.children"><span class="caret"><button @click="selectFromTransformRef(child)">
+                        {{child.name}} (ID:{{child.id}})</button></span>
+                        <!-- <ul class="nested">
+                            <li v-for="subchild in child.children"><span class="caret"><button
+                                        @click="selectObject(subchild)">{{subchild.name}} (ID :
+                                        {{subchild.id}})</button></span>
+                            </li>
+                        </ul> -->
+                    </li>
+                </ul>
             </div>
 
         </li>
@@ -29,46 +32,51 @@
     </div> -->
 </template>
 
-<script lang="ts">import { GameObject } from '@engine/gameObject';
+<script lang="ts">
 import { inject, ref } from 'vue';
+import { GameObject } from '../../../engine/gameObject';
 import Editor from './Editor.vue';
 
-let gameObjectsLstRef;
+let gameObjectsLstRef; // Map<uuid,GameObject>
 
 export default {
 
-name: 'ObjectsList',
-components: {
+    name: 'ObjectsList',
+    components: {
+    },
+    setup() {
+        const store = inject('store');
 
-},
-setup() {
-    const store = inject('store');
+        gameObjectsLstRef = ref();
 
-    gameObjectsLstRef = ref();
+        const selectObject = (go: GameObject) => {
+            Editor.methods.selectObject(go);
+        }
 
-    const selectObject = (go : GameObject)=> {
-        Editor.methods.selectObject(go);
-    }
-    
-    return {
-        store,
-        gameObjectsLstRef,
-        selectObject
-    }
-},
-mounted() {
+        const selectFromTransformRef = (obj : THREE.Object3D)=> {
+            const goId = obj.userData.gameObjectId;
+            Editor.methods.selectObject(GameObject.gameObjects.get(goId));
+        }
+
+        return {
+            store,
+            gameObjectsLstRef,
+            selectObject,
+            selectFromTransformRef,
+        }
+    },
+    mounted() {
         // A Améliorer
         setInterval(() => {
-            gameObjectsLstRef.value = new Map(GameObject.gameObjects);
+            gameObjectsLstRef.value = new Map<string,GameObject>(GameObject.gameObjects);
         }, 1000)
-}
+    }
 }
 </script>
 
 <style lang="scss">
 /* Remove default bullets */
-ul,
-#myUL {
+ul,#myUL {
     list-style-type: none;
 }
 
