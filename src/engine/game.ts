@@ -27,10 +27,33 @@ export class Game {
       return Game.name;
     }
 
+    createLights() {
+      const scene = RendererManager.getInstance().scene;
+      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
+          hemiLight.position.set(0, 200, 0);
+          scene.add(hemiLight);
+          hemiLight.name = "LGM_HemiLight";
+
+          const dirLight = new THREE.DirectionalLight(0xffffff);
+          dirLight.position.set(0, 200, 100);
+          dirLight.castShadow = true;
+          dirLight.shadow.camera.top = 180;
+          dirLight.shadow.camera.bottom = - 100;
+          dirLight.shadow.camera.left = - 120;
+          dirLight.shadow.camera.right = 120;
+          scene.add(dirLight);
+          dirLight.name = "LGM_dirLight";
+
+    }
+
     private constructor() {
+
+      // 1) Savoir si on est en mode dev ou non
+      
 
       //try {
       //   // Importation des classes en dev pour l'execution des codes en temps réel
+      //   // Le faire seulement en mode dev 
       //   const classes = [Debug,GameObject,Game,Mathf];
       //   let t = 2000;
       //   for (const cls of classes) {
@@ -48,6 +71,7 @@ export class Game {
           const mesh = new THREE.Mesh(new THREE.PlaneGeometry(10, 10), new THREE.MeshPhongMaterial({ color: 0x999999, depthWrite: false }));
           mesh.rotation.x = - Math.PI / 2;
           mesh.receiveShadow = true;
+          mesh.name = "LGM_GROUND";
 
           const scene = RendererManager.getInstance().scene;
 
@@ -56,18 +80,22 @@ export class Game {
           scene.add(mesh);
 
 
-          const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
-          hemiLight.position.set(0, 200, 0);
-          scene.add(hemiLight);
+          // const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444);
+          // hemiLight.position.set(0, 200, 0);
+          // scene.add(hemiLight);
+          // hemiLight.name = "LGM_HemiLight";
 
-          const dirLight = new THREE.DirectionalLight(0xffffff);
-          dirLight.position.set(0, 200, 100);
-          dirLight.castShadow = true;
-          dirLight.shadow.camera.top = 180;
-          dirLight.shadow.camera.bottom = - 100;
-          dirLight.shadow.camera.left = - 120;
-          dirLight.shadow.camera.right = 120;
-          scene.add(dirLight);
+          // const dirLight = new THREE.DirectionalLight(0xffffff);
+          // dirLight.position.set(0, 200, 100);
+          // dirLight.castShadow = true;
+          // dirLight.shadow.camera.top = 180;
+          // dirLight.shadow.camera.bottom = - 100;
+          // dirLight.shadow.camera.left = - 120;
+          // dirLight.shadow.camera.right = 120;
+          // scene.add(dirLight);
+          // dirLight.name = "LGM_dirLight";
+
+          this.createLights();
 
           //Water
           // const water = new WaterGO();
@@ -87,11 +115,7 @@ export class Game {
 
           
           scene.add(carModel.transform);
-          
-          // car.scale.set(0.025, 0.025, 0.025);
-          
-          // playerCarGO.transform.attach(carModel.transform);
-
+      
           carModel.setParent(playerCarGO);
 
           scene.add(playerCarGO.transform);

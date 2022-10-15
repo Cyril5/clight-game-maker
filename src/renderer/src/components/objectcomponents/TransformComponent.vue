@@ -1,6 +1,6 @@
 <template>
     <div class="component">
-        <p>ID : {{store.editorRtv.selectedObj.id}}</p>
+        <p>transfID : {{store.editorRtv.selectedObj.transform.uuid}}</p>
         <!-- <button @click="selectTransform(store.editorRtv.selectedObj.transform)">TransformID : {{store.editorRtv.selectedObj.transform.uuid}}</button> -->
         <h3>Position : </h3>
         <div class="position" style="display: flex;">

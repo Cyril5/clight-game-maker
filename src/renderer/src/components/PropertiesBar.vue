@@ -1,15 +1,21 @@
 <template>
     <div class="properties-bar" v-if="store.editorRtv.selectedObj">
 
+        <h2>{{store.editorRtv.selectedObj.transform.name}}</h2>
+        
         <div class="components">
             <input type="checkbox" name="" checked id="">Actif
+            <p>ID : {{store.editorRtv.selectedObj.id}}</p>
             <!-- <input type="number" step="1" id="parentid" @change="setParentId($event)">
             <label for="parentid">Parent ID :</label> -->
             <TransformComponent/> 
 
             <FSMComponent v-for="(item, index) in store.editorRtv.selectedObj.finiteStateMachines" :fsm="item" :index="index"/>
+            
+            <PerspCameraComponent/>
 
             <button v-if="store.editorRtv.selectedObj.constructor.name=='ProgrammableGO'" id="addFSMBtn" @click="addFSM">Ajouter une machine d'Etat sur l'objet</button>
+            <!-- <button @click="addFSM">Ajouter une machine d'Etat sur l'objet</button> -->
         </div>
 
     </div>
@@ -22,19 +28,19 @@
 <script lang="ts">
 import TransformComponent from "./objectcomponents/TransformComponent.vue";
 import FSMComponent from "./objectcomponents/FSMComponent.vue";
-import Renderer from "./Renderer.vue";
 import { inject } from "vue";
-import Editor from "./Editor.vue";
 import store from "@renderer/store/store";
+import PerspCameraComponent from "./objectcomponents/PerspCameraComponent.vue";
 // import { GameObject } from "@engine/gameObject";
 
 export default {
 
     name: 'PropertiesBar',
     components: {
-        TransformComponent,
-        FSMComponent,
-    },
+    TransformComponent,
+    FSMComponent,
+    PerspCameraComponent
+},
     setup() {
         const store = inject('store');
         

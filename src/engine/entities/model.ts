@@ -13,6 +13,7 @@ export class Model extends GameObject {
 
     constructor() {
         super('Car Group');
+        this.type = "Model";
         const color = Random.pickElementFromArray([
             0xa52523,
             0xef2d56,

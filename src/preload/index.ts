@@ -14,6 +14,7 @@ if (process.contextIsolated) {
   try {
     contextBridge.exposeInMainWorld('electron', electronAPI)
     contextBridge.exposeInMainWorld('api', api)
+    
   } catch (error) {
     console.error(error)
   }
@@ -23,4 +24,6 @@ if (process.contextIsolated) {
   // @ts-ignore (define in dts)
   window.api = api
 }
+
+
 

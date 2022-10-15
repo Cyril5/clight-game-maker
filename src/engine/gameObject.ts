@@ -2,20 +2,24 @@
 import * as THREE from 'three';
 import { FiniteStateMachine } from './statesmachine/fsm';
 // import { RendererManager } from '../renderer/src/rendererManager'; 
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { RendererManager } from '../renderer/src/rendererManager';
+import {Component} from '@engine/entities/component';
+import Utils from './utils';
 
 export class GameObject {
-    
-    static gameObjects = new Map<string,GameObject>(); // private map(uuid, GameObject)
-    
-    private id : string;
-    
+
+    static gameObjects = new Map<string, GameObject>(); // private map(uuid, GameObject)
+
+    private id: string;
+
     enabled = true;
 
     transform: THREE.Object3D = new THREE.Object3D();
+    
+    type:string = "GameObject";
 
-    parentID : string = "" //uuid du parent 
+    parentID: string = "" //uuid du parent 
 
     initTransform = {
         'position': new THREE.Vector3(0, 0, 0),
@@ -28,22 +32,13 @@ export class GameObject {
         World: 1
     }
 
-    SerializedGameObject = {
-            "version": 0.1,
-            "data": {
-                "id": "", // uuid
-                "name": "New Game Object",
-                "transformId": "", // A quel uuid d'un THREE.Object est t'il rattaché 
-                "statesmachines": [],
-            }
-    };
-
-
     private worldPosition = new THREE.Vector3();
 
 
     // Peut contenir plusieurs FSM
     finiteStateMachines: Array<FiniteStateMachine> = [];
+
+    private _components : Array<Component> = [];
 
     constructor(name: string) {
 
@@ -53,7 +48,7 @@ export class GameObject {
             GameObject.gameObjects.set(this.id, this);
         else
             alert("GameObject id already exists in gameObjects map");
-        
+
         // ses propriétées seront ajoutés dans l'objet3D
         this.transform.name = name;
         this.transform.type = "GameObject";
@@ -73,15 +68,29 @@ export class GameObject {
 
     }
 
-    getChild(index : number) : GameObject | undefined {
-      return GameObject.gameObjects.get(this.transform.children[index].userData.gameObjectId);
+    addComponent(ComponentType, ...args) {
+        const component = new ComponentType(this, ...args);
+        this._components.push(component);
+        return component;
+      }
+
+    getChild(index: number): GameObject | undefined {
+        return GameObject.gameObjects.get(this.transform.children[index].userData.gameObject.Id);
     }
 
-    setParent(gameObject : GameObject) {
+    removeComponent(component : Component) {
+        Utils.removeElementInArray(this._components,component);
+      }
 
-            gameObject.transform.attach(this.transform);
-            this.transform.userData.parentGameObjectId = gameObject.id;
-        
+      getComponent(ComponentType) {
+        return this._components.find(c => c instanceof ComponentType);
+      }
+
+    setParent(gameObject: GameObject) {
+
+        gameObject.transform.attach(this.transform);
+        this.transform.userData.parentGameObjectId = gameObject.id;
+
     }
 
     resetTransform() {
@@ -117,38 +126,31 @@ export class GameObject {
             fsmsJSON.push(fsm.serialize());
         }
 
-        this.SerializedGameObject.data.id = this.id;
-        this.SerializedGameObject.data.name = this.transform.name;
-        this.SerializedGameObject.data.transformId = this.transform.uuid;
-        this.SerializedGameObject.data.statesmachines = fsmsJSON;
-
-        return this.SerializedGameObject;
+        this.transform.userData.gameObject.id = this.id;
+        this.transform.userData.gameObject.type = this.type;
+        this.transform.userData.gameObject.statesmachines = fsmsJSON;
     }
 
-    fromJSON(json) {
+    setId(id : string) {
+        this.id = id;
+    }
 
-        console.log(json);
+    setTransform(id) {
 
-        if(json.id === undefined || json.transformId === undefined || json.statesmachines == undefined) {
-            console.error("Invalid GameObject JSON \n"+JSON.stringify(json));
-            return;
-        }
-
-        this.id = json.id;
         // chercher le Object3D dans la scene ayant l'id de transformId puis l'affecter au transform
         // du gameObject
-        const result = RendererManager.getInstance().scene.getObjectByProperty("uuid",json.transformId);
+        const result = RendererManager.getInstance().scene?.getObjectByProperty("uuid", id);
 
-        if(result===undefined) {
-            alert("THREE.Object3D "+json.transformId+" was not found ");
+        if (result === undefined) {
+            alert("THREE.Object3D " + id + " was not found ");
             return;
         }
+        // RendererManager.getInstance().scene?.remove(this.transform);
 
         this.transform = result;
 
-        this.finiteStateMachines = json.statesmachines;
-
-        GameObject.gameObjects.set(this.id,this);
+        // this.finiteStateMachines = json.statesmachines;
+        // GameObject.gameObjects.set(json.id,this);
     }
 
     // static findById(id) {

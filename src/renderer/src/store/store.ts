@@ -20,7 +20,7 @@ const editorRtv = reactive({
     states: new Map<string, StateFile>(), //States File
 });
 
-const editorMode = ref('FSM_STATES'); // FSM_STATES, LEVEL, GAME_RUNNING
+const editorMode = ref('LEVEL'); // FSM_STATES, LEVEL, GAME_RUNNING
 const assetsDir = ref<string>();
 const currentFSM = ref<FiniteStateMachine>();
 

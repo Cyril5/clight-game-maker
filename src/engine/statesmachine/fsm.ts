@@ -36,6 +36,8 @@ import { StateFile } from './stateFile';
             }
 
             return {
+                "name": this.name,
+                "enabled": this.enabled,
                 "states": statesJSON,
             }
         }

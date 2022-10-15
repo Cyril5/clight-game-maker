@@ -5,7 +5,7 @@
         <!-- Modal content -->
         <div class="modal-content">
             <div class="modal-header">
-                <!-- <span class="close" @click="show = false">&times;</span> -->
+                <span class="close" @click="show = false">&times;</span>
                 <h2>Bienvenue dans Lusine Game Maker</h2>
             </div>
 
@@ -84,7 +84,7 @@ export default {
             store.assetsDir.value = Project.getAssetsDir();
             show.value = false;
             //Game.getInstance(); // TODO ouvrir un projet
-            Project.open();
+            //Project.open();
             
             store.editorMode.value = 'LEVEL';
 
@@ -116,7 +116,7 @@ export default {
     //   display: none; /* Hidden by default */
     position: fixed;
     /* Stay in place */
-    z-index: 100;
+    z-index: 101;
     /* Sit on top */
     // left: 0;
     // top: 0;

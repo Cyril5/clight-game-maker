@@ -34,7 +34,9 @@
     "sass": "^1.54.4",
     "sass-loader": "^13.0.2",
     "three": "^0.143.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "vue-tree-list": "^1.5.0",
+    "vue3-treeview": "^0.4.0"
   },
   "devDependencies": {
     "@electron-toolkit/tsconfig": "^1.0.1",

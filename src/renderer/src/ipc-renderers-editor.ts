@@ -9,15 +9,20 @@ export default class {
     constructor() {
         const { ipcRenderer } = require('electron');
 
+        // réponse lors de  mainWindow.webContents.send("saveProject")
         ipcRenderer.on("saveProject",()=>{
             Project.save();
+        });
+
+        ipcRenderer.on("setDevMode",()=>{
+            alert("Mode développeur");
         });
 
         ipcRenderer.on("addObjectOfType",(event,message)=>{
             switch (message) {
                 case "3D_MODEL":
                     const test = new Model();
-                    RendererManager.getMainScene().add(test);
+                    RendererManager.getInstance().scene?.add(test);
                     Editor.methods.selectObject(test);
                     break;
             

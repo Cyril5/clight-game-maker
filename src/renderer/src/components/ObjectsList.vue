@@ -3,10 +3,10 @@
 
     <ul id="myUL">
         <li v-for="[key, go] in gameObjectsLstRef">
-
-            <div class="node" draggable="true" v-if="go.transform.parent.type=='Scene'">
-                <span class="caret"><button @click="selectObject(go)">{{go.transform.name}}
-                        (ID:{{go.id}})</button>
+            
+            <!-- v-if="go.transform.parent.type=='Scene'" -->
+            <div class="node" draggable="true"> 
+                <span class="caret"><button @click="selectObject(go)">{{go.transform.name}}</button>
                 </span>
 
                 <ul class="nested">

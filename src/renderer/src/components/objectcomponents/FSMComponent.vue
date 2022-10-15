@@ -17,7 +17,6 @@
 
 import { inject } from 'vue';
 import FSMEditor from '../FSMEditor.vue';
-import { FiniteStateMachine } from '@engine/statesmachine/fsm';
 
 export default {
 

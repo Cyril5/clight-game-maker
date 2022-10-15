@@ -1,10 +1,11 @@
 const fs = require('fs');
 
-import { Game } from '../../engine/game';
+import { Game } from '@engine/game';
 import * as THREE from 'three';
-import { GameObject } from '../../engine/gameObject';
+import { GameObject } from '@engine/gameObject';
 import baseStateFile from './assets/baseStateFile.json';
 import { RendererManager } from './rendererManager';
+import { ProgrammableGO } from '@engine/entities/programmablego';
 
 export class Project {
 
@@ -22,19 +23,18 @@ export class Project {
 
         const scene = RendererManager.getInstance().scene;
         
-        Game.getInstance();
-
-        // const sceneChildren = scene.children;
-        // // TEST : i=2 pour enlever seulement les gameObjects
-        // for (let i = 2; i < sceneChildren.length; i++) {
-        //     const child = sceneChildren[i];
-        //     scene.remove(child);
-        // }
-        // GameObject.gameObjects.clear();
+        // Game.getInstance();
+        //TEST : i=2 pour enlever seulement les gameObjects et garder le sol, la lumiere
+        for (let i = 5; i < scene?.children.length; i++) {
+            const child = scene?.children[i];
+            scene?.remove(child);
+        }
+        
+        GameObject.gameObjects.clear();
 
 
         //Lire le json du jeu
-        //return;
+        // return;
 
         fs.readFile(this.path.join(this.directory,"Game"), 'utf8', (err, data) => {
             if (err) {
@@ -45,22 +45,45 @@ export class Project {
             // console.log(test.objects[3].data.object);
             const loader = new THREE.ObjectLoader();
 
-            let i = 0;
-            for (const iterator of test.objects) {
-                const loadedObject = iterator;
-                const loadedMesh : THREE.Object3D = loader.parse(loadedObject);
+
+            let pos = 0;
+
+            for (const object of test.objects) {
+                const loadedMesh : THREE.Object3D = loader.parse(object);
                 
-                loadedMesh.position.x -= 50;
-                scene.add(loadedMesh);            
-                i++;
-            }
+                loadedMesh.position.x = pos;
+                scene?.add(loadedMesh);
 
-            for(const gameObject of test.gameObjects) {
-                const go : GameObject = new GameObject("New Game Object");
-                go.fromJSON(gameObject.data);
-                scene.add(go.transform);
-            }
+                makeGameObjectsForObject(object.object);
 
+                function makeGameObjectsForObject(object: { userData: { gameObject: { type: any; id: any; } | undefined; } | undefined; uuid: any; }) {
+
+                    if(object.userData === undefined || object.userData.gameObject===undefined) {
+                        return;
+                    }
+    
+                    const goType = object.userData.gameObject.type;
+                    let go: GameObject;
+                    switch (goType) {
+                        case "ProgrammableGO":
+                            go = new ProgrammableGO();
+                            break;
+                    
+                        default:
+                            go = new GameObject("New Game Object");
+                            break;
+                    }
+                    console.log(go);
+                    go.setId(object.userData.gameObject.id);
+                    go.setTransform(object.uuid);
+
+                    // for (const child of object.children) {
+                    //     makeGameObjectsForObject(child);
+                    // }
+                }
+                
+            }
+        
 
         });
 
@@ -74,17 +97,25 @@ export class Project {
 
         // Récupérer tous les gameObjects de la scene
         let transformsJSON : Array<any>  = [];
-        let gameObjectsJSON : Array<any> = [];
 
         for (const go of GameObject.gameObjects) {
-            const value = go[1];
-            transformsJSON.push(value.transform.toJSON()); // THREE.Object3D
-            gameObjectsJSON.push(value.serialize());
+
+            const value : GameObject  = go[1];
+            
+            //if(index > 4) { // Eviter de sauvegarder les objets de l'éditeur
+                if(value.transform.userData.gameObject) {
+                    value.serialize();
+                }
+
+                if(value.transform.parent?.type=="Scene") {
+                    transformsJSON.push(value.transform.toJSON()); // THREE.Object3D
+                }
+            //}
         }
 
         const json = {
             "version": 0.1,
-            "gameObjects": gameObjectsJSON,
+            // "gameObjects": gameObjectsJSON,
             "objects": transformsJSON,
         }
 

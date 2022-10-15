@@ -217,7 +217,7 @@ const menu = Menu.buildFromTemplate([
       {
         label: "Ouvrir Projet",
         click: ()=>{
-
+          mainWindow.webContents.send("openProject");
         },
         accelerator: "CmdOrCtrl+O"
       },

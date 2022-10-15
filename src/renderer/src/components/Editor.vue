@@ -1,5 +1,12 @@
 <template>
+
+    <ObjectsViewer/>
+
     <div class="tabs">
+        <button @click="openProject()" v-if="store.editorMode.value!='GAME_RUNNING'">
+            <font-awesome-icon icon="fa-solid fa-folder-open" /> Ouvrir
+        </button>
+
         <button @click="setEditorMode('LEVEL')" v-if="store.editorMode.value!='GAME_RUNNING'">
             <font-awesome-icon icon="fa-solid fa-chess-knight" /> Editeur de niveau
         </button>
@@ -87,6 +94,8 @@ import FSMEditor from './FSMEditor.vue';
 import StatesEditor from './StatesEditor.vue';
 import ObjectsList from './ObjectsList.vue';
 import { RendererManager } from '@renderer/rendererManager';
+import ObjectsViewer from './ObjectsViewer.vue';
+import { Game } from '@engine/game';
 
 
 let store: any;
@@ -116,14 +125,18 @@ export default {
 
     name: 'Editor',
     components: {
-        Renderer // obtenir l'instance de renderer
-        ,
-        PropertiesBar,
-        FSMEditor,
-        StatesEditor,
-        ObjectsList
-    },
+    Renderer // obtenir l'instance de renderer
+    ,
+    PropertiesBar,
+    FSMEditor,
+    StatesEditor,
+    ObjectsList,
+    ObjectsViewer
+},
     setup() {
+
+        const { ipcRenderer } = require('electron');
+
 
         store = inject('store');
 
@@ -151,6 +164,10 @@ export default {
             store.editorMode.value = mode;
         }
 
+        const openProject = ()=>{
+            ipcRenderer.invoke('openProject');
+        }
+
         new IPCRenderersEditor();
 
 
@@ -162,6 +179,7 @@ export default {
             stopGame,
             gameObjectsLstRef,
             editorMode: EditorMode,
+            openProject
         }
     },
     methods: {
@@ -209,6 +227,8 @@ export default {
                 orbit.enabled = !event.value;
             });
 
+            control.name = "LGM_CONTROL";
+
             control.setSize(1.5);
             control.setSpace(Space.Local);
 
@@ -218,7 +238,10 @@ export default {
             const grid = new THREE.GridHelper(10, 20, 0x000000, 0x000000);
             // grid.material.opacity = 0.2;
             // grid.material.transparent = true;
+            grid.name = "LGM_GRID";
             scene.add(grid);
+
+            Game.getInstance();
 
 
 
