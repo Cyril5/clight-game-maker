@@ -106,7 +106,7 @@ export class Game {
           // Renderer.getMainScene().add(sky);
 
           const playerCarGO = new ProgrammableGO();
-          const carModel: Model = new Model();
+          const carModel: Model = new Model('https://threejs.org/manual/examples/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf');
           // carModel.import();
 
           playerCarGO.addFSM('PlayerCar State Machine');
