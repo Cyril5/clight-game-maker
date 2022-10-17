@@ -65,6 +65,7 @@ export class GameObject {
 
 
         // this.add(this.group);
+        RendererManager.getInstance().scene?.add(this.transform);
 
     }
 

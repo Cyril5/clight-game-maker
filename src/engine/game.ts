@@ -106,20 +106,14 @@ export class Game {
           // Renderer.getMainScene().add(sky);
 
           const playerCarGO = new ProgrammableGO();
-          const carModel: Model = new Model('https://threejs.org/manual/examples/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf');
+          const lowPolyCityModel: Model = new Model('https://threejs.org/manual/examples/resources/models/cartoon_lowpoly_small_city_free_pack/scene.gltf');
           // carModel.import();
 
           playerCarGO.addFSM('PlayerCar State Machine');
           //le premier état est créer automatiquement
           playerCarGO.finiteStateMachines[0].getBaseState().name = "State A";
 
-          
-          scene.add(carModel.transform);
-      
-          carModel.setParent(playerCarGO);
-
-          scene.add(playerCarGO.transform);
-
+          // lowPolyCityModel.setParent(playerCarGO);
           console.log(GameObject.gameObjects);
           
 
